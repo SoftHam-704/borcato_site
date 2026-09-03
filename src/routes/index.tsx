@@ -1,4 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
+import { Abertura } from "@/components/site/Abertura";
 import { HeroTravessia } from "@/components/site/HeroTravessia";
 import { BarraMarcas } from "@/components/site/BarraMarcas";
 import { Capitulo, NavCapitulos } from "@/components/site/Capitulos";
@@ -49,6 +50,7 @@ function Index() {
 
   return (
     <div className="home-borcato travessia">
+      <Abertura />
       <NavCapitulos />
 
       {/* a estrada atravessa a pagina inteira, por tras do conteudo */}
