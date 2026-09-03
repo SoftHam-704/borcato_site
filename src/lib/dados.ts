@@ -77,11 +77,14 @@ export const representadas = [
   { id: "cofran", nome: "Cofran", fornece: "Lanternas e retrovisores" },
   { id: "pysko", nome: "Pysko", fornece: "Kits de suspensão" },
   { id: "hexlub", nome: "Hexlub", fornece: "Óleo lubrificante" },
-  { id: "meca-brazil", nome: "Meca Brazil", fornece: "" },
-  { id: "auto-america", nome: "Auto América", fornece: "" },
-  { id: "mundial-prime", nome: "Mundial Prime", fornece: "" },
-  { id: "sintech", nome: "Sintech", fornece: "" },
-  { id: "vp", nome: "VP", fornece: "" },
+  // As cinco que estavam sem descricao foram preenchidas em 03/09/2026 pela carta
+  // de apresentacao (Agosto/26, versao da Valeria) — casadas marca a marca pela
+  // pagina do PDF, nao adivinhadas.
+  { id: "meca-brazil", nome: "Meca Brazil", fornece: "Bicos injetores, sensores, conectores e cabo de vela" },
+  { id: "auto-america", nome: "Auto América", fornece: "Química automotiva, óleo de transmissão e aromatizantes" },
+  { id: "mundial-prime", nome: "Mundial Prime", fornece: "Desengripante, limpa-contato, descarbonizante e sprays" },
+  { id: "sintech", nome: "Sintech", fornece: "Peças para motor" },
+  { id: "vp", nome: "VP", fornece: "Peças plásticas automotivas" },
 ] as const;
 
 export const empresa = {

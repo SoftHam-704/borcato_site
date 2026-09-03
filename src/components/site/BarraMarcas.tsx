@@ -32,7 +32,7 @@ export function BarraMarcas() {
         {/* a legenda muda com o foco, em vez de existir um rótulo por pastilha —
             é o que mantém a base limpa com 11 marcas */}
         <em aria-live="polite">
-          {atual ? atual.fornece || atual.nome : "passe o cursor para conhecer"}
+          {atual ? atual.fornece : "passe o cursor para conhecer"}
         </em>
       </p>
 
@@ -62,7 +62,7 @@ export function BarraMarcas() {
                     onMouseLeave={() => setEmFoco(null)}
                     onFocus={() => setEmFoco(r.id)}
                     onBlur={() => setEmFoco(null)}
-                    aria-label={copia > 0 ? undefined : r.fornece ? `${r.nome} — ${r.fornece}` : r.nome}
+                    aria-label={copia > 0 ? undefined : `${r.nome} — ${r.fornece}`}
                   >
                     {src ? <img src={src} alt="" aria-hidden /> : <span>{r.nome}</span>}
                   </button>
