@@ -2,6 +2,7 @@ import { useEffect, useRef } from "react";
 import { estados, empresa } from "@/lib/dados";
 import { BarraMarcas } from "@/components/site/BarraMarcas";
 import { FotoViva } from "@/components/site/FotoViva";
+import { Palavras } from "@/components/site/Palavras";
 // Gerada com o Nano Banana a partir da original (marca/geracao/): luz lateral
 // dura e olhar fora de quadro. O passo do rastro de exposicao longa FALHOU —
 // o modelo criou uma segunda pessoa atras dele — entao o rastro fica no CSS.
@@ -42,6 +43,22 @@ export function HeroTravessia() {
     return () => obs.disconnect();
   }, []);
 
+  // O TEXTO SE ESCREVE quando a abertura termina, nao quando a pagina carrega:
+  // a abertura cobre tudo, e animar por baixo dela e desperdicar o gesto. A
+  // Abertura avisa por evento; se ela nao existir (reduced-motion, ou um dia
+  // sem abertura), o fallback de 4,5s garante que o texto nunca fique preso.
+  useEffect(() => {
+    const secao = capsulaRef.current?.closest<HTMLElement>(".hero-tr");
+    if (!secao) return;
+    const pronta = () => secao.classList.add("is-pronta");
+    window.addEventListener("hmb:abriu", pronta, { once: true });
+    const fallback = window.setTimeout(pronta, 4500);
+    return () => {
+      window.removeEventListener("hmb:abriu", pronta);
+      window.clearTimeout(fallback);
+    };
+  }, []);
+
   useEffect(() => {
     const el = capsulaRef.current;
     if (!el) return;
@@ -62,6 +79,13 @@ export function HeroTravessia() {
         el.style.setProperty("--capsula-esc", String(1 + t * 0.06));
         // o grão assenta conforme a foto "chega" — sem deslocar canal nenhum
         el.style.setProperty("--filme", String(1 - t * 0.55));
+        // A PALAVRA-FANTASMA ANDA: rolando para baixo ela vai para a ESQUERDA,
+        // e volta quando se sobe. E parallax — mais lenta que o conteudo — o que
+        // faz a capsula "passar na frente" dela. O dono pediu exatamente isto.
+        // 14% da largura no percurso da primeira tela: le como movimento, nao
+        // como a palavra fugindo.
+        const secao = el.closest<HTMLElement>(".hero-tr");
+        secao?.style.setProperty("--fant-x", `${(-t * document.documentElement.clientWidth * 0.14).toFixed(1)}px`);
       });
     };
     aoRolar();
@@ -100,10 +124,12 @@ export function HeroTravessia() {
             diferenciação feita só por cor: assinatura de template.
             O <em> continua sendo "outros onze" porque é ele que carrega o
             argumento — o número que nenhum concorrente copia sem ter rodado. */}
+        {/* as tres linhas dividem UMA cascata de 6 palavras: a contagem continua
+            de uma linha para a outra, entao o titulo se escreve na ordem da leitura */}
         <h1 className="hero-tr__titulo">
-          <span className="ln ln--1">De Minas para</span>
-          <em className="ln ln--2">outros onze</em>
-          <span className="ln ln--3">estados.</span>
+          <span className="ln ln--1"><Palavras texto="De Minas para" total={6} /></span>
+          <em className="ln ln--2"><Palavras texto="outros onze" desde={3} total={6} /></em>
+          <span className="ln ln--3"><Palavras texto="estados." desde={5} total={6} /></span>
         </h1>
 
         <p className="hero-tr__sub">

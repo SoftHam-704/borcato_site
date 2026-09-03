@@ -36,26 +36,42 @@ export function BarraMarcas() {
         </em>
       </p>
 
-      <ul className="marcas__lista">
-        {representadas.map((r) => {
-          const src = arquivoDe(r.id);
-          return (
-            <li key={r.id}>
-              <button
-                type="button"
-                className={emFoco === r.id ? "is-foco" : undefined}
-                onMouseEnter={() => setEmFoco(r.id)}
-                onMouseLeave={() => setEmFoco(null)}
-                onFocus={() => setEmFoco(r.id)}
-                onBlur={() => setEmFoco(null)}
-                aria-label={r.fornece ? `${r.nome} — ${r.fornece}` : r.nome}
-              >
-                {src ? <img src={src} alt="" aria-hidden /> : <span>{r.nome}</span>}
-              </button>
-            </li>
-          );
-        })}
-      </ul>
+      {/* CARROSSEL: as onze marcas correm devagar, sem parar, e param no hover.
+          Pedido do dono. Sao quatro copias da lista num trilho que anda um quarto
+          do proprio comprimento: quando a animacao reinicia, a copia 2 esta
+          exatamente onde a 1 comecou — e o loop nao tem emenda.
+          Quatro copias, e nao duas, porque a lista (~900px) e mais estreita que
+          o container em 1440 (~1230px): com duas copias apareceria um buraco.
+          So a primeira copia e acessivel; as outras sao decoracao. */}
+      <div className="marcas__trilho">
+        {[0, 1, 2, 3].map((copia) => (
+          <ul
+            className="marcas__lista"
+            key={copia}
+            aria-hidden={copia > 0 || undefined}
+          >
+            {representadas.map((r) => {
+              const src = arquivoDe(r.id);
+              return (
+                <li key={`${copia}-${r.id}`}>
+                  <button
+                    type="button"
+                    className={emFoco === r.id ? "is-foco" : undefined}
+                    tabIndex={copia > 0 ? -1 : undefined}
+                    onMouseEnter={() => setEmFoco(r.id)}
+                    onMouseLeave={() => setEmFoco(null)}
+                    onFocus={() => setEmFoco(r.id)}
+                    onBlur={() => setEmFoco(null)}
+                    aria-label={copia > 0 ? undefined : r.fornece ? `${r.nome} — ${r.fornece}` : r.nome}
+                  >
+                    {src ? <img src={src} alt="" aria-hidden /> : <span>{r.nome}</span>}
+                  </button>
+                </li>
+              );
+            })}
+          </ul>
+        ))}
+      </div>
     </div>
   );
 }

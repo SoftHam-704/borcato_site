@@ -1926,3 +1926,94 @@ body.is-abrindo {
 .capsula__viva.is-pronta {
   opacity: 1;
 }
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   O TEXTO QUE SE ESCREVE
+   Pedido do dono: "não notei efeitos ao escrever os textos". Cada palavra é um
+   <span> com --i e --n (Palavras.tsx); aqui o CSS decide o gesto.
+   ═══════════════════════════════════════════════════════════════════════════ */
+@property --i { syntax: "<integer>"; inherits: false; initial-value: 0; }
+@property --n { syntax: "<integer>"; inherits: false; initial-value: 1; }
+@property --p { syntax: "<number>";  inherits: false; initial-value: 1; }
+
+/* o berço: a palavra sobe de DENTRO dele. É a máscara por linha do
+   lukebaffait.fr, sem clip-path por elemento. O padding com margem negativa é
+   o truque dele para o overflow não decepar descendentes (p, ç, g). */
+.berco {
+  display: inline-block;
+  overflow: hidden;
+  vertical-align: bottom;
+  padding: 0.12em 0.06em 0.16em;
+  margin: -0.12em -0.06em -0.16em;
+}
+.pal {
+  display: inline-block;
+  will-change: transform, opacity;
+}
+
+/* ── no hero: cascata quando a abertura termina ─────────────────────────────
+   Antes de is-pronta as palavras esperam embaixo do berço. */
+.hero-tr .pal {
+  opacity: 0;
+  transform: translateY(112%);
+}
+.hero-tr.is-pronta .pal {
+  animation: pal-sobe 0.95s cubic-bezier(0.16, 1, 0.3, 1) both;
+  /* 80ms entre palavras: 6 palavras = meio segundo de escrita */
+  animation-delay: calc(var(--i) * 80ms + 120ms);
+}
+@keyframes pal-sobe {
+  from { opacity: 0; transform: translateY(112%); }
+  to   { opacity: 1; transform: none; }
+}
+
+/* ── nos capítulos: cada palavra entra conforme o scroll, na ordem ──────────
+   --p é o progresso DESTA palavra: começa quando --cap-entra passa da fatia
+   dela (i/n) e leva 0.35 de --cap-entra para completar. A última palavra
+   termina quando --cap-entra chega a ~0.95: o título se escreve inteiro
+   dentro da entrada do capítulo, sem sobrar palavra presa. */
+.cap__titulo .pal {
+  --p: clamp(0, calc((var(--cap-entra, 1) * 1.3 - var(--i) / var(--n) * 0.6) / 0.35), 1);
+  opacity: var(--p);
+  transform: translateY(calc((1 - var(--p)) * 112%));
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   O CARROSSEL DAS MARCAS
+   Quatro cópias num trilho que anda 25% do próprio comprimento: sem emenda.
+   ═══════════════════════════════════════════════════════════════════════════ */
+.marcas {
+  overflow: hidden;
+  /* as pontas esmaecem: a fila não corta na borda, ela some */
+  -webkit-mask-image: linear-gradient(90deg, transparent, #000 6%, #000 94%, transparent);
+  mask-image: linear-gradient(90deg, transparent, #000 6%, #000 94%, transparent);
+}
+.marcas__trilho {
+  display: flex;
+  width: max-content;
+  animation: marcas-rola 46s linear infinite;
+}
+/* devagar o bastante para se LER cada logo passando; e para no hover, porque
+   o hover é onde a legenda diz o que cada marca fornece */
+.marcas:hover .marcas__trilho,
+.marcas:focus-within .marcas__trilho {
+  animation-play-state: paused;
+}
+.marcas__trilho .marcas__lista {
+  flex: none;
+  flex-wrap: nowrap;
+  /* o vão entre a última pastilha de uma cópia e a primeira da seguinte é o
+     mesmo vão entre pastilhas — senão a emenda aparece como um buraco */
+  padding-right: clamp(8px, 1vw, 14px);
+}
+@keyframes marcas-rola {
+  to { transform: translateX(-25%); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hero-tr .pal,
+  .hero-tr.is-pronta .pal { opacity: 1; transform: none; animation: none; }
+  .cap__titulo .pal { opacity: 1; transform: none; }
+  .marcas__trilho { animation: none; }
+  .marcas { mask-image: none; -webkit-mask-image: none; }
+}

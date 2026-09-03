@@ -4,6 +4,7 @@ import { HeroTravessia } from "@/components/site/HeroTravessia";
 import { BarraMarcas } from "@/components/site/BarraMarcas";
 import { Capitulo, NavCapitulos } from "@/components/site/Capitulos";
 import { Estrada } from "@/components/site/Estrada";
+import { Palavras } from "@/components/site/Palavras";
 import { empresa, estados, representadas } from "@/lib/dados";
 
 export const Route = createFileRoute("/")({
@@ -62,7 +63,7 @@ function Index() {
       <Capitulo id="cap-casa" className="cap--casa">
         <p className="cap__num">01 / A casa</p>
         <h2 className="cap__titulo">
-          Catorze anos de estrada antes de a placa ter o nome dele.
+          <Palavras texto="Catorze anos de estrada antes de a placa ter o nome dele." />
         </h2>
         <div className="cap__corpo">
           <p>
@@ -81,7 +82,7 @@ function Index() {
       <Capitulo id="cap-marcas" className="cap--marcas">
         <p className="cap__num">02 / As marcas</p>
         <h2 className="cap__titulo">
-          De rolamento a filtro de cabine. Onze indústrias na mesma pasta.
+          <Palavras texto="De rolamento a filtro de cabine. Onze indústrias na mesma pasta." />
         </h2>
         <div className="cap__corpo">
           <p>
@@ -104,7 +105,9 @@ function Index() {
       {/* 03 — A ESTRADA. O alcance, que é o dado publicável mais forte que existe. */}
       <Capitulo id="cap-estrada" className="cap--estrada">
         <p className="cap__num">03 / A estrada</p>
-        <h2 className="cap__titulo">Minas é a casa. O resto é quilômetro rodado.</h2>
+        <h2 className="cap__titulo">
+          <Palavras texto="Minas é a casa. O resto é quilômetro rodado." />
+        </h2>
         <div className="cap__corpo">
           <p>
             Representação comercial se prova em presença. A H.M. Borçato atende hoje doze estados

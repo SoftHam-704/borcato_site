@@ -38,6 +38,9 @@ export function Abertura() {
     relogios.current = [];
     setSaindo(true);
     document.body.classList.remove("is-abrindo");
+    // o hero escuta isto para comecar a escrever o titulo — no instante em que a
+    // capsula abre, nao antes (estaria escondido) nem depois (estaria atrasado)
+    window.dispatchEvent(new CustomEvent("hmb:abriu"));
     window.setTimeout(() => setFora(true), 700);
   };
 
@@ -45,6 +48,7 @@ export function Abertura() {
     const semMovimento = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     if (semMovimento) {
       setFora(true);
+      window.dispatchEvent(new CustomEvent("hmb:abriu"));
       return;
     }
 
