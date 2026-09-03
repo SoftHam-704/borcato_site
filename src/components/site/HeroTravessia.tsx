@@ -27,7 +27,6 @@ export function HeroTravessia() {
     if (!el) return;
     if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
       // sem movimento o tratamento existe no estado assentado, não some
-      el.style.setProperty("--sep", "0px");
       el.style.setProperty("--filme", "0.45");
       return;
     }
@@ -41,9 +40,7 @@ export function HeroTravessia() {
         const t = Math.min(1, Math.max(0, window.scrollY / window.innerHeight));
         el.style.setProperty("--capsula-y", `${t * 64}px`);
         el.style.setProperty("--capsula-esc", String(1 + t * 0.06));
-        // o tratamento de filme é forte na chegada e vai assentando: 6px -> 0.
-        // A foto "chega" em vez de já estar lá, que é o gesto da travessia.
-        el.style.setProperty("--sep", `${(1 - t) * 6}px`);
+        // o grão assenta conforme a foto "chega" — sem deslocar canal nenhum
         el.style.setProperty("--filme", String(1 - t * 0.55));
       });
     };
@@ -57,6 +54,20 @@ export function HeroTravessia() {
 
   return (
     <section className="hero-tr" aria-label="Apresentação">
+      {/* A PALAVRA-FANTASMA — a peça central da direção.
+          Referências: 36 (Techwear) e 25 (Silent Shogun), onde a figura fica NA
+          FRENTE das letras e as corta.
+
+          Ela resolve o defeito estrutural do hero anterior: a cápsula tem fundo
+          preto e a página também, então a curva não se lia — preto sobre preto.
+          Com a palavra atrás, a janela da foto RECORTA as letras, e é o corte que
+          devolve a forma à cápsula. Sem tocar na foto.
+
+          Ela precisa ficar abaixo de 8% de contraste, cortada pelas DUAS bordas
+          laterais e pela cápsula. Se aparecer inteira em alguma largura, vira o
+          clichê da palavra gigante de fundo. */}
+      <span className="hero-tr__fantasma" aria-hidden>Borçato</span>
+
       <div className="hero-tr__texto">
         <p className="hero-tr__eb">
           <span>Desde {empresa.fundacao}</span>
@@ -64,11 +75,15 @@ export function HeroTravessia() {
           <span>{empresa.base}</span>
         </p>
 
-        {/* Sem <br>. O título quebrava na mão em tres linhas, e mao nao sobrevive a
-            outra largura. O <em> e a unica marcacao, porque ele carrega SIGNIFICADO
-            (o numero e o argumento); a quebra fica com text-wrap: balance no CSS. */}
+        {/* Tres linhas, tres PESOS — como o 26 (regular/itálico/light) e o 22
+            (alternando bold e light por palavra). Antes era um peso só, com a
+            diferenciação feita só por cor: assinatura de template.
+            O <em> continua sendo "outros onze" porque é ele que carrega o
+            argumento — o número que nenhum concorrente copia sem ter rodado. */}
         <h1 className="hero-tr__titulo">
-          De Minas para <em>outros onze</em> estados.
+          <span className="ln ln--1">De Minas para</span>
+          <em className="ln ln--2">outros onze</em>
+          <span className="ln ln--3">estados.</span>
         </h1>
 
         <p className="hero-tr__sub">
@@ -87,24 +102,14 @@ export function HeroTravessia() {
         </ul>
       </div>
 
-      {/* O TRATAMENTO DE FILME — o efeito da foto do lukebaffait.fr.
-          São três coisas empilhadas, e o nome de cada uma:
-
-          1. ABERRAÇÃO CROMÁTICA (RGB split): duas cópias da foto, uma tingida de
-             vermelho e outra de ciano, deslocadas em sentidos opostos e somadas com
-             `mix-blend-mode: screen`. Onde as três se sobrepõem a cor volta ao normal;
-             nas bordas de contraste sobra a franja colorida. Não dá para fazer com
-             filtro: `screen` sobre o fundo preto é que devolve a imagem original.
-          2. GRÃO DE FILME: ruído em SVG (feTurbulence) por cima de tudo.
-          3. VINHETA: o centro nítido, as bordas afundando no escuro.
-
-          O deslocamento é `--sep`, escrito pelo scroll: forte na chegada, limpando
-          conforme a foto assenta. O JS escreve só o número; a composição é do CSS. */}
+      {/* O GRÃO e a VINHETA ficam; o RGB SPLIT SAIU.
+          Ele era invenção minha — o cliente escolheu a FORMA da cápsula do
+          lukebaffait.fr, não um glitch sobre o rosto. E ele estava destruindo a
+          foto: deslocava duas cópias tingidas 6px para cada lado na primeira
+          pintura, deixando o logo bordado da camisa ILEGÍVEL — justamente a
+          prova visível da cor da marca. Nenhuma das 39 referências da biblioteca
+          aplica glitch sobre rosto humano. */}
       <div className="hero-tr__capsula" ref={capsulaRef}>
-        <div className="capsula__filme" aria-hidden>
-          <img src={fabioEscuro} className="capsula__canal capsula__canal--r" alt="" />
-          <img src={fabioEscuro} className="capsula__canal capsula__canal--c" alt="" />
-        </div>
         <img
           src={fabioEscuro}
           width={780}

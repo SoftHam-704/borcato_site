@@ -34,7 +34,11 @@
   --color-ink-foreground: var(--ink-foreground);
   --color-ink-soft: var(--ink-soft);
   --color-primary-glow: var(--primary-glow);
-  --font-display: "Oswald", ui-sans-serif, system-ui, sans-serif;
+  /* Oswald 700 condensada em CAIXA ALTA era a assinatura do template Lovable,
+     e nao aparece em NENHUMA das 39 referencias compradas — o blueprint do
+     pacote proibe caixa alta fora de rotulo e botao. Uma familia so, com
+     eixos de largura e italico fazendo o trabalho que a segunda fazia. */
+  --font-display: "Archivo", ui-sans-serif, system-ui, sans-serif;
   --font-sans: "Archivo", ui-sans-serif, system-ui, sans-serif;
 }
 
@@ -688,29 +692,37 @@
    é a hierarquia que a skill frontend-design cobra e que o site antigo não tinha. */
 .hero-tr__titulo {
   margin: 0;
+  display: grid;                 /* cada linha manda na propria largura */
+  justify-items: start;
   font-family: var(--font-display), sans-serif;
-  font-weight: 700;
-  font-size: clamp(46px, 7.4vw, 116px);
-  line-height: 0.92;
-  letter-spacing: -0.02em;
+  font-size: clamp(44px, 6.4vw, 96px);
+  line-height: 0.95;
   text-transform: uppercase;
-  text-wrap: balance;
 }
-/* "outros onze" é o dado — é ele que nenhum concorrente copia sem ter rodado. */
-.hero-tr__titulo em {
+/* O CONTRASTE VEM DO PESO E DA LARGURA, nao so da cor.
+   Referencias: 26 (regular / italico / light) e 22 (bold e light por palavra). */
+.hero-tr__titulo .ln {
+  display: block;
   font-style: normal;
+}
+.hero-tr__titulo .ln--1 {
+  font-weight: 300;
+  font-stretch: 100%;
+  letter-spacing: 0.06em;
+}
+/* a linha do DADO: pesada, um pouco mais larga, e a unica com cor */
+.hero-tr__titulo .ln--2 {
+  font-weight: 700;
+  font-stretch: 112%;
+  letter-spacing: -0.01em;
   color: var(--br-luz);
 }
-/* "outros onze" e o dado, e nao pode partir no meio em largura nenhuma —
-   por isso ele ganha a linha dele em vez de depender do balance. */
-@media (min-width: 901px) {
-  .hero-tr__titulo em {
-    display: block;
-  }
-  .hero-tr__titulo {
-    text-wrap: initial;
-  }
+.hero-tr__titulo .ln--3 {
+  font-weight: 300;
+  font-stretch: 100%;
+  letter-spacing: 0.06em;
 }
+
 
 .hero-tr__sub {
   max-width: 46ch;
@@ -1334,63 +1346,16 @@
   z-index: 1;
 }
 
-/* ── 1. Aberração cromática ──────────────────────────────────────────────────
-   A 1a versão usava `screen` sobre a foto e o resultado foi um ANAGLIFO 3D:
-   as cópias SOMAM luz, a imagem estourou, a camisa ficou verde e o Fábio ficou
-   irreconhecível. Somar é o erro — a franja de lente não clareia a imagem.
-
-   Aqui as cópias vivem só nas BORDAS de contraste: cada uma é mascarada pela
-   própria luminância invertida do centro, entram com opacidade baixa e o
-   `overlay` preserva os tons médios. O rosto continua sendo o rosto. */
-.capsula__filme {
-  position: absolute;
-  z-index: 2;
-  inset: 0;
-  pointer-events: none;
-  /* a franja é mais forte nas bordas e recua no rosto, mas NÃO some lá:
-     mascarar o centro por completo (2a tentativa) anulou o efeito inteiro */
-  -webkit-mask-image: radial-gradient(
-    ellipse 70% 60% at 50% 38%,
-    rgba(0, 0, 0, 0.35) 20%,
-    #000 85%
-  );
-  mask-image: radial-gradient(
-    ellipse 70% 60% at 50% 38%,
-    rgba(0, 0, 0, 0.35) 20%,
-    #000 85%
-  );
-}
-.capsula__canal {
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  /* `screen` estourava a imagem (anaglifo); `overlay` a 0.3 sumia.
-     `soft-light` a 0.5 marca a franja e preserva o tom de pele. */
-  mix-blend-mode: soft-light;
-  opacity: calc(var(--filme, 1) * 0.5);
-  will-change: transform;
-}
-/* o vermelho sai para a esquerda, o ciano para a direita */
-.capsula__canal--r {
-  filter: saturate(0) sepia(0.7) hue-rotate(-25deg) saturate(2.4);
-  transform: translateX(calc(var(--sep, 6px) * -1));
-}
-.capsula__canal--c {
-  filter: saturate(0) sepia(0.7) hue-rotate(150deg) saturate(2.2);
-  transform: translateX(var(--sep, 6px));
-}
-
 /* ── 2. Grão de filme ────────────────────────────────────────────────────────
    feTurbulence em data-URI: é ruído gerado pelo próprio navegador, sem baixar
    textura nenhuma. `overlay` mantém o grão nas meias-luzes e poupa os pretos. */
 .capsula__grao {
   position: absolute;
   z-index: 3;
-  inset: -50%;
+  /* era `inset: -50%`, que pinta 4x a area sem motivo nenhum */
+  inset: 0;
   pointer-events: none;
-  opacity: calc(var(--filme, 1) * 0.3);
+  opacity: calc(var(--filme, 1) * 0.18);
   mix-blend-mode: overlay;
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='200' height='200' filter='url(%23n)' opacity='0.55'/%3E%3C/svg%3E");
   background-size: 190px 190px;
@@ -1412,13 +1377,7 @@
   );
 }
 
-@media (prefers-reduced-motion: reduce) {
-  /* o tratamento continua existindo, mas fixo no estado assentado */
-  .capsula__canal {
-    transform: none;
-    opacity: 0.3;
-  }
-}
+
 
 /* ── O GESTO DE CADA CAPÍTULO ────────────────────────────────────────────────
    Todos nascem de `--cap-entra` (0→1), escrito pelo JS. O componente Capitulo
@@ -1514,5 +1473,42 @@
   }
   .cap--marcas .marcas-lista {
     clip-path: none;
+  }
+}
+
+/* ── A PALAVRA-FANTASMA ──────────────────────────────────────────────────────
+   Refs: 36 Techwear e 25 Silent Shogun. É ela que recorta a cápsula. */
+.hero-tr__fantasma {
+  position: absolute;
+  z-index: 0;
+  left: -0.35ch;                     /* o B sai pela borda esquerda */
+  top: 62%;
+  transform: translateY(-50%) translateX(var(--fant-x, 0px));
+  font-family: var(--font-display), sans-serif;
+  font-size: 21vw;
+  font-weight: 700;
+  font-stretch: 125%;                /* o eixo de largura no máximo */
+  line-height: 1;
+  letter-spacing: -0.03em;
+  text-transform: uppercase;
+  white-space: nowrap;
+  /* --br-superficie sobre --br-chao: ~1,1:1 de contraste. É textura, não título. */
+  color: var(--br-superficie);
+  pointer-events: none;
+  user-select: none;
+  will-change: transform;
+}
+
+/* o texto e a cápsula passam POR CIMA dela */
+.hero-tr__texto,
+.hero-tr__capsula {
+  position: relative;
+  z-index: 1;
+}
+
+@media (max-width: 900px) {
+  .hero-tr__fantasma {
+    font-size: 34vw;                 /* em tela estreita precisa ser maior p/ cortar */
+    top: 50%;
   }
 }
