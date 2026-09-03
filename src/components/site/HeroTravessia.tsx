@@ -68,13 +68,25 @@ export function HeroTravessia() {
       return;
     }
 
+    // O PALCO PRESO. O hero fica grudado na tela enquanto a pista rola por baixo,
+    // e só libera a página quando BORÇATO atravessou INTEIRO. Pedido do dono:
+    // "o site só deve sair da seção hero após todo o texto BORÇATO ser visualizado".
+    //
+    // A pista tem --hero-pista de altura (ver CSS); o hero é sticky dentro dela.
+    // `t` deixa de ser "fração de uma viewport rolada" e passa a ser a fração DA
+    // PISTA — que é o que faz o gesto durar o quanto a palavra precisa.
+    const palco = el.closest<HTMLElement>(".hero-palco");
+
     let pedido = 0;
     const aoRolar = () => {
       if (pedido) return;
       pedido = window.requestAnimationFrame(() => {
         pedido = 0;
-        // fração da altura de viewport já rolada, travada em [0,1]
-        const t = Math.min(1, Math.max(0, window.scrollY / window.innerHeight));
+        // quanto da pista já foi percorrido, travado em [0,1]
+        const pista = palco
+          ? Math.max(1, palco.offsetHeight - window.innerHeight)
+          : window.innerHeight;
+        const t = Math.min(1, Math.max(0, window.scrollY / pista));
         el.style.setProperty("--capsula-y", `${t * 64}px`);
         el.style.setProperty("--capsula-esc", String(1 + t * 0.06));
         // o grão assenta conforme a foto "chega" — sem deslocar canal nenhum
@@ -84,8 +96,16 @@ export function HeroTravessia() {
         // faz a capsula "passar na frente" dela. O dono pediu exatamente isto.
         // 14% da largura no percurso da primeira tela: le como movimento, nao
         // como a palavra fugindo.
+        // A PALAVRA ATRAVESSA INTEIRA. Antes andava 14% da largura e o "ÇATO"
+        // nunca aparecia — a palavra saia de cena antes de ser lida. Agora o
+        // deslocamento e medido: o quanto falta para a ULTIMA letra entrar no
+        // quadro, mais uma folga. Assim ela e lida do B ao O.
         const secao = el.closest<HTMLElement>(".hero-tr");
-        secao?.style.setProperty("--fant-x", `${(-t * document.documentElement.clientWidth * 0.14).toFixed(1)}px`);
+        const fant = secao?.querySelector<HTMLElement>(".hero-tr__fantasma");
+        if (secao && fant) {
+          const sobra = Math.max(0, fant.scrollWidth - document.documentElement.clientWidth);
+          secao.style.setProperty("--fant-x", `${(-t * (sobra + 40)).toFixed(1)}px`);
+        }
       });
     };
     aoRolar();
@@ -97,6 +117,10 @@ export function HeroTravessia() {
   }, []);
 
   return (
+    // A PISTA. O hero e sticky dentro dela: enquanto ela rola, ele fica na tela.
+    // A altura da pista define quanto tempo o hero segura a pagina — e ela e
+    // calculada no CSS a partir do quanto BORCATO precisa andar.
+    <div className="hero-palco">
     <section className="hero-tr" aria-label="Apresentação">
       {/* A PALAVRA-FANTASMA — a peça central da direção.
           Referências: 36 (Techwear) e 25 (Silent Shogun), onde a figura fica NA
@@ -216,5 +240,6 @@ export function HeroTravessia() {
           tres telas de distancia e enterrar o argumento mais forte. */}
       <BarraMarcas />
     </section>
+    </div>
   );
 }

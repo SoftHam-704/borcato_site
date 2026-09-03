@@ -2040,3 +2040,51 @@ body.is-abrindo {
   .marcas__trilho { animation: none; }
   .marcas { mask-image: none; -webkit-mask-image: none; }
 }
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   O PALCO PRESO DO HERO
+   Pedido do dono: "o site só deve sair da seção hero após todo o texto BORÇATO
+   ser visualizado". Antes o hero cedia a tela em uma rolagem e a palavra saía
+   de cena antes de ser lida — o "ÇATO" nunca aparecia.
+
+   A pista rola; o hero fica grudado nela. Só quando a pista acaba é que o
+   capítulo 01 sobe. Mesma técnica do palco preso da home da SoftHam.
+   ═══════════════════════════════════════════════════════════════════════════ */
+.hero-palco {
+  position: relative;
+  /* uma tela para o hero + uma tela de curso para a palavra atravessar.
+     Menos que isso e a leitura fica apressada; mais e o visitante acha que
+     travou. 190svh foi o ponto em que a palavra passa inteira sem arrastar. */
+  height: 190svh;
+}
+.hero-palco > .hero-tr {
+  position: sticky;
+  top: 0;
+  height: 100svh;
+  /* o min-height do bloco original brigaria com a altura fixa do sticky */
+  min-height: 0;
+}
+
+@media (max-width: 900px) {
+  /* no mobile a cápsula fica em cima do texto e o hero já é mais alto que a
+     tela; prender ali empurraria o conteúdo para longe demais. */
+  .hero-palco {
+    height: auto;
+  }
+  .hero-palco > .hero-tr {
+    position: static;
+    height: auto;
+    min-height: 100svh;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hero-palco {
+    height: auto;
+  }
+  .hero-palco > .hero-tr {
+    position: static;
+    height: auto;
+    min-height: 100svh;
+  }
+}
