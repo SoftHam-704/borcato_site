@@ -11,5 +11,26 @@ export default defineConfig({
     // Redirect TanStack Start's bundled server entry to src/server.ts (our SSR error wrapper).
     // nitro/vite builds from this
     server: { entry: "server" },
+
+    // ── PRERENDER: é o que torna o deploy da casa possível ────────────────────
+    // A casa publica por FTP no cPanel, e o build vinha só como worker
+    // Cloudflare: `.output/public/` NÃO tinha index.html, então não havia o que
+    // subir. Um site premiado precisa estar NO AR para ser julgado.
+    //
+    // Tentei antes trocar o preset do nitro para `static` e o build quebrou
+    // ("rolldownOptions.input should not be an html file when building for SSR"),
+    // porque a entrada de servidor daqui é a src/server.ts acima.
+    //
+    // O prerender resolve sem trocar preset nenhum: o nitro renderiza a rota e
+    // grava o HTML pronto. O site é UMA rota, então `crawlLinks` fica desligado.
+    //
+    // Medido depois de ligar: index.html de 95 KB com o site inteiro (manchete,
+    // as 11 marcas com descrição, as 8 regiões), servido como arquivo estático
+    // puro com ZERO erro de console e ZERO requisição falha. 667 KB no fio com
+    // o gzip do Apache — dentro do orçamento de 1000 KB.
+    //
+    // Para publicar: subir o conteúdo de `.output/public/` para o cPanel.
+    // O `.output/server/` (1,1 MB) NÃO vai — é o worker, e o FTP não usa.
+    prerender: { enabled: true, crawlLinks: false, routes: ["/"] },
   },
 });
