@@ -628,3 +628,151 @@
   }
 }
 
+
+/* ==========================================================================
+   HERO "A DISTÂNCIA" — direção escolhida em 03/09/2026
+   ==========================================================================
+   Acrescentado no FIM do arquivo de propósito: nada acima foi alterado, então
+   o que o Lovable entregou continua intacto e reversível.
+
+   A paleta veio do BORDADO da camisa do Fábio (foto em close, amostrada em
+   marca/_bordado_4x.png): matizes entre 204° e 240°, nenhum verde. O #90c140 do
+   template Joomla antigo era :hover de um tema comprado, não a marca. */
+.home-borcato {
+  --br-chao: #0a0a0c;
+  --br-superficie: #12141a;
+  --br-marca: #005f96;
+  --br-luz: #a0d0f0;
+  --br-tinta: #d8d8f0;
+  --br-fraco: #8a8fa3;
+}
+
+.hero-tr {
+  position: relative;
+  min-height: 100svh;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 0.82fr);
+  align-items: center;
+  gap: clamp(24px, 4vw, 72px);
+  padding: clamp(88px, 12vh, 160px) 0 clamp(48px, 8vh, 96px) clamp(20px, 6vw, 104px);
+  background: var(--br-chao);
+  color: var(--br-tinta);
+  overflow: hidden;
+}
+
+.hero-tr__eb {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin: 0 0 clamp(20px, 3vh, 34px);
+  font-size: 11px;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--br-luz);
+}
+.hero-tr__eb i {
+  width: 34px;
+  height: 1px;
+  background: currentColor;
+  opacity: 0.5;
+}
+
+/* A escala nasce de UM número. Título domina, corpo respira, rótulo some —
+   é a hierarquia que a skill frontend-design cobra e que o site antigo não tinha. */
+.hero-tr__titulo {
+  margin: 0;
+  font-family: var(--font-display), sans-serif;
+  font-weight: 700;
+  font-size: clamp(46px, 7.4vw, 116px);
+  line-height: 0.92;
+  letter-spacing: -0.02em;
+  text-transform: uppercase;
+  text-wrap: balance;
+}
+/* "outros onze" é o dado — é ele que nenhum concorrente copia sem ter rodado. */
+.hero-tr__titulo em {
+  font-style: normal;
+  color: var(--br-luz);
+}
+
+.hero-tr__sub {
+  max-width: 46ch;
+  margin: clamp(20px, 3vh, 34px) 0 0;
+  font-size: clamp(15px, 1.15vw, 18px);
+  line-height: 1.7;
+  color: var(--br-fraco);
+  text-wrap: pretty;
+}
+
+.hero-tr__ufs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: clamp(28px, 4vh, 44px) 0 0;
+  padding: 0;
+  list-style: none;
+}
+.hero-tr__ufs li {
+  padding: 6px 11px;
+  border: 1px solid rgba(216, 216, 240, 0.16);
+  border-radius: 2px;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  color: var(--br-fraco);
+}
+/* Minas é a casa: recebe a cor da marca, os outros onze ficam em rótulo. */
+.hero-tr__ufs li.is-casa {
+  border-color: var(--br-marca);
+  background: color-mix(in srgb, var(--br-marca) 22%, transparent);
+  color: var(--br-tinta);
+}
+
+/* A CÁPSULA. Geometria medida no lukebaffait.fr: 780×936 com
+   border-radius: 280px 0 0 280px — raio grande só à ESQUERDA. A imagem sangra
+   pela direita, cortada pela borda da tela, que é o que dá a sensação de janela. */
+.hero-tr__capsula {
+  position: relative;
+  justify-self: end;
+  width: min(46vw, 620px);
+  aspect-ratio: 780 / 936;
+  margin-right: calc(clamp(20px, 6vw, 104px) * -1);
+  border-radius: clamp(120px, 18vw, 280px) 0 0 clamp(120px, 18vw, 280px);
+  overflow: hidden;
+  /* o JS escreve só as PEÇAS (--capsula-y/--capsula-esc); o CSS compõe.
+     Assim reduced-motion e resize nunca brigam com inline style. */
+  transform: translateY(var(--capsula-y, 0px)) scale(var(--capsula-esc, 1));
+  transform-origin: 100% 50%;
+  will-change: transform;
+}
+.hero-tr__capsula img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+@media (max-width: 900px) {
+  .hero-tr {
+    grid-template-columns: 1fr;
+    padding-right: clamp(20px, 6vw, 104px);
+    gap: clamp(28px, 5vh, 48px);
+  }
+  .hero-tr__capsula {
+    order: -1;
+    justify-self: stretch;
+    width: 100%;
+    margin-right: 0;
+    aspect-ratio: 4 / 3;
+    border-radius: clamp(80px, 22vw, 160px) 0 0 clamp(80px, 22vw, 160px);
+  }
+  .hero-tr__capsula img {
+    object-position: 50% 22%;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hero-tr__capsula {
+    transform: none;
+  }
+}

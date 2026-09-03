@@ -1,7 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { ArrowRight, Award, Cloud, Eye, Heart, MapPinned, Phone, Users } from "lucide-react";
 import { Header } from "@/components/site/Header";
-import { Hero } from "@/components/site/Hero";
+import { HeroTravessia } from "@/components/site/HeroTravessia";
 import { Preloader } from "@/components/site/Preloader";
 import { Footer } from "@/components/site/Footer";
 import { Reveal } from "@/components/site/Reveal";
@@ -59,12 +59,12 @@ const pillars = [
 
 function Index() {
   return (
-    <div className="min-h-screen bg-background text-foreground">
+    <div className="home-borcato min-h-screen bg-background text-foreground">
       <Preloader />
       <Header />
       <ScrollRail />
 
-      <Hero />
+      <HeroTravessia />
 
       {/* MÉTRICAS MG */}
       <section aria-label="Minas Gerais em números" className="border-b border-border bg-background">
