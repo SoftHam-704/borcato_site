@@ -1,0 +1,46 @@
+{
+ "auto-america": {
+  "prop": 7.0,
+  "peso": 1.02
+ },
+ "cofran": {
+  "prop": 2.72,
+  "peso": 0.93
+ },
+ "filtros-brasil": {
+  "prop": 3.1,
+  "peso": 0.79
+ },
+ "hexlub": {
+  "prop": 4.2,
+  "peso": 1.29
+ },
+ "meca-brazil": {
+  "prop": 1.99,
+  "peso": 1.19
+ },
+ "mundial-prime": {
+  "prop": 1.8,
+  "peso": 1.1
+ },
+ "nidec": {
+  "prop": 4.49,
+  "peso": 0.75
+ },
+ "ntn-snr": {
+  "prop": 6.18,
+  "peso": 0.98
+ },
+ "pysko": {
+  "prop": 2.08,
+  "peso": 0.72
+ },
+ "sintech": {
+  "prop": 4.54,
+  "peso": 1.38
+ },
+ "vp": {
+  "prop": 1.31,
+  "peso": 0.72
+ }
+}
