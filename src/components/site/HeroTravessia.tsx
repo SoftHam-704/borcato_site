@@ -91,15 +91,43 @@ export function HeroTravessia() {
           catálogo, por estrada.
         </p>
 
-        {/* Os 12 estados como dado, não como enfeite. Alcance é verificável;
-            faturamento e número de cliente NÃO entram (ver src/lib/dados.ts). */}
-        <ul className="hero-tr__ufs" aria-label="Estados atendidos">
-          {estados.map((e) => (
-            <li key={e.uf} className={e.casa ? "is-casa" : undefined} title={e.nome}>
-              {e.uf}
-            </li>
-          ))}
-        </ul>
+        {/* O CTA — o hero nao tinha NENHUM. Todos os 14 heros da biblioteca tem.
+            Formato dividido (ref 25 Silent Shogun): bloco claro com o rotulo +
+            quadrado na cor da marca com a seta. O numero ja existia em dados.ts,
+            so nao estava na tela — e e WhatsApp. */}
+        <div className="hero-tr__acoes">
+          <a
+            className="btn-falar"
+            href={`https://wa.me/55${empresa.celular.rotulo.replace(/\D/g, "")}`}
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            <span>Falar com a Borçato</span>
+            <i aria-hidden>
+              <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2">
+                <path d="M4 12h15M13 6l6 6-6 6" />
+              </svg>
+            </i>
+          </a>
+          <a className="link-marcas" href="#cap-marcas">Ver as onze marcas ↓</a>
+        </div>
+
+      {/* O TRILHO DOS 12 ESTADOS — antes eram 12 caixinhas de 11px lado a lado,
+          que e exatamente um filtro de e-commerce. Na biblioteca, dado numerico
+          nunca aparece assim: e numero gigante cortado pela borda (26), card de
+          spec (38) ou paginacao vertical em contorno (22). Este e o 22.
+          O rotulo fecha a conta que o titulo abre: 11 outros + a casa = 12. */}
+      <ul className="hero-tr__trilho" aria-label="Estados atendidos">
+        <li className="trilho__rotulo" aria-hidden>
+          <b>12</b>
+          <span>a casa e mais onze</span>
+        </li>
+        {estados.map((e) => (
+          <li key={e.uf} className={e.casa ? "is-casa" : undefined}>
+            <abbr title={e.nome}>{e.uf}</abbr>
+          </li>
+        ))}
+      </ul>
       </div>
 
       {/* O GRÃO e a VINHETA ficam; o RGB SPLIT SAIU.

@@ -1512,3 +1512,126 @@
     top: 50%;
   }
 }
+
+/* ── O CTA ───────────────────────────────────────────────────────────────────
+   Formato dividido, ref 25 (Silent Shogun): bloco claro + quadrado de cor com
+   a seta. O hero não tinha CTA nenhum; os 14 heros da biblioteca têm. */
+.hero-tr__acoes {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: clamp(14px, 2vw, 26px);
+  margin: clamp(24px, 3.2vh, 36px) 0 0;
+}
+.btn-falar {
+  display: inline-flex;
+  align-items: stretch;
+  text-decoration: none;
+  /* a peça inteira sobe junto: é um objeto só, não dois botões */
+  transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.btn-falar span {
+  display: flex;
+  align-items: center;
+  min-height: 52px;
+  padding: 0 clamp(20px, 2.2vw, 30px);
+  background: var(--br-tinta);
+  color: var(--br-chao);
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+.btn-falar i {
+  display: grid;
+  place-items: center;
+  width: 52px;
+  background: var(--br-marca);
+  color: var(--br-tinta);
+  transition: background 0.35s ease;
+}
+.btn-falar:hover {
+  transform: translateY(-2px);
+}
+.btn-falar:hover i {
+  background: var(--br-luz);
+  color: var(--br-chao);
+}
+.btn-falar:focus-visible {
+  outline: 2px solid var(--br-luz);
+  outline-offset: 3px;
+}
+
+.link-marcas {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  color: var(--br-fraco);
+  font-size: 13px;
+  text-decoration: none;
+  border-bottom: 1px solid transparent;
+  transition: color 0.35s ease, border-color 0.35s ease;
+}
+.link-marcas:hover,
+.link-marcas:focus-visible {
+  color: var(--br-luz);
+  border-bottom-color: currentColor;
+}
+
+/* ── O TRILHO DOS 12 ESTADOS ─────────────────────────────────────────────────
+   Ref 22 (Halo Ring): paginação vertical na borda direita. Substitui as 12
+   caixinhas que liam como filtro de loja. */
+.hero-tr__trilho {
+  /* Em FLUXO, na base da coluna de texto. Duas tentativas flutuantes falharam
+     por medicao: vertical sobre a foto, as 6 ultimas UFs sumiam na camisa clara
+     em 1440; no vao antes da capsula, passava 127px por cima do link em 1024.
+     Aqui nao disputa espaco com nada e ancora a base — que era o outro defeito
+     do war game ("nada toca a base da tela"). */
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 8px clamp(10px, 1.2vw, 18px);
+  margin: clamp(22px, 3vh, 36px) 0 0;
+  padding: clamp(14px, 1.8vh, 20px) 0 0;
+  border-top: 1px solid rgba(216, 216, 240, 0.1);
+  list-style: none;
+}
+.trilho__rotulo {
+  display: flex;
+  align-items: baseline;
+  gap: 9px;
+  margin: 0 clamp(6px, 1vw, 14px) 0 0;
+}
+.trilho__rotulo b {
+  font-family: var(--font-display), sans-serif;
+  font-size: 26px;
+  font-weight: 700;
+  font-stretch: 112%;
+  line-height: 1;
+  color: var(--br-luz);
+  font-variant-numeric: tabular-nums;
+}
+.trilho__rotulo span {
+  font-size: 9px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--br-fraco);
+}
+.hero-tr__trilho li {
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.16em;
+  color: var(--br-fraco);
+  opacity: 0.55;
+}
+.hero-tr__trilho abbr {
+  text-decoration: none;
+  cursor: default;
+}
+/* Minas é a casa: sólida, na cor da luz */
+.hero-tr__trilho li.is-casa {
+  color: var(--br-luz);
+  opacity: 1;
+  font-weight: 600;
+}
+
