@@ -2180,3 +2180,87 @@ body.is-abrindo {
     transition: none;
   }
 }
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   TEMA POR CAPÍTULO — o chão muda ao longo da travessia
+   Ref: landonorris.com, medido (03/09): o fundo dele vai de rgb(40,44,32) a
+   rgb(244,244,237) ao longo da página, por `data-theme` nas seções.
+   O nosso era preto do começo ao fim, e era uma das razões concretas de o site
+   parecer simples.
+
+   COMO FUNCIONA: cada capítulo redefine --br-chao e --br-superficie para si.
+   Os 11 usos do token propagam sozinhos — fundo, véu da nav, cápsula, palavra
+   -fantasma, grade de marcas. Nada precisa ser reescrito.
+
+   A PROGRESSÃO SEGUE A HISTÓRIA, não o gosto:
+     hero + 01  o breu de onde se parte
+     02         a oficina — um azul que já é da marca
+     03         a estrada clareando, o amanhecer de quem roda cedo
+     04         o mais claro: a revelação do nome, o fim da travessia
+
+   A transição é lenta (1,1s) porque é atmosfera, não gesto: se o olho pegar a
+   troca acontecendo, vira efeito; se não pegar, vira clima.
+   ═══════════════════════════════════════════════════════════════════════════ */
+.cap {
+  transition: background-color 1.1s ease, color 1.1s ease;
+}
+
+/* 02 · AS MARCAS — a oficina */
+.cap--marcas {
+  --br-chao: #0b1016;
+  --br-superficie: #131a23;
+  background: var(--br-chao);
+}
+
+/* 03 · A ESTRADA — o amanhecer */
+.cap--estrada {
+  --br-chao: #0e151d;
+  --br-superficie: #172029;
+  background: var(--br-chao);
+}
+
+/* 04 · O NOME — a revelação, o ponto mais claro da travessia */
+.cap--nome {
+  --br-chao: #121b25;
+  --br-superficie: #1c2733;
+}
+
+/* a barra de marcas acompanha o capítulo que ela introduz */
+.marcas {
+  transition: background-color 1.1s ease;
+}
+
+/* ── A COSTURA ENTRE OS CHÃOS ────────────────────────────────────────────────
+   MEDIDO: sem isto a troca acontecia numa LINHA de pixels — salto de 4,2 níveis
+   de luminância entre y=420 e y=440, visível como costura. A transição de 1,1s
+   só age quando o token muda no MESMO elemento; entre irmãos, o corte é seco.
+
+   Cada capítulo ganha uma faixa no topo que faz a passagem do chão anterior
+   para o seu, ao longo de ~180px. É a mesma solução da barra de marcas: quando
+   duas superfícies se encontram, quem resolve é o degradê, não a transição. */
+.cap--marcas::after,
+.cap--estrada::after,
+.cap--nome::after {
+  content: "";
+  position: absolute;
+  z-index: 0;
+  left: 0;
+  right: 0;
+  top: 0;
+  height: clamp(120px, 18vh, 200px);
+  pointer-events: none;
+}
+.cap--marcas::after {
+  background: linear-gradient(to bottom, #0a0a0c, transparent);
+}
+.cap--estrada::after {
+  background: linear-gradient(to bottom, #0b1016, transparent);
+}
+.cap--nome::after {
+  background: linear-gradient(to bottom, #0e151d, transparent);
+}
+/* o conteúdo do capítulo passa POR CIMA da costura */
+.cap > * {
+  position: relative;
+  z-index: 1;
+}
