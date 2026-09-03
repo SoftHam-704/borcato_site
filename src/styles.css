@@ -753,6 +753,13 @@
   justify-self: end;
   width: min(46vw, 620px);
   aspect-ratio: 780 / 936;
+  /* MEDIDO: sem teto a cápsula fica com 744px de altura em 1440x900 e termina
+     134px abaixo da dobra. O teto desconta o padding do hero (clamp de topo +
+     clamp de base), que é a altura que realmente sobra para ela. */
+  max-height: min(
+    calc(100svh - clamp(88px, 12vh, 160px) - clamp(48px, 8vh, 96px)),
+    744px
+  );
   margin-right: calc(clamp(20px, 6vw, 104px) * -1);
   border-radius: clamp(120px, 18vw, 280px) 0 0 clamp(120px, 18vw, 280px);
   overflow: hidden;
@@ -1301,8 +1308,11 @@
   stroke-linecap: round;
 }
 
-/* o conteudo passa POR CIMA da estrada */
-.travessia > *:not(.estrada-linha) {
+/* O conteudo passa POR CIMA da estrada.
+   A nav fica de FORA: ela e `position: fixed`, e esta regra a devolvia ao fluxo
+   (182px de altura empurrando o hero para baixo da dobra). Seletor de mesma
+   especificidade escrito depois ganha — por isso o :not() precisa exclui-la. */
+.travessia > *:not(.estrada-linha):not(.cap-nav) {
   position: relative;
   z-index: 1;
 }

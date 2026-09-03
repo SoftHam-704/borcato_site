@@ -1,6 +1,9 @@
 import { useEffect, useRef } from "react";
 import { estados, empresa } from "@/lib/dados";
-import fabioEscuro from "@/assets/site/fabio-escuro.jpg";
+// Gerada com o Nano Banana a partir da original (marca/geracao/): luz lateral
+// dura e olhar fora de quadro. O passo do rastro de exposicao longa FALHOU —
+// o modelo criou uma segunda pessoa atras dele — entao o rastro fica no CSS.
+import fabioEscuro from "@/assets/site/fabio-travessia.jpg";
 
 // Hero da direção "A DISTÂNCIA" (escolhida em 03/09/2026).
 //
