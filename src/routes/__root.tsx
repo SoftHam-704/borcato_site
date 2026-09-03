@@ -83,12 +83,12 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       {
         name: "description",
         content:
-          "Representação comercial e marketing de autopeças com cobertura em todo o estado de Minas Gerais.",
+          "De Belo Horizonte para doze estados. Onze indústrias representadas, levadas ao distribuidor onde ele está.",
       },
       { property: "og:title", content: "H.M. Borçato — Representação Comercial e Marketing" },
       {
         property: "og:description",
-        content: "Representação de autopeças em Minas Gerais: qualidade, tecnologia e os melhores negócios.",
+        content: "De Belo Horizonte para doze estados. Onze indústrias representadas.",
       },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
@@ -115,7 +115,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
 
 function RootShell({ children }: { children: ReactNode }) {
   return (
-    <html lang="en">
+    <html lang="pt-BR">
       <head>
         <HeadContent />
       </head>

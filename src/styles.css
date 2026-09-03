@@ -639,6 +639,13 @@
    marca/_bordado_4x.png): matizes entre 204° e 240°, nenhum verde. O #90c140 do
    template Joomla antigo era :hover de um tema comprado, não a marca. */
 .home-borcato {
+  /* A COLUNA DA NAV — uma so fonte de verdade.
+     A nav vive dentro dela e o conteudo comeca depois dela; antes eram dois
+     numeros chutados em separado, e em 1024/1280/1440 a nav aberta invadia o
+     texto (medido: folga de -32px no pior caso). Ver prova_goteira.py. */
+  --br-goteira: clamp(58px, 13vw, 210px);
+  /* o vao entre a nav e a primeira letra do conteudo */
+  --br-respiro: clamp(14px, 1.4vw, 24px);
   --br-chao: #0a0a0c;
   --br-superficie: #12141a;
   --br-marca: #005f96;
@@ -654,7 +661,7 @@
   grid-template-columns: minmax(0, 1fr) minmax(0, 0.82fr);
   align-items: center;
   gap: clamp(24px, 4vw, 72px);
-  padding: clamp(88px, 12vh, 160px) 0 clamp(48px, 8vh, 96px) clamp(20px, 6vw, 104px);
+  padding: clamp(88px, 12vh, 160px) 0 clamp(48px, 8vh, 96px) var(--br-goteira);
   background: var(--br-chao);
   color: var(--br-tinta);
   overflow: hidden;
@@ -693,6 +700,16 @@
 .hero-tr__titulo em {
   font-style: normal;
   color: var(--br-luz);
+}
+/* "outros onze" e o dado, e nao pode partir no meio em largura nenhuma —
+   por isso ele ganha a linha dele em vez de depender do balance. */
+@media (min-width: 901px) {
+  .hero-tr__titulo em {
+    display: block;
+  }
+  .hero-tr__titulo {
+    text-wrap: initial;
+  }
 }
 
 .hero-tr__sub {
@@ -774,5 +791,476 @@
 @media (prefers-reduced-motion: reduce) {
   .hero-tr__capsula {
     transform: none;
+  }
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   A ESPINHA DA TRAVESSIA — quatro capítulos
+   Referência de estrutura: Grigoletto #26 (Ferrari 296 GTB).
+   Escrito em 03/09/2026, depois do diagnóstico "o site ainda tem cara de IA".
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+.travessia {
+  background: var(--br-chao);
+  color: var(--br-tinta);
+  /* trava a rolagem horizontal antes de ela existir: a cápsula e o card da
+     estrada sangram DE PROPÓSITO, e sangria sem esta linha vira barra no rodapé */
+  overflow-x: clip;
+}
+
+/* ── A nav de capítulos ──────────────────────────────────────────────────────
+   Fixa à esquerda no desktop, onde não disputa com a cápsula (que sangra à
+   direita). Vira barra no rodapé no mobile, onde não há coluna sobrando. */
+.cap-nav {
+  position: fixed;
+  z-index: 40;
+  top: 50%;
+  left: 0;
+  /* a nav ocupa a goteira e nao passa dela: o rotulo aberto (max-width: 14ch)
+     e o padding cabem dentro, entao o conteudo nunca e invadido */
+  /* a nav termina um respiro ANTES do conteudo, e o overflow-x: hidden garante
+     que o rotulo aberto encolha em vez de furar a coluna em telas estreitas */
+  width: calc(var(--br-goteira) - var(--br-respiro));
+  padding-left: clamp(12px, 1.6vw, 26px);
+  overflow-x: hidden;
+  transform: translateY(-50%);
+  /* a nav não pode roubar clique do conteúdo que passa por baixo dela */
+  pointer-events: none;
+}
+.cap-nav ul {
+  display: grid;
+  gap: 2px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.cap-nav a {
+  pointer-events: auto;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  /* 44px de alvo tátil — o portão de responsividade cobra, e a fonte é 11px */
+  min-height: 44px;
+  padding: 0 8px;
+  color: var(--br-fraco);
+  text-decoration: none;
+  font-size: 11px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  transition: color 0.4s cubic-bezier(0.2, 0.7, 0.2, 1);
+}
+.cap-nav b {
+  font-variant-numeric: tabular-nums;
+  font-weight: 600;
+  opacity: 0.55;
+}
+/* o rótulo fica retraído e só se abre no capítulo ativo: a nav vira régua de
+   progresso em vez de menu, que é o gesto do Ferrari */
+.cap-nav span {
+  max-width: 0;
+  overflow: hidden;
+  white-space: nowrap;
+  opacity: 0;
+  transition:
+    max-width 0.5s cubic-bezier(0.2, 0.7, 0.2, 1),
+    opacity 0.4s ease;
+}
+.cap-nav a:hover,
+.cap-nav a:focus-visible,
+.cap-nav a.is-aqui {
+  color: var(--br-tinta);
+}
+@media (min-width: 1181px) {
+  .cap-nav a:hover span,
+  .cap-nav a:focus-visible span,
+  .cap-nav a.is-aqui span {
+    max-width: 14ch;
+    opacity: 1;
+  }
+}
+/* trava final: o texto encolhe antes de furar a coluna */
+.cap-nav span {
+  text-overflow: ellipsis;
+}
+.cap-nav a.is-aqui b {
+  color: var(--br-luz);
+  opacity: 1;
+}
+
+@media (max-width: 900px) {
+  /* no mobile a nav vira barra no rodape e a goteira lateral some */
+  .home-borcato {
+    --br-goteira: clamp(20px, 6vw, 104px);
+  }
+  .cap-nav {
+    top: auto;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    width: auto;
+    padding-left: 0;
+    transform: none;
+    background: color-mix(in srgb, var(--br-chao) 88%, transparent);
+    backdrop-filter: blur(14px);
+    border-top: 1px solid rgba(216, 216, 240, 0.1);
+    /* barra do iPhone */
+    padding-bottom: env(safe-area-inset-bottom, 0px);
+  }
+  .cap-nav ul {
+    grid-auto-flow: column;
+    grid-auto-columns: 1fr;
+    gap: 0;
+  }
+  .cap-nav a {
+    flex-direction: column;
+    justify-content: center;
+    gap: 3px;
+    padding: 8px 4px;
+    font-size: 9px;
+    letter-spacing: 0.1em;
+    text-align: center;
+  }
+  /* no mobile o rótulo fica sempre visível: não há hover para revelá-lo */
+  .cap-nav span {
+    max-width: none;
+    opacity: 0.75;
+  }
+}
+
+/* ── O capítulo ──────────────────────────────────────────────────────────────
+   `--cap-entra` (0→1) é escrito pelo JS; TODO gesto nasce dele aqui.
+   O capítulo sobe 34px e revela, e cada variante acrescenta o gesto dela. */
+.cap {
+  position: relative;
+  padding: clamp(96px, 16vh, 200px) clamp(20px, 6vw, 104px);
+  padding-left: var(--br-goteira);
+  opacity: calc(0.25 + var(--cap-entra, 1) * 0.75);
+  transform: translateY(calc((1 - var(--cap-entra, 1)) * 34px));
+  will-change: opacity, transform;
+}
+
+@media (max-width: 900px) {
+  .cap {
+    padding-left: clamp(20px, 6vw, 104px);
+  }
+  /* espaço para a barra de capítulos no rodapé */
+  .cap--nome {
+    padding-bottom: calc(clamp(96px, 16vh, 200px) + 76px);
+  }
+}
+
+.cap__num {
+  margin: 0 0 clamp(18px, 2.6vh, 30px);
+  font-size: 11px;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--br-luz);
+}
+
+.cap__titulo {
+  max-width: 20ch;
+  margin: 0;
+  font-family: var(--font-display), sans-serif;
+  font-weight: 700;
+  font-size: clamp(30px, 4.4vw, 66px);
+  line-height: 1.03;
+  letter-spacing: -0.018em;
+  text-transform: uppercase;
+  text-wrap: balance;
+}
+
+.cap__corpo {
+  max-width: 58ch;
+  margin: clamp(24px, 3.4vh, 40px) 0 0;
+}
+.cap__corpo p {
+  margin: 0 0 1.1em;
+  font-size: clamp(15px, 1.15vw, 18px);
+  line-height: 1.75;
+  color: var(--br-fraco);
+  text-wrap: pretty;
+}
+.cap__corpo p:last-child {
+  margin-bottom: 0;
+}
+
+/* ── 02 · As marcas ────────────────────────────────────────────────────────── */
+.marcas-lista {
+  display: grid;
+  /* 11 nao fecha em 5 colunas (sobra fila de 1 com 4 buracos). Em ate 3 colunas
+     a ultima fila fica cheia ou quase, e a grade le como lista, nao como tabela
+     inacabada. O max-width segura as colunas largas em 1440. */
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 300px), 1fr));
+  max-width: 1040px;
+  gap: 1px;
+  margin: clamp(40px, 6vh, 72px) 0 0;
+  padding: 0;
+  list-style: none;
+  background: rgba(216, 216, 240, 0.1); /* o gap vira a linha da grade */
+  border: 1px solid rgba(216, 216, 240, 0.1);
+}
+.marcas-lista li {
+  display: grid;
+  gap: 6px;
+  padding: clamp(18px, 2.4vh, 26px) clamp(16px, 1.6vw, 22px);
+  background: var(--br-chao);
+}
+.marcas-lista b {
+  font-family: var(--font-display), sans-serif;
+  font-size: clamp(15px, 1.2vw, 19px);
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  text-transform: uppercase;
+}
+.marcas-lista span {
+  font-size: 13px;
+  line-height: 1.5;
+  color: var(--br-fraco);
+  text-wrap: pretty;
+}
+
+/* ── 03 · A estrada ────────────────────────────────────────────────────────── */
+.estrada {
+  margin: clamp(40px, 6vh, 72px) 0 0;
+}
+.estrada__casa {
+  display: flex;
+  align-items: baseline;
+  gap: 14px;
+  margin: 0 0 clamp(20px, 3vh, 32px);
+  padding: 0 0 clamp(20px, 3vh, 32px);
+  border-bottom: 1px solid rgba(216, 216, 240, 0.12);
+}
+.estrada__casa b {
+  font-family: var(--font-display), sans-serif;
+  font-size: clamp(40px, 6vw, 84px);
+  font-weight: 700;
+  line-height: 0.9;
+  letter-spacing: -0.03em;
+  color: var(--br-luz);
+}
+.estrada__casa span {
+  font-size: 12px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--br-fraco);
+}
+
+.estrada__ufs {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 158px), 1fr));
+  gap: clamp(16px, 2.2vw, 30px);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.estrada__ufs li {
+  display: grid;
+  gap: 3px;
+}
+.estrada__ufs b {
+  font-family: var(--font-display), sans-serif;
+  font-size: clamp(20px, 2.1vw, 30px);
+  font-weight: 700;
+  line-height: 1;
+  letter-spacing: -0.02em;
+}
+.estrada__ufs span {
+  font-size: 12px;
+  color: var(--br-fraco);
+}
+
+/* ── 04 · O nome ───────────────────────────────────────────────────────────── */
+.cap--nome {
+  text-align: center;
+  background:
+    radial-gradient(
+      ellipse 80% 60% at 50% 34%,
+      color-mix(in srgb, var(--br-marca) 18%, transparent),
+      transparent 70%
+    ),
+    var(--br-chao);
+}
+.cap__titulo--grande {
+  max-width: none;
+  display: flex;
+  justify-content: center;
+  align-items: baseline;
+  /* as duas letras se aproximam conforme o capítulo entra: a revelação
+     ACONTECE, em vez de já estar pronta quando chega */
+  gap: calc((1 - var(--cap-entra, 1)) * 40px);
+  font-size: clamp(84px, 17vw, 260px);
+  line-height: 0.86;
+  letter-spacing: -0.04em;
+  color: var(--br-luz);
+}
+.cap__corpo--centro {
+  margin-inline: auto;
+  max-width: 48ch;
+}
+.cap__homenagem {
+  font-size: clamp(17px, 1.5vw, 23px) !important;
+  line-height: 1.6 !important;
+  color: var(--br-tinta) !important;
+  text-wrap: balance;
+}
+
+.fecho {
+  margin: clamp(56px, 9vh, 104px) auto 0;
+  max-width: 900px;
+}
+.fecho__chamada {
+  margin: 0 0 clamp(24px, 3.4vh, 40px);
+  font-family: var(--font-display), sans-serif;
+  font-size: clamp(19px, 1.9vw, 28px);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: -0.01em;
+}
+.fecho__vias {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 230px), 1fr));
+  gap: clamp(18px, 3vw, 40px);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.fecho__vias li {
+  display: grid;
+  gap: 5px;
+  justify-items: center;
+}
+.fecho__vias a {
+  /* 44px de alvo tátil, exigido pelo portão de responsividade */
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 44px;
+  font-size: clamp(15px, 1.3vw, 19px);
+  color: var(--br-tinta);
+  text-decoration: none;
+  border-bottom: 1px solid color-mix(in srgb, var(--br-luz) 45%, transparent);
+  transition: color 0.35s ease, border-color 0.35s ease;
+  /* e-mail é longo; sem isto ele estoura a coluna em 375px */
+  overflow-wrap: anywhere;
+  max-width: 100%;
+}
+.fecho__vias a:hover,
+.fecho__vias a:focus-visible {
+  color: var(--br-luz);
+  border-color: var(--br-luz);
+}
+.fecho__vias span {
+  font-size: 11px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--br-fraco);
+}
+.fecho__assinatura {
+  margin: clamp(48px, 8vh, 88px) 0 0;
+  font-size: 11px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--br-fraco);
+}
+
+/* ── A barra de marcas (base do hero) ───────────────────────────────────────── */
+.marcas {
+  position: relative;
+  z-index: 2;
+  padding: clamp(22px, 3.4vh, 38px) clamp(20px, 6vw, 104px);
+  padding-left: var(--br-goteira);
+  background: var(--br-chao);
+  border-top: 1px solid rgba(216, 216, 240, 0.1);
+  border-bottom: 1px solid rgba(216, 216, 240, 0.1);
+}
+.marcas__titulo {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 6px 14px;
+  margin: 0 0 clamp(16px, 2.2vh, 24px);
+  font-size: 11px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--br-fraco);
+}
+/* a legenda muda com o foco; reservar a linha impede o pulo de layout */
+.marcas__titulo em {
+  min-height: 1em;
+  font-style: normal;
+  letter-spacing: 0.1em;
+  color: var(--br-luz);
+}
+
+.marcas__lista {
+  display: flex;
+  flex-wrap: wrap;
+  gap: clamp(8px, 1vw, 14px);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.marcas__lista button {
+  display: grid;
+  place-items: center;
+  /* 44px de alvo tátil */
+  width: clamp(56px, 6vw, 76px);
+  height: 44px;
+  padding: 0 8px;
+  background: none;
+  border: 1px solid rgba(216, 216, 240, 0.12);
+  border-radius: 999px;
+  cursor: pointer;
+  transition:
+    border-color 0.35s ease,
+    background-color 0.35s ease;
+}
+.marcas__lista img {
+  width: 100%;
+  max-height: 20px;
+  object-fit: contain;
+  /* os recortes são monocromáticos claros; em repouso ficam apagados e
+     acendem no foco — mesmo princípio da parede de parceiros da SoftHam */
+  opacity: 0.45;
+  transition: opacity 0.35s ease;
+}
+.marcas__lista span {
+  font-size: 10px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--br-fraco);
+}
+.marcas__lista button:hover,
+.marcas__lista button:focus-visible,
+.marcas__lista button.is-foco {
+  border-color: color-mix(in srgb, var(--br-luz) 55%, transparent);
+  background: color-mix(in srgb, var(--br-marca) 16%, transparent);
+}
+.marcas__lista button:hover img,
+.marcas__lista button:focus-visible img,
+.marcas__lista button.is-foco img {
+  opacity: 1;
+}
+
+@media (max-width: 900px) {
+  .marcas {
+    padding-left: clamp(20px, 6vw, 104px);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .cap {
+    opacity: 1;
+    transform: none;
+  }
+  .cap__titulo--grande {
+    gap: 0;
+  }
+  .cap-nav span,
+  .marcas__lista img,
+  .marcas__lista button,
+  .cap-nav a {
+    transition: none;
   }
 }

@@ -52,12 +52,11 @@ export function HeroTravessia() {
           <span>{empresa.base}</span>
         </p>
 
+        {/* Sem <br>. O título quebrava na mão em tres linhas, e mao nao sobrevive a
+            outra largura. O <em> e a unica marcacao, porque ele carrega SIGNIFICADO
+            (o numero e o argumento); a quebra fica com text-wrap: balance no CSS. */}
         <h1 className="hero-tr__titulo">
-          De Minas para
-          <br />
-          <em>outros onze</em>
-          <br />
-          estados.
+          De Minas para <em>outros onze</em> estados.
         </h1>
 
         <p className="hero-tr__sub">
