@@ -5,28 +5,58 @@
 // existem, mas são dados comerciais do cliente e NÃO vão para uma página pública.
 // O que fica é alcance geográfico e as marcas — ambos verificáveis e autorizados.
 
-export interface Estado {
-  uf: string;
+// ⚠️ CORRIGIDO EM 03/09/2026, DEPOIS DE O PRÓPRIO FÁBIO PEGAR O ERRO NO HERO.
+//
+// O site dizia "de Minas para outros onze estados". ERA FALSO. Ele atende
+// APENAS MINAS GERAIS.
+//
+// De onde veio o erro: o RepOne mostra 12 UFs com pedido, e eu transformei isso
+// em manchete. Mas os números diziam o contrário — 226 clientes em MG contra 22
+// nos outros onze estados SOMADOS. Aquilo não era cobertura: era cliente que se
+// mudou ou comprou de longe. E o meu próprio arquivo DADOS-DO-SISTEMA.md tinha
+// escrito "(a confirmar com o Fábio)". Nunca confirmei.
+//
+// LIÇÃO, que virou regra dura no QG: dado de sistema não vira manchete sem o
+// cliente confirmar.
+
+/** Uma região de Minas onde a Borçato atende — a cobertura REAL. */
+export interface Regiao {
   nome: string;
-  /** Minas é a base; os outros onze são estrada. */
-  casa?: boolean;
+  /** as praças que ancoram a região, para o mapa e para a legenda */
+  ancoras: string;
 }
 
-/** Os 12 estados atendidos, em ordem de relevância na operação (RepOne, 09/2026). */
-export const estados: readonly Estado[] = [
-  { uf: "MG", nome: "Minas Gerais", casa: true },
-  { uf: "ES", nome: "Espírito Santo" },
-  { uf: "GO", nome: "Goiás" },
-  { uf: "SP", nome: "São Paulo" },
-  { uf: "RN", nome: "Rio Grande do Norte" },
-  { uf: "RJ", nome: "Rio de Janeiro" },
-  { uf: "PA", nome: "Pará" },
-  { uf: "MT", nome: "Mato Grosso" },
-  { uf: "CE", nome: "Ceará" },
-  { uf: "DF", nome: "Distrito Federal" },
-  { uf: "PR", nome: "Paraná" },
-  { uf: "SC", nome: "Santa Catarina" },
+/**
+ * A cobertura: Minas Gerais inteira, por região.
+ *
+ * O dado publicável forte não é "quantos estados" — é o que o próprio material do
+ * cliente já dizia e eu não usei: **ele atendeu todos os distribuidores regionais
+ * de MG e as filiais dos nacionais presentes no estado**. Isso é cobertura
+ * demonstrável; doze estados não era.
+ *
+ * ⚠️ As âncoras abaixo são as praças óbvias de cada região mineira. PRECISAM da
+ * confirmação do Fábio (pergunta 2 da lista de 03/09) antes de irem ao ar como
+ * roteiro de viagem. Se ele não confirmar, o mapa mostra as regiões sem nomear
+ * cidade.
+ */
+export const regioes: readonly Regiao[] = [
+  { nome: "Central / RMBH", ancoras: "Belo Horizonte · Contagem · Betim" },
+  { nome: "Sul de Minas", ancoras: "Varginha · Poços de Caldas · Pouso Alegre" },
+  { nome: "Triângulo", ancoras: "Uberlândia · Uberaba · Araguari" },
+  { nome: "Zona da Mata", ancoras: "Juiz de Fora · Muriaé · Ubá" },
+  { nome: "Norte", ancoras: "Montes Claros · Janaúba · Pirapora" },
+  { nome: "Vale do Aço", ancoras: "Ipatinga · Governador Valadares · Coronel Fabriciano" },
+  { nome: "Centro-Oeste", ancoras: "Divinópolis · Formiga · Pará de Minas" },
+  { nome: "Alto Paranaíba", ancoras: "Patos de Minas · Patrocínio · Araxá" },
 ] as const;
+
+/** A casa. Um estado só, e é esse o argumento. */
+export const casa = {
+  uf: "MG",
+  nome: "Minas Gerais",
+  /** IBGE 2024 — número público, do estado, não do cliente. */
+  municipios: 853,
+} as const;
 
 /**
  * As 11 representadas.

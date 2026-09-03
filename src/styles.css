@@ -754,7 +754,7 @@
   letter-spacing: 0.14em;
   color: var(--br-fraco);
 }
-/* Minas é a casa: recebe a cor da marca, os outros onze ficam em rótulo. */
+/* Minas é a casa: recebe a cor da marca; as regiões ficam em rótulo. */
 .hero-tr__ufs li.is-casa {
   border-color: var(--br-marca);
   background: color-mix(in srgb, var(--br-marca) 22%, transparent);
@@ -1460,7 +1460,7 @@
   opacity: clamp(0, calc((var(--cap-entra, 1) - 0.3) / 0.5), 1);
 }
 
-/* 03 · A ESTRADA — o MG cresce, e os onze estados chegam depois dele.
+/* 03 · A ESTRADA — o MG cresce, e as regiões chegam depois dele.
    A hierarquia do gesto repete a hierarquia do argumento: a casa primeiro. */
 .cap--estrada .estrada__casa b {
   --t: clamp(0, calc((var(--cap-entra, 1) - 0.2) / 0.6), 1);

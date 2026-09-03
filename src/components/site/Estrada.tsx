@@ -35,7 +35,7 @@ const ROTA: Record<string, number> = {
   // é a amplitude horizontal que dá a leitura de curva.
   "cap-casa": 0.74,
   "cap-marcas": 1.02,
-  // a lista dos 12 estados é a mais larga da página: aqui a estrada recua para o
+  // a lista das regiões de Minas é a mais larga da página: aqui a estrada recua para o
   // vão e volta, o que também dá o bojo da curva
   "cap-estrada": 0.86,
   // o capítulo do nome é o único CENTRALIZADO: o "H.M." gigante ocupa o meio da

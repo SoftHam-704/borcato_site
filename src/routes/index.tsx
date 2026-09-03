@@ -5,7 +5,7 @@ import { BarraMarcas } from "@/components/site/BarraMarcas";
 import { Capitulo, NavCapitulos } from "@/components/site/Capitulos";
 import { Estrada } from "@/components/site/Estrada";
 import { Palavras } from "@/components/site/Palavras";
-import { empresa, estados, representadas } from "@/lib/dados";
+import { empresa, regioes, casa, representadas } from "@/lib/dados";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -14,12 +14,12 @@ export const Route = createFileRoute("/")({
       {
         name: "description",
         content:
-          "De Belo Horizonte para doze estados. Onze indústrias representadas, levadas ao distribuidor onde ele está.",
+          "Representação comercial de autopeças em Minas Gerais. Onze indústrias representadas, praça por praça, desde 2018.",
       },
       { property: "og:title", content: "H.M. Borçato — Representação Comercial e Marketing" },
       {
         property: "og:description",
-        content: "De Belo Horizonte para doze estados. Onze indústrias representadas.",
+        content: "Onze indústrias representadas em Minas Gerais. Todo distribuidor de Minas conhece o nome.",
       },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
@@ -47,7 +47,6 @@ export const Route = createFileRoute("/")({
 //
 // Nada de faturamento, numero de clientes ou pedidos. Ver src/lib/dados.ts.
 function Index() {
-  const fora = estados.filter((e) => !e.casa);
 
   return (
     <div className="home-borcato travessia">
@@ -73,8 +72,8 @@ function Index() {
             mineiro de autopeças havia catorze anos.
           </p>
           <p>
-            São quatro pessoas. É pouca gente para doze estados, e é de propósito — quem atende
-            conhece o distribuidor pelo nome, e o industrial sabe com quem está falando.
+            São quatro pessoas para um estado inteiro, e é de propósito — quem atende conhece
+            o distribuidor pelo nome, e o industrial sabe com quem está falando.
           </p>
         </div>
       </Capitulo>
@@ -103,29 +102,37 @@ function Index() {
         </ul>
       </Capitulo>
 
-      {/* 03 — A ESTRADA. O alcance, que é o dado publicável mais forte que existe. */}
+      {/* 03 — A ESTRADA. A cobertura, que e o dado publicavel mais forte que existe.
+          CORRIGIDO em 03/09: era a lista das 12 UFs do RepOne, e era FALSO — ele
+          atende so MG. O argumento verdadeiro e melhor: um estado inteiro, praca
+          por praca, e a prova estava no material dele o tempo todo ("atendeu todos
+          os distribuidores regionais de MG e as filiais dos nacionais no estado"). */}
       <Capitulo id="cap-estrada" className="cap--estrada">
         <p className="cap__num">03 / A estrada</p>
         <h2 className="cap__titulo">
-          <Palavras texto="Minas é a casa. O resto é quilômetro rodado." />
+          <Palavras texto="Um estado inteiro cabe em muitos quilômetros." />
         </h2>
         <div className="cap__corpo">
           <p>
-            Representação comercial se prova em presença. A H.M. Borçato atende hoje doze estados
-            — e a lista abaixo não é ambição de cobertura, é onde já se entra.
+            Representação comercial se prova em presença, e presença se mede em estrada.
+            A H.M. Borçato atende os distribuidores regionais de Minas e as filiais dos
+            nacionais no estado — do Triângulo à Zona da Mata, do Sul ao Norte.
+          </p>
+          <p>
+            Não é um mapa de ambição. É onde o carro já chegou.
           </p>
         </div>
 
         <div className="estrada">
           <p className="estrada__casa">
-            <b>MG</b>
-            <span>Minas Gerais — a casa</span>
+            <b>{casa.uf}</b>
+            <span>{casa.municipios} municípios · um estado</span>
           </p>
           <ul className="estrada__ufs">
-            {fora.map((e) => (
-              <li key={e.uf}>
-                <b>{e.uf}</b>
-                <span>{e.nome}</span>
+            {regioes.map((r) => (
+              <li key={r.nome}>
+                <b>{r.nome}</b>
+                <span>{r.ancoras}</span>
               </li>
             ))}
           </ul>

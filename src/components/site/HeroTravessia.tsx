@@ -1,5 +1,5 @@
 import { useEffect, useRef } from "react";
-import { estados, empresa } from "@/lib/dados";
+import { regioes, casa, empresa } from "@/lib/dados";
 import { BarraMarcas } from "@/components/site/BarraMarcas";
 import { FotoViva } from "@/components/site/FotoViva";
 import { Palavras } from "@/components/site/Palavras";
@@ -122,19 +122,28 @@ export function HeroTravessia() {
         {/* Tres linhas, tres PESOS — como o 26 (regular/itálico/light) e o 22
             (alternando bold e light por palavra). Antes era um peso só, com a
             diferenciação feita só por cor: assinatura de template.
-            O <em> continua sendo "outros onze" porque é ele que carrega o
-            argumento — o número que nenhum concorrente copia sem ter rodado. */}
-        {/* as tres linhas dividem UMA cascata de 6 palavras: a contagem continua
-            de uma linha para a outra, entao o titulo se escreve na ordem da leitura */}
+            O <em> destaca "de Minas" — o argumento agora é o ESTADO, não a
+            contagem de UFs. */}
+        {/* A MANCHETE. Dizia "De Minas para outros onze estados" e era FALSO — o
+            proprio Fabio pegou o erro olhando o hero (03/09/2026). Ele atende
+            APENAS MINAS GERAIS. Ver a nota em dados.ts.
+
+            A cobertura mineira e um argumento MAIS FORTE que doze estados
+            arranhados, e a prova estava no material dele desde o inicio: atendeu
+            todos os distribuidores regionais de MG e as filiais dos nacionais no
+            estado. Deixa de ser quantidade de UF e vira reputacao.
+
+            As tres linhas dividem UMA cascata de 6 palavras: a contagem continua
+            de uma linha para a outra, entao o titulo se escreve na ordem da leitura. */}
         <h1 className="hero-tr__titulo">
-          <span className="ln ln--1"><Palavras texto="De Minas para" total={6} /></span>{" "}
-          <em className="ln ln--2"><Palavras texto="outros onze" desde={3} total={6} /></em>{" "}
-          <span className="ln ln--3"><Palavras texto="estados." desde={5} total={6} /></span>
+          <span className="ln ln--1"><Palavras texto="Todo distribuidor" total={6} /></span>{" "}
+          <em className="ln ln--2"><Palavras texto="de Minas" desde={2} total={6} /></em>{" "}
+          <span className="ln ln--3"><Palavras texto="conhece o nome." desde={4} total={6} /></span>
         </h1>
 
         <p className="hero-tr__sub">
-          Onze indústrias representadas, levadas ao distribuidor onde ele está — não por
-          catálogo, por estrada.
+          Onze indústrias representadas em um estado inteiro — não por catálogo,
+          por estrada, praça por praça.
         </p>
 
         {/* O CTA — o hero nao tinha NENHUM. Todos os 14 heros da biblioteca tem.
@@ -158,19 +167,19 @@ export function HeroTravessia() {
           <a className="link-marcas" href="#cap-marcas">Ver as onze marcas ↓</a>
         </div>
 
-      {/* O TRILHO DOS 12 ESTADOS — antes eram 12 caixinhas de 11px lado a lado,
-          que e exatamente um filtro de e-commerce. Na biblioteca, dado numerico
-          nunca aparece assim: e numero gigante cortado pela borda (26), card de
-          spec (38) ou paginacao vertical em contorno (22). Este e o 22.
-          O rotulo fecha a conta que o titulo abre: 11 outros + a casa = 12. */}
-      <ul className="hero-tr__trilho" aria-label="Estados atendidos">
+      {/* O TRILHO DA COBERTURA. Antes eram as 12 UFs do RepOne — dado FALSO, e o
+          proprio Fabio pegou o erro olhando o hero (03/09). Ver dados.ts.
+          Agora sao as regioes de Minas: a cobertura que ele tem de verdade. O
+          numero que abre a linha e publico (IBGE) e e do ESTADO, nao do cliente —
+          nenhuma contagem de cliente ou pedido, como manda a regra dura. */}
+      <ul className="hero-tr__trilho" aria-label="Cobertura em Minas Gerais">
         <li className="trilho__rotulo" aria-hidden>
-          <b>12</b>
-          <span>a casa e mais onze</span>
+          <b>{casa.municipios}</b>
+          <span>municípios · um estado</span>
         </li>
-        {estados.map((e) => (
-          <li key={e.uf} className={e.casa ? "is-casa" : undefined}>
-            <abbr title={e.nome}>{e.uf}</abbr>
+        {regioes.map((r) => (
+          <li key={r.nome} title={r.ancoras}>
+            {r.nome}
           </li>
         ))}
       </ul>

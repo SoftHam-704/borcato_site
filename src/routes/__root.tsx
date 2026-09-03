@@ -83,12 +83,12 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       {
         name: "description",
         content:
-          "De Belo Horizonte para doze estados. Onze indústrias representadas, levadas ao distribuidor onde ele está.",
+          "Representação comercial de autopeças em Minas Gerais. Onze indústrias representadas, praça por praça, desde 2018.",
       },
       { property: "og:title", content: "H.M. Borçato — Representação Comercial e Marketing" },
       {
         property: "og:description",
-        content: "De Belo Horizonte para doze estados. Onze indústrias representadas.",
+        content: "Onze indústrias representadas em Minas Gerais. Todo distribuidor de Minas conhece o nome.",
       },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
