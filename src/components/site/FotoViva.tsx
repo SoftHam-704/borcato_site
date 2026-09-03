@@ -1,10 +1,10 @@
 import { useEffect, useRef } from "react";
 
-import f0 from "@/assets/site/frames/0.jpg";
-import f1 from "@/assets/site/frames/1.jpg";
-import f2 from "@/assets/site/frames/2.jpg";
-import f3 from "@/assets/site/frames/3.jpg";
-import f4 from "@/assets/site/frames/4.jpg";
+import f0 from "@/assets/site/frames/0.avif";
+import f1 from "@/assets/site/frames/1.avif";
+import f2 from "@/assets/site/frames/2.avif";
+import f3 from "@/assets/site/frames/3.avif";
+import f4 from "@/assets/site/frames/4.avif";
 
 // A FOTO VIVA — o Fábio virando o rosto conforme se rola.
 //

@@ -2088,3 +2088,95 @@ body.is-abrindo {
     min-height: 100svh;
   }
 }
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   AS PEÇAS — o capítulo 02 deixa de ser texto sobre preto
+   Achado nº 1 do júri: num site sobre um homem que vende rolamento, filtro e
+   lanterna, não aparecia nenhum dos três. As 11 peças foram geradas,
+   normalizadas (mesma luz, mesmo preto, mesmo enquadramento) e tratadas em
+   duotom na paleta do site. Nenhuma tem marca visível.
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+/* ── a peça presa ao cursor (desktop) ────────────────────────────────────── */
+.peca-cursor {
+  position: fixed;
+  z-index: 30;
+  left: 0;
+  top: 0;
+  width: clamp(180px, 15vw, 260px);
+  aspect-ratio: 1;
+  pointer-events: none;
+  opacity: 0;
+  /* A POSICAO e o GESTO ficam em propriedades SEPARADAS.
+     Antes tudo vivia num `transform` so, com `transition: scale` — mas `scale`
+     e `transform` sao propriedades diferentes, entao a transicao nunca pegava e
+     o transform ficava travado no estado de repouso. Medido: as variaveis
+     diziam (361, 499) e o transform aplicava (253, 391) — a peca parava 161px
+     acima do ponteiro.
+     Com `translate` e `scale` proprios (nao dentro de `transform`), cada um
+     anima sozinho e a conta fecha. */
+  translate: var(--peca-x, 0px) var(--peca-y, 0px);
+  transform: translate(-50%, -50%);
+  scale: 0.86;
+  transition: opacity 0.32s ease, scale 0.42s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.peca-cursor.is-visivel {
+  opacity: 1;
+  scale: 1;
+}
+.peca-cursor img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  display: block;
+}
+
+/* ── a linha da marca reage ──────────────────────────────────────────────── */
+.marcas-lista li {
+  position: relative;
+  transition: background-color 0.3s ease;
+}
+.marcas-lista li:hover {
+  background: color-mix(in srgb, var(--br-marca) 9%, var(--br-chao));
+}
+
+/* a peça dentro do card: escondida no desktop, é lá que o cursor a leva */
+.marcas-lista__peca {
+  display: none;
+}
+
+/* ── EM TOQUE não existe cursor ──────────────────────────────────────────────
+   A spec obriga a definir isto aqui, não na fase seguinte: sem alternativa, o
+   capítulo 02 voltaria a ser uma lista de texto exatamente onde parte do
+   público vai olhar. A peça entra no próprio card, conforme ele chega à tela. */
+@media (hover: none), (pointer: coarse) {
+  .marcas-lista li {
+    grid-template-columns: 68px minmax(0, 1fr);
+    grid-template-areas:
+      "peca nome"
+      "peca fornece";
+    align-items: center;
+    column-gap: 14px;
+  }
+  .marcas-lista li b {
+    grid-area: nome;
+  }
+  .marcas-lista li span {
+    grid-area: fornece;
+  }
+  .marcas-lista__peca {
+    display: block;
+    grid-area: peca;
+    width: 68px;
+    height: 68px;
+    object-fit: contain;
+    /* nasce apagada e acende com o capítulo, junto com o resto do gesto */
+    opacity: calc(0.25 + var(--cap-entra, 1) * 0.75);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .peca-cursor {
+    transition: none;
+  }
+}

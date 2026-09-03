@@ -6,7 +6,11 @@ import { Palavras } from "@/components/site/Palavras";
 // Gerada com o Nano Banana a partir da original (marca/geracao/): luz lateral
 // dura e olhar fora de quadro. O passo do rastro de exposicao longa FALHOU —
 // o modelo criou uma segunda pessoa atras dele — entao o rastro fica no CSS.
-import fabioEscuro from "@/assets/site/fabio-travessia.jpg";
+// O PISO da capsula e o QUADRO 0 da foto viva, nao um arquivo separado.
+// Antes era `fabio-travessia.jpg` (619 KB) mostrando exatamente a mesma
+// imagem do quadro 0 (110 KB) — 619 KB baixados para nada, e 68% do peso
+// da pagina era o Fabio duas vezes. Era o achado no 8 do juri.
+import fabioEscuro from "@/assets/site/frames/0.avif";
 
 // Hero da direção "A DISTÂNCIA" (escolhida em 03/09/2026).
 //

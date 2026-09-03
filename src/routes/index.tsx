@@ -5,6 +5,7 @@ import { BarraMarcas } from "@/components/site/BarraMarcas";
 import { Capitulo, NavCapitulos } from "@/components/site/Capitulos";
 import { Estrada } from "@/components/site/Estrada";
 import { Palavras } from "@/components/site/Palavras";
+import { PecaNoCursor, pecaDe } from "@/components/site/PecaNoCursor";
 import { empresa, regioes, casa, representadas } from "@/lib/dados";
 
 export const Route = createFileRoute("/")({
@@ -55,6 +56,9 @@ function Index() {
 
       {/* a estrada atravessa a pagina inteira, por tras do conteudo */}
       <Estrada />
+      {/* FORA dos capitulos: dentro deles o transform do gesto de revelacao
+          vira bloco de contencao e quebra o `position: fixed` da peca. */}
+      <PecaNoCursor />
 
       <HeroTravessia />
 
@@ -92,13 +96,23 @@ function Index() {
           </p>
         </div>
 
+        {/* Cada marca carrega a PECA que ela fornece. No desktop a peca segue o
+            cursor (PecaNoCursor); no celular ela entra no proprio card, porque
+            la nao existe cursor — e sem isso o capitulo 02 voltaria a ser uma
+            lista de texto exatamente onde parte do publico vai olhar. */}
         <ul className="marcas-lista">
-          {representadas.map((r) => (
-            <li key={r.id}>
-              <b>{r.nome}</b>
-              {r.fornece ? <span>{r.fornece}</span> : null}
-            </li>
-          ))}
+          {representadas.map((r) => {
+            const peca = pecaDe(r.id);
+            return (
+              <li key={r.id} data-marca={r.id} data-peca={peca}>
+                <b>{r.nome}</b>
+                <span>{r.fornece}</span>
+                {peca ? (
+                  <img className="marcas-lista__peca" src={peca} alt="" aria-hidden />
+                ) : null}
+              </li>
+            );
+          })}
         </ul>
       </Capitulo>
 
