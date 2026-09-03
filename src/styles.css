@@ -1306,3 +1306,106 @@
   position: relative;
   z-index: 1;
 }
+
+/* ── O TRATAMENTO DE FILME NA CÁPSULA ────────────────────────────────────────
+   O efeito da foto do lukebaffait.fr. Três camadas com nome próprio:
+   aberração cromática (RGB split), grão de filme e vinheta.
+   Calibragem MÉDIA, decidida pelo dono: o tratamento é visível e dá identidade,
+   mas o rosto do Fábio continua lendo nítido — ele é o dono se apresentando. */
+
+.hero-tr__capsula {
+  /* fundo preto por baixo: o `screen` das cópias soma sobre ele */
+  background: #000;
+}
+
+/* a base é a foto de verdade, e é ela que carrega o alt */
+.capsula__base {
+  position: relative;
+  z-index: 1;
+}
+
+/* ── 1. Aberração cromática ──────────────────────────────────────────────────
+   A 1a versão usava `screen` sobre a foto e o resultado foi um ANAGLIFO 3D:
+   as cópias SOMAM luz, a imagem estourou, a camisa ficou verde e o Fábio ficou
+   irreconhecível. Somar é o erro — a franja de lente não clareia a imagem.
+
+   Aqui as cópias vivem só nas BORDAS de contraste: cada uma é mascarada pela
+   própria luminância invertida do centro, entram com opacidade baixa e o
+   `overlay` preserva os tons médios. O rosto continua sendo o rosto. */
+.capsula__filme {
+  position: absolute;
+  z-index: 2;
+  inset: 0;
+  pointer-events: none;
+  /* a franja é mais forte nas bordas e recua no rosto, mas NÃO some lá:
+     mascarar o centro por completo (2a tentativa) anulou o efeito inteiro */
+  -webkit-mask-image: radial-gradient(
+    ellipse 70% 60% at 50% 38%,
+    rgba(0, 0, 0, 0.35) 20%,
+    #000 85%
+  );
+  mask-image: radial-gradient(
+    ellipse 70% 60% at 50% 38%,
+    rgba(0, 0, 0, 0.35) 20%,
+    #000 85%
+  );
+}
+.capsula__canal {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  /* `screen` estourava a imagem (anaglifo); `overlay` a 0.3 sumia.
+     `soft-light` a 0.5 marca a franja e preserva o tom de pele. */
+  mix-blend-mode: soft-light;
+  opacity: calc(var(--filme, 1) * 0.5);
+  will-change: transform;
+}
+/* o vermelho sai para a esquerda, o ciano para a direita */
+.capsula__canal--r {
+  filter: saturate(0) sepia(0.7) hue-rotate(-25deg) saturate(2.4);
+  transform: translateX(calc(var(--sep, 6px) * -1));
+}
+.capsula__canal--c {
+  filter: saturate(0) sepia(0.7) hue-rotate(150deg) saturate(2.2);
+  transform: translateX(var(--sep, 6px));
+}
+
+/* ── 2. Grão de filme ────────────────────────────────────────────────────────
+   feTurbulence em data-URI: é ruído gerado pelo próprio navegador, sem baixar
+   textura nenhuma. `overlay` mantém o grão nas meias-luzes e poupa os pretos. */
+.capsula__grao {
+  position: absolute;
+  z-index: 3;
+  inset: -50%;
+  pointer-events: none;
+  opacity: calc(var(--filme, 1) * 0.3);
+  mix-blend-mode: overlay;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='200' height='200' filter='url(%23n)' opacity='0.55'/%3E%3C/svg%3E");
+  background-size: 190px 190px;
+}
+
+/* ── 3. Vinheta ──────────────────────────────────────────────────────────────
+   Centro limpo, bordas afundando. É o que tira a foto do estúdio e a coloca
+   num quadro — e também o que faz a cápsula parecer janela, não recorte. */
+.capsula__vinheta {
+  position: absolute;
+  z-index: 4;
+  inset: 0;
+  pointer-events: none;
+  background: radial-gradient(
+    ellipse 78% 68% at 50% 42%,
+    transparent 42%,
+    rgba(0, 0, 0, 0.38) 78%,
+    rgba(0, 0, 0, 0.72) 100%
+  );
+}
+
+@media (prefers-reduced-motion: reduce) {
+  /* o tratamento continua existindo, mas fixo no estado assentado */
+  .capsula__canal {
+    transform: none;
+    opacity: 0.3;
+  }
+}

@@ -22,7 +22,12 @@ export function HeroTravessia() {
   useEffect(() => {
     const el = capsulaRef.current;
     if (!el) return;
-    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+      // sem movimento o tratamento existe no estado assentado, não some
+      el.style.setProperty("--sep", "0px");
+      el.style.setProperty("--filme", "0.45");
+      return;
+    }
 
     let pedido = 0;
     const aoRolar = () => {
@@ -33,6 +38,10 @@ export function HeroTravessia() {
         const t = Math.min(1, Math.max(0, window.scrollY / window.innerHeight));
         el.style.setProperty("--capsula-y", `${t * 64}px`);
         el.style.setProperty("--capsula-esc", String(1 + t * 0.06));
+        // o tratamento de filme é forte na chegada e vai assentando: 6px -> 0.
+        // A foto "chega" em vez de já estar lá, que é o gesto da travessia.
+        el.style.setProperty("--sep", `${(1 - t) * 6}px`);
+        el.style.setProperty("--filme", String(1 - t * 0.55));
       });
     };
     aoRolar();
@@ -75,14 +84,34 @@ export function HeroTravessia() {
         </ul>
       </div>
 
+      {/* O TRATAMENTO DE FILME — o efeito da foto do lukebaffait.fr.
+          São três coisas empilhadas, e o nome de cada uma:
+
+          1. ABERRAÇÃO CROMÁTICA (RGB split): duas cópias da foto, uma tingida de
+             vermelho e outra de ciano, deslocadas em sentidos opostos e somadas com
+             `mix-blend-mode: screen`. Onde as três se sobrepõem a cor volta ao normal;
+             nas bordas de contraste sobra a franja colorida. Não dá para fazer com
+             filtro: `screen` sobre o fundo preto é que devolve a imagem original.
+          2. GRÃO DE FILME: ruído em SVG (feTurbulence) por cima de tudo.
+          3. VINHETA: o centro nítido, as bordas afundando no escuro.
+
+          O deslocamento é `--sep`, escrito pelo scroll: forte na chegada, limpando
+          conforme a foto assenta. O JS escreve só o número; a composição é do CSS. */}
       <div className="hero-tr__capsula" ref={capsulaRef}>
+        <div className="capsula__filme" aria-hidden>
+          <img src={fabioEscuro} className="capsula__canal capsula__canal--r" alt="" />
+          <img src={fabioEscuro} className="capsula__canal capsula__canal--c" alt="" />
+        </div>
         <img
           src={fabioEscuro}
           width={780}
           height={936}
           alt="Fábio Borçato, sócio-fundador da H.M. Borçato."
           fetchPriority="high"
+          className="capsula__base"
         />
+        <span className="capsula__grao" aria-hidden />
+        <span className="capsula__vinheta" aria-hidden />
       </div>
     </section>
   );
