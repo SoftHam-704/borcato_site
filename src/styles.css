@@ -946,7 +946,7 @@
     justify-content: center;
     gap: 3px;
     padding: 8px 4px;
-    font-size: 9px;
+    font-size: 10px;
     letter-spacing: 0.1em;
     text-align: center;
   }
@@ -1638,7 +1638,7 @@
   font-variant-numeric: tabular-nums;
 }
 .trilho__rotulo span {
-  font-size: 9px;
+  font-size: 10px;
   letter-spacing: 0.14em;
   text-transform: uppercase;
   color: var(--br-fraco);

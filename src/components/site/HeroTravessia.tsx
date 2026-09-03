@@ -127,8 +127,8 @@ export function HeroTravessia() {
         {/* as tres linhas dividem UMA cascata de 6 palavras: a contagem continua
             de uma linha para a outra, entao o titulo se escreve na ordem da leitura */}
         <h1 className="hero-tr__titulo">
-          <span className="ln ln--1"><Palavras texto="De Minas para" total={6} /></span>
-          <em className="ln ln--2"><Palavras texto="outros onze" desde={3} total={6} /></em>
+          <span className="ln ln--1"><Palavras texto="De Minas para" total={6} /></span>{" "}
+          <em className="ln ln--2"><Palavras texto="outros onze" desde={3} total={6} /></em>{" "}
           <span className="ln ln--3"><Palavras texto="estados." desde={5} total={6} /></span>
         </h1>
 

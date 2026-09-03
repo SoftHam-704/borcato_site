@@ -1,4 +1,4 @@
-import type { CSSProperties } from "react";
+import type { CSSProperties, ReactNode } from "react";
 
 // PALAVRAS — o texto que se ESCREVE em vez de aparecer.
 //
@@ -26,6 +26,8 @@ interface Props {
 export function Palavras({ texto, desde = 0, total }: Props) {
   const palavras = texto.split(/\s+/).filter(Boolean);
   const n = total ?? palavras.length;
+  // O ESPACO FICA FORA DO BERCO. Dentro dele (no fim de um inline-block) o
+  // navegador descarta o espaco final, e o titulo saiu "DEMINASPARA".
   return (
     <>
       {palavras.map((p, i) => (
@@ -36,9 +38,8 @@ export function Palavras({ texto, desde = 0, total }: Props) {
           >
             {p}
           </span>
-          {i < palavras.length - 1 ? " " : null}
         </span>
-      ))}
+      )).reduce<ReactNode[]>((acc, el, i) => (i ? [...acc, " ", el] : [el]), [])}
     </>
   );
 }

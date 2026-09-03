@@ -59,6 +59,7 @@ function Index() {
 
       <HeroTravessia />
 
+      <main>
       {/* 01 — A CASA. Quem e, e de onde fala. */}
       <Capitulo id="cap-casa" className="cap--casa">
         <p className="cap__num">01 / A casa</p>
@@ -166,6 +167,7 @@ function Index() {
           </p>
         </div>
       </Capitulo>
+      </main>
     </div>
   );
 }
