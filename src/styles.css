@@ -1419,3 +1419,100 @@
     opacity: 0.3;
   }
 }
+
+/* ── O GESTO DE CADA CAPÍTULO ────────────────────────────────────────────────
+   Todos nascem de `--cap-entra` (0→1), escrito pelo JS. O componente Capitulo
+   não sabe de nenhum deles: escreve o número, e cada capítulo decide o que faz.
+   É o que impede a página de virar quatro blocos empilhados com o mesmo fade.
+
+   @property É OBRIGATÓRIO AQUI, não é enfeite. Custom property comum é TEXTO:
+   `--t: clamp(...)` fica guardado como a string "clamp(0, calc(...), 1)" e só é
+   avaliado no ponto de uso — dentro de outro calc() ele não resolve. MEDIDO: sem
+   isto a grade das marcas ficava com `inset(0px 0px 100%)` (invisível) e o MG
+   travava em scale(0.82), mesmo com --cap-entra igual a 1.
+   Registrando como <number>, o navegador computa o valor na hora da atribuição. */
+@property --t {
+  syntax: "<number>";
+  inherits: false;
+  initial-value: 1;
+}
+@property --cap-entra {
+  syntax: "<number>";
+  /* HERDA: o JS escreve na <section> e os filhos (grade, MG, título) leem dali.
+     Com `inherits: false` os filhos liam o initial-value 1 e o gesto nunca
+     acontecia — medido: --cap-entra ia de 0 a 0.99 e o clip ficava em 0%. */
+  inherits: true;
+  initial-value: 1;
+}
+
+/* 01 · A CASA — o texto SOBE, como quem chega. O rótulo do capítulo entra antes
+   do título, então a leitura acontece na ordem em que foi escrita. */
+.cap--casa .cap__num {
+  opacity: var(--cap-entra, 1);
+  transform: translateY(calc((1 - var(--cap-entra, 1)) * 20px));
+}
+.cap--casa .cap__titulo {
+  /* o título chega DEPOIS: a curva é a mesma, mas atrasada
+     (clamp de 0.15 a 1 remapeado para 0→1) */
+  --t: clamp(0, calc((var(--cap-entra, 1) - 0.15) / 0.85), 1);
+  opacity: var(--t);
+  transform: translateY(calc((1 - var(--t)) * 34px));
+}
+.cap--casa .cap__corpo {
+  --t: clamp(0, calc((var(--cap-entra, 1) - 0.3) / 0.7), 1);
+  opacity: var(--t);
+  transform: translateY(calc((1 - var(--t)) * 26px));
+}
+
+/* 02 · AS MARCAS — a grade se ACENDE. As células entram por linha, e a borda
+   da grade se desenha antes do conteúdo: é uma pasta sendo aberta. */
+.cap--marcas .marcas-lista {
+  --t: clamp(0, calc((var(--cap-entra, 1) - 0.25) / 0.75), 1);
+  /* a grade cresce a partir do topo, revelando as linhas */
+  clip-path: inset(0 0 calc((1 - var(--t)) * 100%) 0);
+}
+.cap--marcas .marcas-lista li {
+  opacity: clamp(0, calc((var(--cap-entra, 1) - 0.3) / 0.5), 1);
+}
+
+/* 03 · A ESTRADA — o MG cresce, e os onze estados chegam depois dele.
+   A hierarquia do gesto repete a hierarquia do argumento: a casa primeiro. */
+.cap--estrada .estrada__casa b {
+  --t: clamp(0, calc((var(--cap-entra, 1) - 0.2) / 0.6), 1);
+  display: inline-block;
+  transform: scale(calc(0.82 + var(--t) * 0.18));
+  transform-origin: 0 100%;
+  opacity: var(--t);
+}
+.cap--estrada .estrada__ufs {
+  --t: clamp(0, calc((var(--cap-entra, 1) - 0.45) / 0.55), 1);
+  opacity: var(--t);
+  transform: translateY(calc((1 - var(--t)) * 22px));
+}
+
+/* 04 · O NOME — já tem o gesto próprio (as letras se aproximam). O que falta é
+   a homenagem chegar DEPOIS da revelação: primeiro o H.M., depois o porquê. */
+.cap--nome .cap__corpo,
+.cap--nome .fecho {
+  --t: clamp(0, calc((var(--cap-entra, 1) - 0.4) / 0.6), 1);
+  opacity: var(--t);
+  transform: translateY(calc((1 - var(--t)) * 24px));
+}
+
+@media (prefers-reduced-motion: reduce) {
+  /* sem movimento tudo existe, inteiro e parado */
+  .cap--casa .cap__num,
+  .cap--casa .cap__titulo,
+  .cap--casa .cap__corpo,
+  .cap--marcas .marcas-lista li,
+  .cap--estrada .estrada__casa b,
+  .cap--estrada .estrada__ufs,
+  .cap--nome .cap__corpo,
+  .cap--nome .fecho {
+    opacity: 1;
+    transform: none;
+  }
+  .cap--marcas .marcas-lista {
+    clip-path: none;
+  }
+}

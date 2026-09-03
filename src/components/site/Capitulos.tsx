@@ -102,6 +102,10 @@ export function Capitulo({ id, children, className }: CapituloProps) {
         // 0 quando o topo encosta no rodapé da tela; 1 quando sobe 62% da viewport.
         // A faixa de 62% é a mesma do Movimento 2 da SoftHam — larga o bastante para
         // duas seções dividirem a tela por um instante, que é o que evita corte seco.
+        // MEDIDO no fim da página: o capítulo 04 fica com topo=216 numa viewport
+        // de 900, e esta fórmula dá 1.225 — ela chega a 1 sozinha, inclusive no
+        // último capítulo. Tentei "consertar" isso com uma janela de fim de página
+        // e foi o conserto que quebrou o gesto (--cap-entra caiu de 0.97 p/ 0.13).
         const t = (vh - r.top) / (vh * 0.62);
         el.style.setProperty("--cap-entra", String(Math.min(1, Math.max(0, t))));
       });
