@@ -57,7 +57,6 @@ function Index() {
       <Estrada />
 
       <HeroTravessia />
-      <BarraMarcas />
 
       {/* 01 — A CASA. Quem e, e de onde fala. */}
       <Capitulo id="cap-casa" className="cap--casa">

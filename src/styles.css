@@ -665,7 +665,8 @@
   grid-template-columns: minmax(0, 1fr) minmax(0, 0.82fr);
   align-items: center;
   gap: clamp(24px, 4vw, 72px);
-  padding: clamp(88px, 12vh, 160px) 0 clamp(48px, 8vh, 96px) var(--br-goteira);
+  padding: clamp(80px, 10vh, 130px) 0
+    calc(var(--alt-marcas, 120px) + clamp(16px, 2.4vh, 28px)) var(--br-goteira);
   background: var(--br-chao);
   color: var(--br-tinta);
   overflow: hidden;
@@ -695,7 +696,10 @@
   display: grid;                 /* cada linha manda na propria largura */
   justify-items: start;
   font-family: var(--font-display), sans-serif;
-  font-size: clamp(44px, 6.4vw, 96px);
+  /* vmin, nao vw: em tela larga e BAIXA (1440x900, 1280x720) o titulo
+     com 6.4vw dava 438px de altura e estourava a coluna. Com vmin ele
+     responde tambem a altura da janela. */
+  font-size: clamp(38px, 7.2vmin, 88px);
   line-height: 0.95;
   text-transform: uppercase;
 }
@@ -726,9 +730,9 @@
 
 .hero-tr__sub {
   max-width: 46ch;
-  margin: clamp(20px, 3vh, 34px) 0 0;
-  font-size: clamp(15px, 1.15vw, 18px);
-  line-height: 1.7;
+  margin: clamp(16px, 2.4vh, 30px) 0 0;
+  font-size: clamp(14px, 1.1vw, 17px);
+  line-height: 1.65;
   color: var(--br-fraco);
   text-wrap: pretty;
 }
@@ -765,11 +769,15 @@
   justify-self: end;
   width: min(46vw, 620px);
   aspect-ratio: 780 / 936;
-  /* MEDIDO: sem teto a cápsula fica com 744px de altura em 1440x900 e termina
-     134px abaixo da dobra. O teto desconta o padding do hero (clamp de topo +
-     clamp de base), que é a altura que realmente sobra para ela. */
+  /* O teto desconta TUDO o que ja ocupa altura no hero: o padding de topo e o
+     de base (que agora inclui a barra de marcas via --alt-marcas). MEDIDO: sem
+     descontar a barra, a conta dava 90 + 120,6 + 720 = 931px numa viewport de
+     900 — o padding SOMA a altura do maior filho, nao reserva por dentro. */
   max-height: min(
-    calc(100svh - clamp(88px, 12vh, 160px) - clamp(48px, 8vh, 96px)),
+    calc(
+      100svh - clamp(80px, 10vh, 130px) - var(--alt-marcas, 120px) -
+        clamp(16px, 2.4vh, 28px) - 8px
+    ),
     744px
   );
   margin-right: calc(clamp(20px, 6vw, 104px) * -1);
@@ -1194,14 +1202,20 @@
 }
 
 /* ── A barra de marcas (base do hero) ───────────────────────────────────────── */
+/* Dentro do hero, a barra de marcas e a BASE da composicao — ancora, nao separa.
+   ABSOLUTA na base, com o hero reservando o espaco dela via --alt-marcas, que o
+   JS MEDE (nao chuta). Tres tentativas com grid falharam: a altura da barra muda
+   com a largura (238px em 375, onde as pastilhas quebram em 3 linhas; 117px em
+   1440), e no mobile a grade vira uma coluna so e cria uma faixa a mais. */
 .marcas {
-  position: relative;
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
   z-index: 2;
-  padding: clamp(22px, 3.4vh, 38px) clamp(20px, 6vw, 104px);
+  padding: clamp(14px, 2vh, 22px) clamp(20px, 6vw, 104px) 0;
   padding-left: var(--br-goteira);
-  background: var(--br-chao);
-  border-top: 1px solid rgba(216, 216, 240, 0.1);
-  border-bottom: 1px solid rgba(216, 216, 240, 0.1);
+  border-top: 1px solid rgba(216, 216, 240, 0.08);
 }
 .marcas__titulo {
   display: flex;
@@ -1276,8 +1290,15 @@
 }
 
 @media (max-width: 900px) {
+  /* no mobile a capsula fica EM CIMA do texto: os dois empilhados nao cabem numa
+     tela junto com a barra. Ela volta ao fluxo, logo abaixo do hero. */
   .marcas {
-    padding-left: clamp(20px, 6vw, 104px);
+    position: static;
+    padding: clamp(18px, 2.6vh, 26px) clamp(20px, 6vw, 104px);
+    border-bottom: 1px solid rgba(216, 216, 240, 0.08);
+  }
+  .hero-tr {
+    padding-bottom: clamp(28px, 4vh, 44px);
   }
 }
 
@@ -1772,5 +1793,116 @@ body.is-abrindo {
 @media (prefers-reduced-motion: reduce) {
   .abertura {
     display: none;
+  }
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   AS TRANSIÇÕES ENTRE CAPÍTULOS — clip-path revelando
+   Referência: landonorris.com, medido com 41 elementos usando clip-path.
+   Lá uma seção não aparece embaixo da outra: ela é REVELADA por uma máscara
+   que cresce. Era o que faltava — o dono disse que o site tinha "virado uma
+   landing page com uma linha descendo e mais nada".
+
+   Cada capítulo revela numa DIREÇÃO diferente, e a direção diz algo:
+     01 A casa    — de baixo para cima: a casa se ergue
+     02 As marcas — da esquerda: a pasta se abre
+     03 A estrada — da direita: vem de fora, é quilômetro rodado
+     04 O nome    — do centro para as bordas: a revelação se abre
+
+   Tudo nasce de --cap-entra, que o JS já escreve. O componente não sabe de
+   nenhuma destas regras — é o padrão da casa: JS escreve a peça, CSS compõe.
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+/* a máscara termina ANTES do conteúdo interno acabar de entrar, senão o
+   capítulo abre e o texto ainda está subindo — parece atraso, não revelação */
+@property --rev {
+  syntax: "<number>";
+  inherits: false;
+  initial-value: 1;
+}
+
+.cap {
+  /* --rev vai de 0 a 1 mais rápido que --cap-entra: a cortina abre primeiro,
+     e o conteúdo entra dentro do quadro já aberto */
+  --rev: clamp(0, calc(var(--cap-entra, 1) / 0.55), 1);
+}
+
+/* 01 · A CASA — de baixo para cima */
+.cap--casa {
+  clip-path: inset(calc((1 - var(--rev)) * 100%) 0 0 0);
+}
+
+/* 02 · AS MARCAS — da esquerda, como uma pasta abrindo */
+.cap--marcas {
+  clip-path: inset(0 calc((1 - var(--rev)) * 100%) 0 0);
+}
+
+/* 03 · A ESTRADA — da direita: vem de fora */
+.cap--estrada {
+  clip-path: inset(0 0 0 calc((1 - var(--rev)) * 100%));
+}
+
+/* 04 · O NOME — do centro para as bordas: a revelação se abre */
+.cap--nome {
+  clip-path: inset(0 calc((1 - var(--rev)) * 50%) 0 calc((1 - var(--rev)) * 50%));
+}
+
+/* A costura entre capítulos: uma linha fina de luz na borda que está sendo
+   revelada, forte no momento da abertura e apagando quando o capítulo assenta.
+   É o que faz a transição ser vista, e não só acontecer. */
+.cap::before {
+  content: "";
+  position: absolute;
+  z-index: 3;
+  pointer-events: none;
+  background: linear-gradient(
+    var(--costura-dir, 90deg),
+    transparent,
+    color-mix(in srgb, var(--br-luz) 55%, transparent),
+    transparent
+  );
+  /* acende no meio da revelação e apaga no fim: sen(pi * rev) aproximado por
+     uma parábola, que o CSS calcula sem função trigonométrica */
+  opacity: calc(4 * var(--rev) * (1 - var(--rev)) * 0.55);
+}
+.cap--casa::before {
+  --costura-dir: 90deg;
+  left: 0;
+  right: 0;
+  height: 1px;
+  top: calc((1 - var(--rev)) * 100%);
+}
+.cap--marcas::before {
+  --costura-dir: 180deg;
+  top: 0;
+  bottom: 0;
+  width: 1px;
+  right: calc((1 - var(--rev)) * 100%);
+}
+.cap--estrada::before {
+  --costura-dir: 180deg;
+  top: 0;
+  bottom: 0;
+  width: 1px;
+  left: calc((1 - var(--rev)) * 100%);
+}
+/* o do nome tem duas bordas; a costura fica só na esquerda para não dobrar */
+.cap--nome::before {
+  --costura-dir: 180deg;
+  top: 0;
+  bottom: 0;
+  width: 1px;
+  left: calc((1 - var(--rev)) * 50%);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .cap--casa,
+  .cap--marcas,
+  .cap--estrada,
+  .cap--nome {
+    clip-path: none;
+  }
+  .cap::before {
+    opacity: 0;
   }
 }

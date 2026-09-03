@@ -1,5 +1,6 @@
 import { useEffect, useRef } from "react";
 import { estados, empresa } from "@/lib/dados";
+import { BarraMarcas } from "@/components/site/BarraMarcas";
 // Gerada com o Nano Banana a partir da original (marca/geracao/): luz lateral
 // dura e olhar fora de quadro. O passo do rastro de exposicao longa FALHOU —
 // o modelo criou uma segunda pessoa atras dele — entao o rastro fica no CSS.
@@ -21,6 +22,24 @@ import fabioEscuro from "@/assets/site/fabio-travessia.jpg";
 // hover/reduced-motion não briga com inline style.
 export function HeroTravessia() {
   const capsulaRef = useRef<HTMLDivElement>(null);
+
+  // A barra de marcas e absoluta na base do hero, e a altura dela MUDA com a
+  // largura (medido: 238px em 375, onde as pastilhas quebram em 3 linhas; 117px
+  // em 1440). O hero precisa reservar esse espaco, e nenhum valor fixo serve —
+  // entao ele e MEDIDO e escrito em --alt-marcas. Tres tentativas com grid
+  // falharam antes disto.
+  useEffect(() => {
+    const hero = document.querySelector<HTMLElement>(".hero-tr");
+    const barra = document.querySelector<HTMLElement>(".marcas");
+    if (!hero || !barra) return;
+    const medir = () => {
+      hero.style.setProperty("--alt-marcas", `${Math.round(barra.offsetHeight)}px`);
+    };
+    medir();
+    const obs = new ResizeObserver(medir);
+    obs.observe(barra);
+    return () => obs.disconnect();
+  }, []);
 
   useEffect(() => {
     const el = capsulaRef.current;
@@ -149,6 +168,13 @@ export function HeroTravessia() {
         <span className="capsula__grao" aria-hidden />
         <span className="capsula__vinheta" aria-hidden />
       </div>
+
+      {/* As 11 representadas na BASE DA PRIMEIRA TELA, como no 26 (Ferrari).
+          Antes eram irmas do hero e comecavam 1px abaixo da dobra em toda
+          largura — a promessa da ficha nunca se cumpria. Para um representante
+          comercial as marcas que ele carrega SAO a credencial: enterra-las a
+          tres telas de distancia e enterrar o argumento mais forte. */}
+      <BarraMarcas />
     </section>
   );
 }
