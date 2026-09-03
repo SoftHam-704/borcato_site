@@ -1,82 +1,115 @@
-# A foto nova do Fábio — briefing de geração
+# A foto nova do Fábio — briefing de geração (v2, em passos)
 
 **Decidido em 03/09/2026 com o dono.** O Fábio gostou do efeito do lukebaffait.fr, e a
-foto atual (`src/assets/site/fabio-escuro.jpg`) é de estúdio, limpa, olhando para a
-câmera. A nova deve ter o Fábio **olhando para o lado**, como o Luke no print.
+foto atual é de estúdio, limpa, olhando para a câmera. A nova deve ter o clima do print
+do Luke — o rosto recortado pela luz, com rastro de exposição longa.
+
+> **Por que esta v2:** a v1 pedia tudo num prompt só (pose + luz + rastro + aberração +
+> grão). O Nano Banana não trabalha assim — ele é bom em **uma edição por vez**, cada
+> uma partindo do resultado da anterior. E pedir para girar a cabeça é o tipo de coisa
+> que faz ele trocar a pessoa. Aqui vai em passos, do mais seguro ao mais arriscado.
 
 ---
 
-## Por que a imagem, e não só o CSS
+## A imagem de partida
 
-O tratamento em CSS já está no site (grão, vinheta, aberração cromática reagindo ao
-scroll) e está calibrado — mas ele tem teto. **O rastro do print do Luke é fotográfico:
-vem de exposição longa com movimento real diante da lente, não de pós-processamento.**
-Nenhum filtro reproduz isso, porque o borrão do original tem informação que a foto
-parada não tem: o rosto ocupou duas posições enquanto o obturador estava aberto.
+**`S:\Borçato\WhatsApp Image 2026-09-01 at 07.54.32.jpeg`** (1067 × 1600, corpo inteiro).
 
-Então a divisão é: **o peso vem na imagem, o CSS faz o acabamento e o movimento.**
+**Não** partir de `src/assets/site/fabio-escuro.jpg` — aquilo já é um recorte meu em
+780×936, com menos resolução e sem margem para reenquadrar.
 
-Quando a imagem nova chegar, é só trocar o arquivo em `src/assets/site/` e apontar o
-`import` em `HeroTravessia.tsx`. Nada mais muda.
+**Boa notícia:** nessa foto o corpo dele já está em 3/4 e o rosto já está levemente
+virado. **Metade do que a v1 pedia já existe** — não é preciso girar a cabeça, só
+desviar o olhar. Isso reduz muito o risco de o gerador trocar a pessoa.
+
+---
+
+## Os passos, nesta ordem
+
+Cada passo parte do **resultado aprovado do anterior**. Se um passo estragar a
+semelhança, voltar ao anterior e seguir sem ele — os primeiros já entregam muito.
+
+### Passo 1 — a luz (o que mais muda, e o mais seguro)
+
+> Keep the man's face, beard, hair, and clothing exactly as they are. Do not change his
+> identity or facial features. Relight the scene: a single hard directional key light
+> from the left side, carving his face and shoulder out of the darkness, with deep
+> shadow falloff on the opposite side. Background pure black. Moody, cinematic,
+> editorial lighting.
+
+Este passo sozinho já tira a cara de estúdio. **Se só ele der certo, já valeu.**
+
+### Passo 2 — o olhar
+
+> Keep everything identical. Change only his gaze: he now looks off to the side, away
+> from the camera, eyes directed out of the frame. Head stays in the same position —
+> only the eyes and a slight chin turn change.
+
+Pedir **só os olhos e um leve giro de queixo** é muito mais seguro que pedir 3/4 de
+perfil. Se ele começar a virar a cabeça toda e o rosto mudar, aceitar só o olhar.
+
+### Passo 3 — o rastro de exposição longa (o passo arriscado)
+
+> Keep the man sharp and in focus. Add a long-exposure ghosting effect: a soft,
+> semi-transparent duplicate of his head and shoulder trailing to one side, as if he
+> moved slightly while the shutter stayed open. The trail should be subtle and fade
+> out; his face must remain sharp and clearly readable.
+
+**Este é o que pode falhar.** Se o Nano Banana borrar a imagem inteira ou desfigurar o
+rosto, **pular** — a aberração cromática e o grão já estão no CSS do site, e o rastro é
+o único que ele não faz. Melhor sem rastro e com o Fábio reconhecível.
+
+### Passo 4 — enquadramento (pode ser feito à mão, sem IA)
+
+Recortar para **780 × 936** (ou 1560 × 1872 para retina), sujeito da cintura para cima,
+**deslocado para a direita, com espaço negativo à esquerda** — é por lá que o título
+passa. Esse recorte não precisa de gerador: qualquer editor faz, e sem risco.
+
+---
+
+## Se o Nano Banana não chegar perto
+
+Alternativas, em ordem de esforço:
+
+1. **Aceitar menos.** Passos 1 + 2 + 4, sem o rastro. O CSS do site já dá grão, vinheta
+   e aberração — e reagindo ao scroll, o que o print estático do Luke nem tem.
+2. **Outro gerador para o passo 3.** Seedream e Flux Kontext costumam ir melhor em
+   efeito de movimento; o Nano Banana é melhor em preservar pessoa.
+3. **Fotografar de novo.** O efeito do Luke é uma técnica de câmera simples: velocidade
+   baixa (1/4 s), sujeito se movendo devagar, flash no fim da exposição. Qualquer
+   fotógrafo de retrato faz. Se o Fábio topar 20 minutos de estúdio, sai melhor que
+   qualquer geração — e a foto passa a ser dele de verdade.
 
 ---
 
 ## O que preservar (não negociável)
 
-- **É o Fábio.** Mesma pessoa, mesmo rosto, reconhecível por quem o conhece. Barba,
-  cabelo e compleição iguais.
+- **É o Fábio.** Reconhecível por quem o conhece. Se não for, descartar — não adianta
+  ficar bonito.
 - **A camisa clara com o logo bordado da H.M. Borçato** — é a marca dele no peito.
-- **O fundo escuro.** A cápsula é recortada sobre `#0a0a0c`; fundo claro não funciona.
-- **A proporção 780 × 936** (a cápsula é `aspect-ratio: 780/936`). Gerar maior nessa
-  mesma proporção — 1560 × 1872 é o ideal, para a tela retina.
-- **Enquadramento vertical**, sujeito da cintura para cima, com **espaço negativo à
-  esquerda** — é por lá que o título passa.
-
-## O que muda
-
-- **Olhando para o lado**, não para a câmera. De perfil parcial (3/4), o olhar saindo
-  do quadro. É o que dá a leitura de "quem está a caminho", que é a direção do site.
-- **Luz lateral dura**, recortando o rosto contra o fundo. A foto atual tem luz de
-  estúdio chapada.
-- **Rastro de exposição longa**: um fantasma do rosto/ombro deslocado para um lado,
-  como se ele tivesse se movido durante a exposição.
-
----
-
-## Prompt (para Flow / Nano Banana / Seedream — image-to-image a partir da foto atual)
-
-> Cinematic portrait of the same man from the reference photo, preserving his exact
-> facial features, beard, and hairstyle. He is now turned in three-quarter profile,
-> looking off-frame to the side, not at the camera. He wears the same light blue
-> button-up work shirt with the embroidered chest logo. Deep black background.
-> Hard directional key light from one side carving his face out of the darkness,
-> strong falloff into shadow. Long-exposure motion blur: a soft ghosted double of his
-> head and shoulder trailing to one side, as if he moved while the shutter was open.
-> Subtle chromatic aberration on the high-contrast edges. Fine 35mm film grain.
-> Vertical composition, subject from the waist up, positioned to the right of frame
-> with negative space on the left. Moody, editorial, analog film look.
-> Aspect ratio 780:936.
-
-### Negativos
-> looking at camera, studio softbox lighting, white or light background, full-body,
-> horizontal composition, different person, cartoon, illustration, text, watermark,
-> oversaturated colors, red or green color cast
-
----
+- **Fundo escuro**, para sumir no `#0a0a0c` da cápsula.
+- **Proporção 780 × 936**, vertical.
+- **Espaço negativo à esquerda**, para o título.
 
 ## Aviso sobre a cor
 
-**A identidade é AZUL** (`#005f96`), provada no logo bordado da camisa dele — o verde
-do site antigo era `:hover` de template comprado. Se o gerador devolver a imagem com
-dominante vermelha (como o print do Luke, que é vermelho), **rejeitar**: o print serve
-de referência de TÉCNICA, não de cor. Ver `qg/clientes/borcato.md`.
+**A identidade é AZUL** (`#005f96`), provada no logo bordado da camisa — o verde do site
+antigo era `:hover` de template comprado. O print do Luke é **vermelho**: serve de
+referência de **técnica**, não de cor. Se vier com dominante vermelha, rejeitar.
+
+## Conferência antes de aceitar
+
+1. Alguém que conhece o Fábio o reconhece?
+2. O logo bordado continua legível no peito?
+3. O fundo é escuro o bastante?
+4. Há espaço negativo de um lado?
+5. A dominante é neutra ou azulada — nunca vermelha nem esverdeada.
 
 ---
 
-## Como conferir antes de aceitar
+## Quando a imagem chegar
 
-1. Alguém que conhece o Fábio o reconhece? Se não, descartar — não adianta ser bonito.
-2. O logo bordado continua legível no peito?
-3. O fundo é escuro o bastante para sumir no `#0a0a0c` da cápsula?
-4. Há espaço negativo de um lado para o título respirar?
-5. A dominante de cor é neutra ou azulada — nunca vermelha ou esverdeada.
+Trocar o arquivo em `src/assets/site/` e apontar o `import` em `HeroTravessia.tsx`.
+O tratamento de CSS (grão, vinheta, aberração reagindo ao scroll) já está pronto e
+calibrado — pode ser que com a imagem nova ele precise **diminuir**, para não somar
+tratamento sobre tratamento. É um número: `--sep` e `--filme` em `HeroTravessia.tsx`.
