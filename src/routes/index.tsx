@@ -2,6 +2,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { HeroTravessia } from "@/components/site/HeroTravessia";
 import { BarraMarcas } from "@/components/site/BarraMarcas";
 import { Capitulo, NavCapitulos } from "@/components/site/Capitulos";
+import { Estrada } from "@/components/site/Estrada";
 import { empresa, estados, representadas } from "@/lib/dados";
 
 export const Route = createFileRoute("/")({
@@ -49,6 +50,9 @@ function Index() {
   return (
     <div className="home-borcato travessia">
       <NavCapitulos />
+
+      {/* a estrada atravessa a pagina inteira, por tras do conteudo */}
+      <Estrada />
 
       <HeroTravessia />
       <BarraMarcas />

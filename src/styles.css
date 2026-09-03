@@ -801,6 +801,9 @@
    ═══════════════════════════════════════════════════════════════════════════ */
 
 .travessia {
+  /* a estrada e absoluta e se ancora AQUI; sem isto ela se ancoraria no
+     viewport e ficaria parada na tela em vez de rolar com a pagina */
+  position: relative;
   background: var(--br-chao);
   color: var(--br-tinta);
   /* trava a rolagem horizontal antes de ela existir: a cápsula e o card da
@@ -1111,7 +1114,10 @@
 
 .fecho {
   margin: clamp(56px, 9vh, 104px) auto 0;
-  max-width: 900px;
+  /* MEDIDO: em 1024 a 1a coluna ("Celular · WhatsApp") chegava a 9px da nav.
+     O fecho e centralizado e nao herda a goteira, entao ele mesmo se limita a
+     largura util — o que sobra depois das duas colunas da nav. */
+  max-width: min(900px, calc(100vw - var(--br-goteira) * 2));
 }
 .fecho__chamada {
   margin: 0 0 clamp(24px, 3.4vh, 40px);
@@ -1202,7 +1208,10 @@
   flex-wrap: wrap;
   gap: clamp(8px, 1vw, 14px);
   margin: 0;
-  padding: 0;
+  /* a estrada desce pela faixa da direita e precisa atravessar esta barra em
+     algum ponto; sem este recuo ela cortava a última pastilha em 1024 (medido).
+     A lista para antes da faixa, e a linha passa pelo vão. */
+  padding: 0 clamp(0px, 9vw, 150px) 0 0;
   list-style: none;
 }
 .marcas__lista button {
@@ -1267,4 +1276,33 @@
   .cap-nav a {
     transition: none;
   }
+}
+
+/* ── A ESTRADA — a linha que atravessa a travessia ───────────────────────────
+   Referencia: `.fluid-line` do lukebaffait.fr, o efeito escolhido pelo cliente.
+   O path e gerado em JS pelas posicoes REAIS dos capitulos (Estrada.tsx). */
+.estrada-linha {
+  position: absolute;
+  z-index: 0;
+  top: 0;
+  left: 0;
+  width: 100%;
+  /* a altura e escrita pelo JS, junto com o viewBox */
+  pointer-events: none;
+}
+.estrada-linha path {
+  /* MEDIDO: com --br-marca (#005f96) a 0.55 sobre o chao (#0a0a0c) o contraste
+     efetivo era 1.63:1 — invisivel. Copiei peso e opacidade da fita da SoftHam sem
+     ver que la a fita era VERMELHA sobre preto, e aqui e azul escuro sobre quase
+     preto. Com --br-luz a 0.55 o contraste sobe para 4.20:1. */
+  stroke: var(--br-luz);
+  stroke-width: 1.5;
+  stroke-opacity: 0.55;
+  stroke-linecap: round;
+}
+
+/* o conteudo passa POR CIMA da estrada */
+.travessia > *:not(.estrada-linha) {
+  position: relative;
+  z-index: 1;
 }
