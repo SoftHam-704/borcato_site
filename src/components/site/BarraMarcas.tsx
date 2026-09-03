@@ -18,7 +18,7 @@ const logos = import.meta.glob<{ default: string }>("../../assets/marcas/*.png",
 
 function arquivoDe(id: string): string | undefined {
   const chave = Object.keys(logos).find((k) => k.endsWith(`/${id}.png`));
-  return chave ? logos[chave].default : undefined;
+  return chave ? logos[chave]?.default : undefined;
 }
 
 export function BarraMarcas() {

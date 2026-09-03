@@ -5,8 +5,15 @@
 // existem, mas são dados comerciais do cliente e NÃO vão para uma página pública.
 // O que fica é alcance geográfico e as marcas — ambos verificáveis e autorizados.
 
+export interface Estado {
+  uf: string;
+  nome: string;
+  /** Minas é a base; os outros onze são estrada. */
+  casa?: boolean;
+}
+
 /** Os 12 estados atendidos, em ordem de relevância na operação (RepOne, 09/2026). */
-export const estados = [
+export const estados: readonly Estado[] = [
   { uf: "MG", nome: "Minas Gerais", casa: true },
   { uf: "ES", nome: "Espírito Santo" },
   { uf: "GO", nome: "Goiás" },

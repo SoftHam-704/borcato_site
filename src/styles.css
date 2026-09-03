@@ -1073,6 +1073,10 @@
 /* ── 04 · O nome ───────────────────────────────────────────────────────────── */
 .cap--nome {
   text-align: center;
+  /* este capitulo e centralizado, entao a goteira da nav nao pode empurra-lo:
+     sem isto o bloco inteiro ficava ~105px a direita do centro real em 1440 */
+  padding-left: clamp(20px, 6vw, 104px);
+  padding-right: clamp(20px, 6vw, 104px);
   background:
     radial-gradient(
       ellipse 80% 60% at 50% 34%,

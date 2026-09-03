@@ -127,9 +127,10 @@ function Index() {
       <Capitulo id="cap-nome" className="cap--nome">
         <p className="cap__num">04 / O nome</p>
         <h2 className="cap__titulo cap__titulo--grande">
-          <span aria-hidden>H</span>
-          <span aria-hidden>.</span>
-          <span aria-hidden>M</span>
+          {/* as letras sao spans para que o gesto de aproximacao (--cap-entra)
+              tenha o que aproximar; o leitor de tela recebe "H.M." inteiro */}
+          <span aria-hidden>H.</span>
+          <span aria-hidden>M.</span>
           <span className="sr-only">H.M.</span>
         </h2>
         <div className="cap__corpo cap__corpo--centro">
