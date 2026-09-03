@@ -113,3 +113,24 @@ Trocar o arquivo em `src/assets/site/` e apontar o `import` em `HeroTravessia.ts
 O tratamento de CSS (grão, vinheta, aberração reagindo ao scroll) já está pronto e
 calibrado — pode ser que com a imagem nova ele precise **diminuir**, para não somar
 tratamento sobre tratamento. É um número: `--sep` e `--filme` em `HeroTravessia.tsx`.
+
+---
+
+# Se um dia quiser pedir outra foto ao Fábio
+
+**Não é bloqueio.** A foto atual está no site e funciona. Isto fica registrado para o
+caso de haver uma nova sessão de fotos por outro motivo.
+
+**A foto que ele já tem é boa** (medido na original de 1067×1600):
+- Razão de luz do rosto: **3,66:1** — isso já é luz dramática, não estúdio chapado
+- Fundo em **6,9/255**, praticamente preto
+
+**O que falta é enquadramento, não luz.** A cápsula é 780×936 (0,833) e a foto é
+0,667 — mais estreita. O sujeito ocupa 72% da largura, sobrando 10% de vão à esquerda
+e 18% à direita, quando a cápsula pede 35-40% de um lado para o título respirar.
+**Tive de inventar 25% de fundo por composição** (espelhando o preto) para caber.
+
+**Se houver nova foto, o pedido é só este:** mesma luz, mesmo fundo, **enquadrar mais
+largo, com o Fábio deslocado para um lado** e o corpo da cintura para cima. Formato
+vertical 4:5. É instrução de enquadramento — não precisa de estúdio novo nem de
+técnica especial.
