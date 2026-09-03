@@ -12,6 +12,11 @@ import { useEffect, useRef, useState } from "react";
 // A diferença para um preloader: isto não mede carregamento nenhum, e não mente
 // sobre progresso. É uma ABERTURA — quatro tempos, 3,4s, com botão de pular.
 //
+// RODA SEMPRE, não uma vez por sessão. A convenção padrão é não segurar quem já
+// viu, mas este site é PEÇA DE VENDA: o Fábio vai abrir na frente de distribuidor
+// e de indústria, e quem recarrega na mesma reunião é justamente ele. Perder a
+// abertura na segunda vez é perdê-la onde ela mais importa. Quem não quer, pula.
+//
 // O gesto é o do próprio site: a cápsula (a forma que o cliente escolheu) se abre
 // e o hero está atrás dela. A porta e a travessia são a mesma coisa.
 
@@ -21,8 +26,6 @@ const TEMPOS = {
   capsula: 2000, // a cápsula se abre e revela o hero
   fim: 3400, // a camada sai do caminho
 } as const;
-
-const CHAVE = "hmb-abertura";
 
 export function Abertura() {
   const [saindo, setSaindo] = useState(false);
@@ -36,24 +39,11 @@ export function Abertura() {
     setSaindo(true);
     document.body.classList.remove("is-abrindo");
     window.setTimeout(() => setFora(true), 700);
-    try {
-      sessionStorage.setItem(CHAVE, "1");
-    } catch {
-      /* sessionStorage bloqueado: a abertura roda de novo, e tudo bem */
-    }
   };
 
   useEffect(() => {
-    // quem já viu nesta sessão vai direto ao site
-    let jaViu = false;
-    try {
-      jaViu = sessionStorage.getItem(CHAVE) === "1";
-    } catch {
-      jaViu = false;
-    }
     const semMovimento = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-
-    if (jaViu || semMovimento) {
+    if (semMovimento) {
       setFora(true);
       return;
     }

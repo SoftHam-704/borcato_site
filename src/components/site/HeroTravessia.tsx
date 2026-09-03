@@ -1,6 +1,7 @@
 import { useEffect, useRef } from "react";
 import { estados, empresa } from "@/lib/dados";
 import { BarraMarcas } from "@/components/site/BarraMarcas";
+import { FotoViva } from "@/components/site/FotoViva";
 // Gerada com o Nano Banana a partir da original (marca/geracao/): luz lateral
 // dura e olhar fora de quadro. O passo do rastro de exposicao longa FALHOU —
 // o modelo criou uma segunda pessoa atras dele — entao o rastro fica no CSS.
@@ -157,6 +158,8 @@ export function HeroTravessia() {
           prova visível da cor da marca. Nenhuma das 39 referências da biblioteca
           aplica glitch sobre rosto humano. */}
       <div className="hero-tr__capsula" ref={capsulaRef}>
+        {/* A foto PARADA e o piso: aparece na hora, e fica se o canvas nao
+            puder rodar (sem JS, reduced-motion, ou um quadro que falhou). */}
         <img
           src={fabioEscuro}
           width={780}
@@ -165,6 +168,8 @@ export function HeroTravessia() {
           fetchPriority="high"
           className="capsula__base"
         />
+        {/* A foto VIVA cobre a parada assim que os cinco quadros carregam. */}
+        <FotoViva />
         <span className="capsula__grao" aria-hidden />
         <span className="capsula__vinheta" aria-hidden />
       </div>

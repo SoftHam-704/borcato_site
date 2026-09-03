@@ -1255,7 +1255,7 @@
   height: 44px;
   padding: 0 8px;
   background: none;
-  border: 1px solid rgba(216, 216, 240, 0.12);
+  border: 1px solid rgba(216, 216, 240, 0.2);
   border-radius: 999px;
   cursor: pointer;
   transition:
@@ -1264,11 +1264,13 @@
 }
 .marcas__lista img {
   width: 100%;
-  max-height: 20px;
+  max-height: 22px;
   object-fit: contain;
-  /* os recortes são monocromáticos claros; em repouso ficam apagados e
-     acendem no foco — mesmo princípio da parede de parceiros da SoftHam */
-  opacity: 0.45;
+  /* 0.45 em repouso era pouco: no navegador de verdade "NTN", "Nidec" e "VP"
+     sumiam contra o chao (as capturas nao mostravam). As onze marcas SAO a
+     credencial do representante — precisam se ler sem hover. O realce de quem
+     esta em foco continua, pela borda e pelo salto de opacidade. */
+  opacity: 0.72;
   transition: opacity 0.35s ease;
 }
 .marcas__lista span {
@@ -1905,4 +1907,22 @@ body.is-abrindo {
   .cap::before {
     opacity: 0;
   }
+}
+
+/* ── A FOTO VIVA ─────────────────────────────────────────────────────────────
+   O canvas cobre a foto parada assim que os cinco quadros carregam. A parada
+   continua embaixo como piso: sem JS, com reduced-motion ou se um quadro
+   falhar, o hero nao fica vazio. */
+.capsula__viva {
+  position: absolute;
+  z-index: 1;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  display: block;
+  opacity: 0;
+  transition: opacity 0.5s ease;
+}
+.capsula__viva.is-pronta {
+  opacity: 1;
 }
