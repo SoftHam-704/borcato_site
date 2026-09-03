@@ -642,6 +642,21 @@
    A paleta veio do BORDADO da camisa do Fábio (foto em close, amostrada em
    marca/_bordado_4x.png): matizes entre 204° e 240°, nenhum verde. O #90c140 do
    template Joomla antigo era :hover de um tema comprado, não a marca. */
+/* ═══════════════════════════════════════════════════════════════════════════
+   A PALETA — DECISÃO FECHADA DO DONO (03/09/2026). NÃO "CORRIGIR".
+
+   O logo que o cliente entregou (marca/logo/hm-borcato-cores-reais.jpeg) tem os
+   quatro ícones num DEGRADÊ, amostrado: #048fc6 no pistão → #0fd9ff no freio,
+   matizes entre 190° e 197°. São mais claros e mais vibrantes que o nosso
+   --br-marca (#005f96).
+
+   Isso foi levado ao dono, com a diferença medida. A decisão foi MANTER a nossa
+   paleta: o azul mais fechado se sustenta melhor sobre o chão #0a0a0c, e o
+   --br-luz (#a0d0f0) já cobre a faixa clara do degradê do logo.
+
+   Se numa sessão futura alguém amostrar o logo e achar que a paleta "está
+   errada": não está. Foi comparada e decidida.
+   ═══════════════════════════════════════════════════════════════════════════ */
 .home-borcato {
   /* A COLUNA DA NAV — uma so fonte de verdade.
      A nav vive dentro dela e o conteudo comeca depois dela; antes eram dois
