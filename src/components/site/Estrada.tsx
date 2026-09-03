@@ -29,6 +29,31 @@ import { useEffect, useRef } from "react";
  * repeti. O conteúdo dos capítulos é alinhado à esquerda e tem `max-width`, então a
  * faixa da direita é o vão livre: é por lá que a estrada desce, serpenteando.
  */
+/**
+ * O MAPA DE MINAS, em fração da largura e da altura do capítulo 03.
+ *
+ * Não é cartografia — é a silhueta reconhecível de Minas, na ordem em que o Fábio
+ * roda. O público é mineiro: errar ONDE fica o Triângulo ou a Zona da Mata é o
+ * único erro que ele detecta na hora.
+ *
+ * A ordem é a de uma viagem que sai de casa e volta: BH (centro) → Sul → Triângulo
+ * (oeste) → Alto Paranaíba → Centro-Oeste → Norte → Vale do Aço → Zona da Mata
+ * (leste). Nunca dois saltos seguidos atravessando o estado.
+ *
+ * `x` é fração da largura da tela; `y` é fração da ALTURA do capítulo 03 — assim o
+ * mapa acompanha o capítulo em qualquer viewport, sem número fixo.
+ */
+export const REGIOES_MAPA: { nome: string; x: number; y: number }[] = [
+  { nome: "Central / RMBH", x: 0.62, y: 0.52 },
+  { nome: "Sul de Minas", x: 0.54, y: 0.74 },
+  { nome: "Triângulo", x: 0.30, y: 0.55 },
+  { nome: "Alto Paranaíba", x: 0.44, y: 0.47 },
+  { nome: "Centro-Oeste", x: 0.53, y: 0.44 },
+  { nome: "Norte", x: 0.60, y: 0.18 },
+  { nome: "Vale do Aço", x: 0.74, y: 0.40 },
+  { nome: "Zona da Mata", x: 0.78, y: 0.66 },
+];
+
 const ROTA: Record<string, number> = {
   // A rota SERPENTEIA: entra larga, recua, avança de novo. Uma rota quase reta
   // (a 1a tinha os quatro pontos entre 0,78 e 1,06) vira régua, não estrada —
@@ -57,6 +82,8 @@ export function Estrada() {
     // curva caíam SOBRE o texto. No celular não existe vão por onde a estrada passe:
     // ela é um efeito de desktop, e no mobile simplesmente não existe.
     const estreito = window.matchMedia("(max-width: 900px)");
+    /** onde, ao longo do traco, cada regiao acende */
+    let marcos: { el: HTMLElement; emQue: number }[] = [];
 
     /** Remonta a curva a partir de onde os capítulos estão AGORA. */
     const montar = () => {
@@ -73,13 +100,23 @@ export function Estrada() {
       const topoDoc = window.scrollY;
       const larg = document.documentElement.clientWidth;
 
-      // um ponto por capítulo, no centro vertical dele
-      const pontos = alvos.map((el) => {
+      // Um ponto por capítulo, no centro vertical dele — EXCETO o capítulo 03,
+      // que entrega os 8 pontos do mapa de Minas.
+      //
+      // A spec é explícita: UM path só. Se houvesse dois — a estrada global e uma
+      // rota local do capítulo 03 — eles teriam progressos diferentes e a emenda
+      // ficaria visível (risco R-43, o modo de falha nº 1 desta fase). Aqui as
+      // regiões são pontos da MESMA spline: a emenda não existe por construção.
+      const pontos = alvos.flatMap((el) => {
         const r = el.getBoundingClientRect();
-        return {
-          x: larg * (ROTA[el.id] ?? 0.5),
-          y: r.top + topoDoc + r.height / 2,
-        };
+        const topo = r.top + topoDoc;
+        if (el.id === "cap-estrada") {
+          return REGIOES_MAPA.map((g) => ({
+            x: larg * g.x,
+            y: topo + r.height * g.y,
+          }));
+        }
+        return [{ x: larg * (ROTA[el.id] ?? 0.5), y: topo + r.height / 2 }];
       });
 
       // a estrada nasce na cápsula do hero e morre depois do último capítulo:
@@ -118,9 +155,44 @@ export function Estrada() {
       path.setAttribute("d", d);
 
       const compr = path.getTotalLength();
+
+      // ONDE, ao longo do traco, cada regiao fica. Mede-se o comprimento do path
+      // ate o ponto dela — assim a luz acende no instante em que a ponta passa,
+      // e nao num palpite de porcentagem.
+      marcos = [];
+      const lis = document.querySelectorAll<HTMLElement>("#cap-estrada .estrada__ufs li");
+      if (lis.length === REGIOES_MAPA.length) {
+        const passos = 260;
+        REGIOES_MAPA.forEach((g, i) => {
+          const alvoX = larg * g.x;
+          const capEl = document.getElementById("cap-estrada");
+          if (!capEl) return;
+          const rc = capEl.getBoundingClientRect();
+          const alvoY = rc.top + window.scrollY + rc.height * g.y;
+          // procura o ponto do path mais proximo do marco
+          let melhor = 0;
+          let menor = Infinity;
+          for (let k = 0; k <= passos; k++) {
+            const l = (compr * k) / passos;
+            const pt = path.getPointAtLength(l);
+            const d = (pt.x - alvoX) ** 2 + (pt.y - alvoY) ** 2;
+            if (d < menor) {
+              menor = d;
+              melhor = l;
+            }
+          }
+          const el = lis[i];
+          if (el) marcos.push({ el, emQue: melhor });
+        });
+      }
+
       path.style.strokeDasharray = `${compr}`;
-      // reduced-motion: a estrada existe inteira, sem depender de rolagem
+      // reduced-motion: a estrada existe inteira E as regioes ficam acesas —
+      // e o que a spec exige, para quem nao ve movimento nao perder a cena.
       path.style.strokeDashoffset = reduzido.matches ? "0" : `${compr}`;
+      if (reduzido.matches) {
+        for (const m of marcos) m.el.classList.add("is-percorrida");
+      }
 
       return compr;
     };
@@ -138,6 +210,18 @@ export function Estrada() {
         // LINEAR. Sem ease: a ponta anda exatamente o que o dedo anda.
         const t = Math.min(1, Math.max(0, window.scrollY / rolavel));
         path.style.strokeDashoffset = (compr * (1 - t)).toFixed(1);
+
+        // AS REGIOES ACENDEM QUANDO A PONTA CHEGA NELAS.
+        // O que separa "rota percorrida" de "mapa de calor" (que a spec proibe):
+        // existe uma ponta que anda, e o que ficou para tras esta aceso. A fonte
+        // de progresso e a MESMA da linha — nao ha segundo relogio, entao a luz
+        // nao pode se desencontrar do traco.
+        if (marcos.length) {
+          const andado = compr * t;
+          for (const m of marcos) {
+            m.el.classList.toggle("is-percorrida", andado >= m.emQue);
+          }
+        }
       });
     };
     esfregar();

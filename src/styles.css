@@ -1372,7 +1372,10 @@
    para 101px com z-index 1. Regra larga com lista de excecoes so cresce.
    Agora NOMEIA quem sobe, em vez de subir todo mundo e abrir excecao. */
 .travessia > .hero-tr,
-.travessia > .marcas,
+.travessia > .marcas {
+  position: relative;
+  z-index: 1;
+}
 .travessia > .cap {
   position: relative;
   z-index: 1;
@@ -2263,4 +2266,69 @@ body.is-abrindo {
 .cap > * {
   position: relative;
   z-index: 1;
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   FASE 3 — A ROTA ACENDE AS REGIÕES
+   O capítulo 03 se chama "A estrada" e era a seção mais parada do site: a linha
+   passava pela margem sem tocar em nada. Agora ela ENTRA no capítulo, desenha o
+   contorno de Minas e acende cada região quando a ponta chega nela.
+
+   O que separa isto de um "mapa de calor" (que a spec proíbe): existe uma PONTA
+   que anda, e o que ficou para trás está aceso. Rota percorrida, não cobertura
+   pintada.
+   ═══════════════════════════════════════════════════════════════════════════ */
+.estrada__ufs li {
+  transition:
+    color 0.55s cubic-bezier(0.16, 1, 0.3, 1),
+    opacity 0.55s ease;
+}
+/* apagada: existe, mas ainda não foi percorrida */
+.estrada__ufs li b {
+  color: var(--br-fraco);
+  transition: color 0.55s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.estrada__ufs li span {
+  opacity: 0.5;
+  transition: opacity 0.55s ease;
+}
+
+/* acesa: a estrada já passou por aqui */
+.estrada__ufs li.is-percorrida b {
+  color: var(--br-tinta);
+}
+.estrada__ufs li.is-percorrida span {
+  opacity: 1;
+}
+/* o pingo que marca a parada — só aparece depois de percorrida */
+.estrada__ufs li {
+  position: relative;
+  padding-left: 16px;
+}
+.estrada__ufs li::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0.55em;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--br-fraco);
+  opacity: 0.35;
+  transition: background-color 0.55s ease, opacity 0.55s ease, box-shadow 0.55s ease;
+}
+.estrada__ufs li.is-percorrida::before {
+  background: var(--br-luz);
+  opacity: 1;
+  /* o halo diz "a estrada encostou aqui", sem virar enfeite */
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--br-luz) 18%, transparent);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .estrada__ufs li,
+  .estrada__ufs li b,
+  .estrada__ufs li span,
+  .estrada__ufs li::before {
+    transition: none;
+  }
 }

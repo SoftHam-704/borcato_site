@@ -20,8 +20,15 @@ esquerda, e as duas coisas nunca se encontram.
 
 ## O que construir
 
-A linha que ja vem descendo **pousa** num contorno do Brasil e vira rota: sai de MG e
-percorre os 11 estados conforme se rola, acendendo cada sigla ao chegar.
+> ⚠️ **SPEC CORRIGIDA EM 03/09, DEPOIS DA CORRECAO DO CLIENTE.** A versao original dizia
+> "contorno do Brasil" e "os 11 estados". **Nao existem mais** — o Fabio atende APENAS
+> Minas Gerais, e ele mesmo pegou o erro olhando o hero. Ver `src/lib/dados.ts`.
+>
+> **O escopo novo e melhor:** um estado tem silhueta reconhecivel; doze espalhados pelo
+> Brasil nao tinham. E a cobertura mineira e demonstravel, ao contrario dos 12 estados.
+
+A linha que ja vem descendo **pousa** no contorno de MINAS GERAIS e vira rota: sai de Belo
+Horizonte e percorre as **8 regioes** conforme se rola, acendendo cada uma ao chegar.
 
 ### A decisao de arquitetura que evita o defeito principal
 
@@ -32,7 +39,7 @@ falha numero 1 desta fase.
 
 **A saida e um `path` so.** A `Estrada` ja monta a curva a partir das posicoes reais das
 secoes (`Estrada.tsx:62-126`): hoje sao 4 pontos de capitulo mais 2 de entrada/saida. O
-ponto do `cap-estrada` vira a **entrada do mapa**, e os 11 estados viram **pontos
+ponto do `cap-estrada` vira a **entrada do mapa**, e as 8 regioes viram **pontos
 adicionais da mesma spline Catmull-Rom**. A emenda deixa de existir por construcao, em vez
 de ser disfarcada.
 
@@ -58,7 +65,7 @@ Estao escritas nos comentarios do proprio arquivo. Nao as reaprenda:
 | Limite | Valor | Por que |
 |---|---|---|
 | Geometria do mapa | **<= 40 KB gzip** | e simbolo, nao cartografia (D-04) |
-| Posicao relativa dos 12 estados | **correta** | errar a ordem geografica e o unico erro que este publico detecta |
+| Posicao relativa das 8 regioes | **correta** | o publico e mineiro: errar onde fica o Triangulo ou a Zona da Mata e o unico erro que ele detecta na hora |
 | Precisao do contorno | **estilizada, declarada** | imprecisao de estilo e direcao; imprecisao acidental e erro |
 | reduced-motion | rota completa, siglas acesas | e o que `Estrada.tsx:123` ja faz para a linha |
 | Mobile (< 900px) | **decisao obrigatoria** | a estrada nao existe la (`Estrada.tsx:59-65`) |
@@ -88,7 +95,7 @@ Alem dos numeros, dois testes de espirito:
 
 ## Criterios de saida
 
-- [ ] a rota parte de MG e toca os 11 na ordem, acendendo a sigla ao chegar
+- [ ] a rota parte de BH e toca as 8 regioes na ordem, acendendo cada uma ao chegar
 - [ ] geometria <= 40 KB gzip
 - [ ] **zero emenda visivel** entre a estrada e a rota, em 1024/1440/1920
 - [ ] reduced-motion mostra rota completa e siglas acesas
