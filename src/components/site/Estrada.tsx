@@ -32,6 +32,16 @@ import { useEffect, useRef } from "react";
 /**
  * O MAPA DE MINAS, em fração da largura e da altura do capítulo 03.
  *
+ * 🔒 DECISÃO FECHADA (03/09, opção C do relatório da fase 3): a linha desenha esta
+ * rota ATRÁS do capítulo 03 e não aparece dentro dele — o fundo opaco da seção a
+ * cobre, e nenhum z-index resolve, porque o `clip-path` do gesto de revelação cria
+ * contexto de empilhamento. Foram quatro tentativas; a spec mandava parar em duas.
+ *
+ * O que o visitante vê, e que é o que importa: as 8 regiões acendendo em ordem
+ * conforme a ponta da linha chega em cada uma. Rota percorrida, não mapa de calor.
+ *
+ * **Não "consertar" isto.** Ver `war-game/outputs/fases/f3-PARCIAL.md`.
+ *
  * Não é cartografia — é a silhueta reconhecível de Minas, na ordem em que o Fábio
  * roda. O público é mineiro: errar ONDE fica o Triângulo ou a Zona da Mata é o
  * único erro que ele detecta na hora.

@@ -56,7 +56,15 @@ estará atrás do fundo e simplesmente não se vê.
 do site". A linha continua desenhando a rota **atrás** do capítulo, invisível ali mas visível
 antes e depois. É o menor custo, e entrega a maior parte do valor.
 
-**Minha recomendação: C agora, B quando houver decisão de arquitetura.** A cena já melhorou
+> ## ✅ DECIDIDO PELO DONO (03/09): **opção C.**
+> A cena fica como está. A linha desenha a rota atrás do capítulo — invisível ali,
+> visível antes e depois — e as 8 regiões acendem em ordem conforme a ponta passa.
+>
+> **Não reabrir.** Custou quatro tentativas e a spec mandava parar em duas. Se um dia
+> houver motivo para retomar, a opção B (SVG próprio no capítulo) é o caminho, e ela
+> contraria o "um path só" da spec de propósito — é decisão arquitetural, não bug.
+
+**Minha recomendação era: C agora, B quando houver decisão de arquitetura.** A cena já melhorou
 de forma medível; forçar a linha para dentro custou quatro tentativas e não entregou.
 
 ## Ainda pendente da spec
