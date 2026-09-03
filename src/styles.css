@@ -1093,8 +1093,11 @@
 
 .estrada__ufs {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(min(100%, 158px), 1fr));
-  gap: clamp(16px, 2.2vw, 30px);
+  /* 158px servia para siglas de 2 letras; nome de regiao pede o dobro. Com 236px
+     dao 4 colunas em 1440 e as 8 regioes fecham 4+4, sem fila orfa nem quebra
+     de nome em duas linhas. */
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 236px), 1fr));
+  gap: clamp(18px, 2vw, 28px) clamp(16px, 2.2vw, 30px);
   margin: 0;
   padding: 0;
   list-style: none;
@@ -1105,7 +1108,12 @@
 }
 .estrada__ufs b {
   font-family: var(--font-display), sans-serif;
-  font-size: clamp(20px, 2.1vw, 30px);
+  /* "Alto Paranaiba" e "Central / RMBH" sao os mais longos e mandam na escala:
+     com 22px quebravam em duas linhas numa coluna de 269px. Em 18px cabem, e o
+     nome da regiao deixa de competir com o "MG" gigante logo acima. */
+  font-size: clamp(15px, 1.2vw, 18px);
+  letter-spacing: -0.005em;
+  white-space: nowrap;
   font-weight: 700;
   line-height: 1;
   letter-spacing: -0.02em;
