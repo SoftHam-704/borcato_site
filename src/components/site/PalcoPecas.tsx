@@ -45,7 +45,19 @@ export function PalcoPecas() {
         const t = Math.min(1, Math.max(0, -r.top / pista));
         // t=0 é a primeira peça, t=1 a última. O piso de 0,999 evita que o
         // último quadro pisque de volta para a primeira ao encostar no fim.
-        const i = Math.min(COM_PECA.length - 1, Math.floor(t * 0.999 * COM_PECA.length));
+        // A PISTA TEM 12 TRECHOS PARA 11 MARCAS.
+        //
+        // O 12o e a PASSAGEM, e ele existe porque a versao anterior roubava o
+        // tempo da ultima marca: a entrega ocupava o ultimo 1/11, que era
+        // justamente o trecho da VP. MEDIDO — clicar na pastilha dela levava a
+        // entrega=0,653, com o texto em 10% de opacidade. A 11a marca era a
+        // unica que o visitante nao conseguia ler.
+        //
+        // Agora as 11 marcas ocupam os 11 primeiros trechos, cada uma com
+        // leitura inteira, e a passagem tem trecho proprio depois delas.
+        const TRECHOS = COM_PECA.length + 1;
+        const trecho = t * 0.999 * TRECHOS;
+        const i = Math.min(COM_PECA.length - 1, Math.floor(trecho));
         setAtiva((antes) => (antes === i ? antes : i));
 
         // A PASSAGEM PARA "A ESTRADA" — do objeto para o territorio.
@@ -59,11 +71,13 @@ export function PalcoPecas() {
         // relogio proprio, e o conteudo continua legivel o tempo todo — quem
         // parar no meio ve uma peca menor, nao um estado quebrado.
         //
-        // A janela e o ULTIMO 1/11 da pista (o tempo da 11a peca), para a
-        // entrega acontecer na virada e nao ao longo do capitulo inteiro.
-        const limiar = 1 - 1 / COM_PECA.length;
-        const entrega = Math.min(1, Math.max(0, (t - limiar) / (1 - limiar)));
-        palco.style.setProperty("--entrega", entrega.toFixed(4));
+        // A passagem roda no 12o trecho — DEPOIS de a VP ter sido lida.
+        const entrega = Math.min(1, Math.max(0, trecho - COM_PECA.length));
+        // NA RAIZ, e nao so no palco: o capitulo 03 e IRMAO deste (nao filho),
+        // entao uma variavel escrita aqui nunca chegaria la. A passagem precisa
+        // que as duas cenas leiam o MESMO relogio — e o que separa uma entrega
+        // coordenada de dois fades independentes.
+        document.documentElement.style.setProperty("--entrega", entrega.toFixed(4));
       });
     };
 
@@ -154,7 +168,8 @@ export function PalcoPecas() {
                   // horas depois, neste arquivo. Achado na revisao de 05/09.
                   const topo =
                     palco.getBoundingClientRect().top + window.scrollY;
-                  const alvo = topo + (pista * (i + 0.5)) / COM_PECA.length;
+                  // mira o meio do trecho DA MARCA, na conta de 12 trechos
+                  const alvo = topo + (pista * (i + 0.5)) / (COM_PECA.length + 1);
                   // MESMA REGRA DA ROLAGEM HORIZONTAL DA TRILHA (linha ~101):
                   // este salto pedia `smooth` incondicional, e o outro ja
                   // respeitava a preferencia. Duas rolagens na mesma tela com
