@@ -82,23 +82,39 @@ JS_AUDITORIA = """
     //     excecao o portao acusava 12 falhas em TODA largura, inclusive 1440
     //     onde nao ha problema — 12 iguais em toda largura e assinatura de
     //     falso positivo, nao de defeito.
+    // DUAS EXCECOES, e so duas — ambas NOMEADAS.
+    //
+    // A 1a versao ignorava QUALQUER ancestral com translateX > 1px, achando que
+    // isso identificava a marquise. Nao identificava: identificava qualquer
+    // translacao. Provado em 05/09 — um botao fora da tela sob um pai com
+    // `translateX(20px)` passava despercebido. Excecao por FORMA e cega;
+    // excecao por NOME e auditavel.
+    const MARQUISES = ['marcas__trilho'];
     let ignorar = false;
     for (let p = el.parentElement; p; p = p.parentElement) {
       const ps = getComputedStyle(p);
+      // 1. pai que rola de lado: o item e alcancavel rolando
       if (ps.overflowX === 'auto' || ps.overflowX === 'scroll') { ignorar = true; break; }
-      if (ps.transform && ps.transform !== 'none' && /matrix/.test(ps.transform)) {
-        // so conta como marquise se o pai realmente desloca no eixo X
-        const m = new DOMMatrixReadOnly(ps.transform);
-        if (Math.abs(m.m41) > 1) { ignorar = true; break; }
-      }
+      // 2. marquise CONHECIDA: por construcao tem copias fora do quadro
+      const cls = (p.className || '').toString();
+      if (MARQUISES.some((m) => cls.includes(m))) { ignorar = true; break; }
     }
     if (ignorar) continue;
-    if (r.right < 2 || r.left > vw - 2) {
+
+    // RECORTE PARCIAL TAMBEM CONTA. A 1a versao so pegava o que estava
+    // INTEIRO fora (`right < 2 || left > vw - 2`) — um botao com metade da
+    // largura cortada passava limpo, e metade de um alvo de 44px e 22px:
+    // abaixo do piso da casa, na pratica inclicavel.
+    // Aqui o criterio e quanto do alvo SOBRA visivel.
+    const visivelX = Math.max(0, Math.min(r.right, vw) - Math.max(r.left, 0));
+    const fracao = r.width > 0 ? visivelX / r.width : 0;
+    if (visivelX < 44 || fracao < 0.6) {
       foraDaTela.push({
         tag: el.tagName.toLowerCase(),
         cls: (el.className || '').toString().slice(0, 40),
         txt: (el.textContent || '').trim().slice(0, 26),
         left: Math.round(r.left), right: Math.round(r.right), vw,
+        visivel: Math.round(visivelX), pct: Math.round(fracao * 100),
       });
     }
   }
@@ -146,7 +162,8 @@ with sync_playwright() as pw:
         print(f"  clicavel FORA da tela: {len(fora)}",
               "OK" if not fora else "<<< FALHA (inalcancavel)")
         for f in fora[:6]:
-            print(f"      {f['tag']}.{f['cls']} x={f['left']}..{f['right']} vw={f['vw']} :: {f['txt']!r}")
+            print(f"      {f['tag']}.{f['cls']} x={f['left']}..{f['right']} "
+                  f"visivel {f.get('visivel','?')}px ({f.get('pct','?')}%) :: {f['txt']!r}")
         print(f"  erros de console : {len(erros)}")
         for e in erros[:5]:
             print(f"      {e[:150]}")

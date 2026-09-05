@@ -186,7 +186,7 @@ o padrão importa mais que os defeitos.
 | Telas de erro | "Page not found", "Go home" num documento `pt-BR` | ✅ traduzidas |
 | Pastilhas do palco | 584px de trilha; em 375px começavam em **x = −104** | ✅ trilha rola de lado, alvo de 44px intacto |
 | `offsetTop` no palco | a armadilha que este próprio arquivo documenta | ✅ trocado por `getBoundingClientRect` |
-| Âncoras de cidade | `dados.ts` pede confirmação; a página já as exibe | ⚠️ **em aberto** — ver abaixo |
+| Âncoras de cidade | `dados.ts` pedia confirmação; a página já as exibia | ✅ **removidas** (decisão do dono: só as regiões) |
 
 ### O furo do portão, que é a lição maior
 
@@ -200,14 +200,43 @@ O portão ganhou um teste novo — **controle clicável fora da área visível**
 quem tem pai rolável ou é item de marquise. **E foi validado reintroduzindo o bug:**
 com o defeito de volta ele acusa 4 e nomeia os certos; sem, acusa zero.
 
-### O que continua em aberto (decisão do cliente, não técnica)
+### As cidades saíram (05/09) — decisão do dono
 
-`src/lib/dados.ts` marca as cidades-âncora como **a confirmar com o Fábio**, e
-`src/routes/index.tsx` já as renderiza. É a regra dura nº 2 sendo esticada: as cidades
-são plausíveis, mas ninguém confirmou que são roteiro real.
+Perguntei, ele respondeu **"apenas as regiões"**. Saíram do hero, do capítulo 03 e do
+próprio `dados.ts` (o campo `ancoras` não existe mais, para não ficar dado publicável
+sem uso). Voltam só com autorização explícita do Fábio.
 
-**Duas saídas:** perguntar a ele (uma pergunta, não pessoal), ou mostrar as regiões sem
-nomear cidade. **Não deixar como está sem decidir.**
+---
+
+## 4-C. SEGUNDA AUDITORIA (05/09) — e ela achou furo no MEU teste
+
+Uma segunda revisão conferiu a rodada anterior. Três achados, todos procedentes:
+
+**1. Eu declarei a tradução concluída e faltavam duas linhas.** Meu grep buscou os
+títulos e botões; os parágrafos ficaram. ✅ corrigido, com varredura ampla depois.
+
+**2. O indicador do palco mentia no celular.** Em 375px a trilha mostra 315px de 569px:
+**da 7ª marca em diante a pastilha ativa saía da área visível e o `scrollLeft` ficava em
+zero** — cinco das onze sem indicação de posição. ✅ a trilha agora acompanha a marca
+ativa (sem `scrollIntoView`: ele rolaria a página inteira e daria salto vertical).
+
+**3. O teste que EU criei e declarei "validado" tinha dois furos.** Este é o mais
+instrutivo:
+
+| Furo | O que passava | Por quê |
+|---|---|---|
+| Exceção por forma | botão fora da tela sob pai com `translateX(20px)` | eu ignorava **qualquer** translação em X, achando que isso identificava a marquise |
+| Recorte parcial | botão com metade da largura cortada | eu só detectava o que estava **inteiro** fora |
+
+**Provei os dois criando o defeito**, e ambos passavam despercebidos.
+
+> **A lição:** validar um teste com UM caso não o valida. Eu tinha reintroduzido o bug
+> das pastilhas, visto o teste pegar, e chamado de validado. Um caso prova que ele pega
+> aquele caso.
+>
+> **E exceção por FORMA é cega; exceção por NOME é auditável.** Agora a marquise é
+> ignorada pela classe (`marcas__trilho`), não por ter transform. E o critério passou a
+> ser *quanto do alvo sobra visível* (mínimo 44px e 60%), não "está inteiro fora".
 
 ---
 

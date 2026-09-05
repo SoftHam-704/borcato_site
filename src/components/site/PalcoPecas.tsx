@@ -27,6 +27,7 @@ const COM_PECA = representadas
 
 export function PalcoPecas() {
   const palcoRef = useRef<HTMLDivElement>(null);
+  const trilhaRef = useRef<HTMLUListElement>(null);
   const [ativa, setAtiva] = useState(0);
 
   useEffect(() => {
@@ -58,6 +59,33 @@ export function PalcoPecas() {
       if (pedido) cancelAnimationFrame(pedido);
     };
   }, []);
+
+  // A TRILHA ACOMPANHA A MARCA ATIVA.
+  // MEDIDO (05/09, achado da 2a auditoria): em 375px a trilha mostra 315px de
+  // 569px de conteudo. Da 7a marca em diante a pastilha ativa saia da area
+  // visivel e o `scrollLeft` ficava em ZERO — cinco das onze sem indicacao de
+  // posicao. Rolar a trilha nao e opcional: sem isso o indicador mente.
+  //
+  // `scrollIntoView` esta FORA DE QUESTAO aqui: ele rola o ancestral mais
+  // proximo que rola — que e a PAGINA — e daria um salto vertical no meio da
+  // leitura. Aqui so o eixo X da propria trilha se move.
+  useEffect(() => {
+    const ul = trilhaRef.current;
+    if (!ul) return;
+    const btn = ul.querySelectorAll("button")[ativa];
+    if (!btn) return;
+    const u = ul.getBoundingClientRect();
+    const b = btn.getBoundingClientRect();
+    if (b.left >= u.left && b.right <= u.right) return; // ja visivel
+    // centraliza a pastilha na faixa, sem tocar na rolagem vertical
+    const alvo = ul.scrollLeft + (b.left - u.left) - (u.width - b.width) / 2;
+    ul.scrollTo({
+      left: Math.max(0, alvo),
+      behavior: window.matchMedia("(prefers-reduced-motion: reduce)").matches
+        ? "auto"
+        : "smooth",
+    });
+  }, [ativa]);
 
   const marca = COM_PECA[ativa]!;
 
@@ -92,7 +120,7 @@ export function PalcoPecas() {
 
         {/* AS PASTILHAS — como os logos no rodapé da referência. Clicáveis:
             quem não quer rolar onze vezes salta direto. */}
-        <ul className="palco-pecas__trilha" aria-label="As onze indústrias">
+        <ul className="palco-pecas__trilha" ref={trilhaRef} aria-label="As onze indústrias">
           {COM_PECA.map((r, i) => (
             <li key={r.id}>
               <button
