@@ -2706,7 +2706,32 @@ body.is-abrindo {
   );
 }
 
-@media (max-width: 900px) {
+/* ── TABLET (700–900px): composição própria, não regra de celular esticada ──
+   MEDIDO (4a auditoria, captura de 768): o retrato ficava preso à esquerda com
+   `max-width: 420px`, sobrava uma faixa vazia de ~300px à direita, e o título
+   era empurrado para fora da primeira tela. A assimetria não relacionava foto
+   e texto — parecia a regra móvel aplicada a uma largura que comporta duas
+   colunas.
+   Aqui o retrato ocupa uma coluna estreita À DIREITA e o texto a coluna larga:
+   a mesma relação do desktop, em proporção que cabe. */
+@media (min-width: 700px) and (max-width: 900px) {
+  .casa {
+    grid-template-columns: minmax(0, 1.35fr) minmax(0, 0.75fr);
+    align-items: center;
+    gap: clamp(20px, 3vw, 36px);
+  }
+  .casa__retrato {
+    order: 0;
+    max-width: none;
+    border-radius: clamp(60px, 10vw, 110px) 0 0 clamp(60px, 10vw, 110px);
+  }
+  .casa__marcos {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: clamp(12px, 1.8vw, 20px) clamp(14px, 2vw, 26px);
+  }
+}
+
+@media (max-width: 699px) {
   .casa {
     grid-template-columns: 1fr;
     gap: clamp(24px, 5vh, 40px);
@@ -2973,19 +2998,41 @@ body.is-abrindo {
 }
 
 /* ── a chave que liga o mapa à lista (R3-03) ──────────────────────────────── */
+/* O NUMERO E LEGENDA, NAO DECORACAO — precisa ser legivel SEMPRE.
+   MEDIDO (4a auditoria): a cor `--br-fraco` sozinha da 5,72:1 contra o chao do
+   capitulo, acima do minimo de 4,5. Era a OPACIDADE 0,55 que derrubava para
+   ~2,55:1, e justamente no celular, onde a chave mais importa.
+   Agora o numero nasce cheio; quem conta o progresso e o HALO e o TRACO. */
 .mapa-mg__num {
   font-family: var(--font-display), sans-serif;
   font-size: 3.2px;
   font-weight: 700;
   text-anchor: middle;
   fill: var(--br-fraco);
-  opacity: 0.55;
-  transition: fill 0.45s ease, opacity 0.45s ease;
+  transition: fill 0.45s ease;
   pointer-events: none;
+  /* o contorno separa o numero do preenchimento do mapa sem apagar nada */
+  paint-order: stroke;
+  stroke: var(--br-chao);
+  stroke-width: 0.9;
+  stroke-linejoin: round;
 }
 .mapa-mg [data-regiao].is-acesa .mapa-mg__num {
   fill: var(--br-luz);
-  opacity: 1;
+}
+
+/* ESTA REGRA PRECISA VIR DEPOIS DA BASE, e nao antes.
+   Ela estava na linha 2818 e a base na 2987: mesma especificidade, e a que vem
+   por ultimo vence — a media query era sobrescrita e o numero ficava em 3,2px
+   no celular. Medido: fontSizeCSS reportava 3.2px com a regra "aplicada".
+   Cascata nao e especificidade. */
+@media (max-width: 900px) {
+  /* em 375px o SVG cai para ~330px de largura (escala 3,3): 3,2 unidades do
+     viewBox davam ~10px de fonte. Com 4,4 chega a ~14px. */
+  .mapa-mg__num {
+    font-size: 4.4px;
+    stroke-width: 1.2;
+  }
 }
 
 /* a lista numerada, na MESMA ordem da viagem */
@@ -3001,9 +3048,9 @@ body.is-abrindo {
   font-style: normal;
   font-weight: 700;
   letter-spacing: 0.04em;
+  /* sem opacidade, pelo mesmo motivo do numero no mapa: e legenda */
   color: var(--br-fraco);
-  opacity: 0.6;
-  transition: color 0.45s ease, opacity 0.45s ease;
+  transition: color 0.45s ease;
 }
 .estrada__ufs li.is-percorrida em {
   color: var(--br-luz);

@@ -60,6 +60,24 @@ export const PONTOS: { nome: string; cx: number; cy: number }[] = [
   { nome: "Triângulo", cx: 27.8, cy: 49.2 },
 ];
 
+/**
+ * O COMPRIMENTO ACUMULADO ate cada parada, em unidades do viewBox.
+ *
+ * A rota e uma polilinha: `ATE[i]` e quanto a ponta precisa andar para chegar
+ * na parada `i`. E o que permite acender no instante da chegada, em vez de
+ * dividir o percurso em fatias iguais que ignoram a geografia.
+ */
+const ATE: number[] = (() => {
+  const acc: number[] = [0];
+  for (let i = 1; i < PONTOS.length; i++) {
+    const a = PONTOS[i - 1]!;
+    const b = PONTOS[i]!;
+    acc.push(acc[i - 1]! + Math.hypot(b.cx - a.cx, b.cy - a.cy));
+  }
+  return acc;
+})();
+const COMPRIMENTO = ATE[ATE.length - 1]!;
+
 export function MapaMinas() {
   const svgRef = useRef<SVGSVGElement>(null);
 
@@ -85,15 +103,36 @@ export function MapaMinas() {
         // ele já entrou de verdade, e a última enquanto ainda está legível.
         const r = svg.getBoundingClientRect();
         const vh = window.innerHeight;
-        // começa quando o topo do mapa sobe acima de 82% da tela (ele já
-        // apareceu) e termina quando a base dele chega a 28% (ainda visível)
+        // Começa quando o topo do mapa sobe acima de 82% da tela (ele já
+        // apareceu) e termina quando a base dele chega a 62%.
+        //
+        // O 0,28 anterior fazia a rota completar com o mapa quase saindo:
+        // MEDIDO (4a auditoria) em t=0,9575 os oito estavam acesos, mas os
+        // números 6 e 7 já tinham passado do topo do viewport e o 8 estava em
+        // y=10. A viagem terminava fora da tela.
+        // Com 0,62 os números pararam de ser cortados, mas MEDIDO de novo: no
+        // instante em que a rota completa, o topo do mapa estava em y=-104 — a
+        // silhueta ainda sangrava pela borda. Com 0,86 a última parada acende
+        // com o mapa INTEIRO no quadro, e sobra rolagem para lê-lo completo.
         const inicio = vh * 0.82;
-        const fim = vh * 0.28;
+        const fim = vh * 0.86;
         const percorrido = inicio - r.top;
         const total = Math.max(1, inicio - fim + r.height);
         const t = Math.min(1, Math.max(0, percorrido / total));
         svg.style.setProperty("--rota", t.toFixed(4));
-        const acesas = Math.round(t * PONTOS.length);
+
+        // UMA SO MEDIDA GOVERNA TRACO, PONTO E LISTA.
+        //
+        // Era `Math.round(t * PONTOS.length)`: o acendimento em oito fatias
+        // IGUAIS, enquanto a linha avanca por COMPRIMENTO — e os segmentos da
+        // rota tem comprimentos bem diferentes (de 7,7 a 27,4 unidades).
+        // MEDIDO (4a auditoria): em t=0,5581 o traco ja tinha passado pelo
+        // ponto 5, e ele continuava apagado. A ponta chegava e a luz nao.
+        //
+        // Agora cada parada acende quando a PONTA ALCANCA o comprimento
+        // acumulado ate ela — a mesma regra na ida e na volta.
+        const andado = t * COMPRIMENTO;
+        const acesas = ATE.filter((c) => andado >= c).length;
         svg.querySelectorAll<SVGGElement>("[data-regiao]").forEach((g, i) => {
           g.classList.toggle("is-acesa", i < acesas);
         });
