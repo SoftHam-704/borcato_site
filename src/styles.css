@@ -2610,3 +2610,123 @@ body.is-abrindo {
     scale: 1;
   }
 }
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   01 · A CASA — de texto para CENA
+   O parecer de júri: "hoje é título grande, dois parágrafos e uma frase. Eu
+   colocaria o retrato ocupando uma coluna, a história em uma linha vertical e
+   uma pequena sequência de marcos". Ref. 15 da biblioteca (Lineage Hot).
+   Aqui o retrato é um close do MESMO ensaio do hero — lá o busto, aqui o
+   rosto: repetir a imagem seria fraqueza, outro enquadramento é composição.
+   ═══════════════════════════════════════════════════════════════════════════ */
+.casa {
+  display: grid;
+  /* o texto manda (é onde está o argumento); o retrato ancora à direita */
+  grid-template-columns: minmax(0, 1.25fr) minmax(0, 0.85fr);
+  align-items: center;
+  gap: clamp(28px, 5vw, 88px);
+}
+
+.casa__dizer .cap__titulo {
+  margin-bottom: clamp(18px, 2.4vw, 32px);
+}
+
+/* ── os marcos: a história em quatro paradas ──────────────────────────────── */
+.casa__marcos {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: clamp(14px, 2vw, 26px) clamp(20px, 3vw, 44px);
+  margin: clamp(26px, 3.4vw, 44px) 0 0;
+  padding: clamp(22px, 2.6vw, 34px) 0 0;
+  list-style: none;
+  /* a régua no topo separa sem criar caixa */
+  border-top: 1px solid color-mix(in srgb, var(--br-tinta) 12%, transparent);
+  counter-reset: marco;
+}
+.casa__marcos li {
+  display: grid;
+  gap: 4px;
+}
+.casa__marcos b {
+  font-family: var(--font-display), sans-serif;
+  /* vmin, não vw: em tela baixa o vw estoura a coluna (regra da casa) */
+  font-size: clamp(1.5rem, 2.8vmin, 2.1rem);
+  font-weight: 700;
+  line-height: 1;
+  letter-spacing: -0.01em;
+  color: var(--br-marca);
+}
+.casa__marcos span {
+  font-size: clamp(0.82rem, 1.25vmin, 0.95rem);
+  line-height: 1.45;
+  color: var(--br-fraco);
+  text-wrap: pretty;
+}
+
+/* a bio dele, fechando — assinatura, não parágrafo */
+.casa__bio {
+  margin: clamp(22px, 2.8vw, 34px) 0 0;
+  font-size: clamp(0.95rem, 1.4vmin, 1.1rem);
+  color: var(--br-fraco);
+}
+.casa__bio i {
+  font-style: italic;
+  color: var(--br-tinta);
+}
+
+/* ── o retrato ────────────────────────────────────────────────────────────── */
+.casa__retrato {
+  position: relative;
+  margin: 0;
+  /* o mesmo raio assimétrico da cápsula do hero: a forma é a assinatura da
+     casa, e repeti-la aqui costura os dois capítulos */
+  border-radius: clamp(80px, 14vw, 180px) 0 0 clamp(80px, 14vw, 180px);
+  overflow: hidden;
+}
+.casa__retrato img {
+  display: block;
+  width: 100%;
+  height: auto;
+  /* o gesto: entra com o capítulo, um pouco depois do texto */
+  --t: clamp(0, calc((var(--cap-entra, 1) - 0.25) / 0.75), 1);
+  opacity: var(--t);
+  scale: calc(1.06 - var(--t) * 0.06);
+  transition: none;
+}
+/* a luz que sobe do canto — o mesmo cone da cápsula */
+.casa__retrato::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: linear-gradient(
+    200deg,
+    transparent 52%,
+    color-mix(in srgb, var(--br-chao) 72%, transparent)
+  );
+}
+
+@media (max-width: 900px) {
+  .casa {
+    grid-template-columns: 1fr;
+    gap: clamp(24px, 5vh, 40px);
+  }
+  /* no celular o retrato vem PRIMEIRO: a pessoa antes da história */
+  .casa__retrato {
+    order: -1;
+    max-width: 420px;
+    /* no celular a imagem ocupa a largura inteira: raio nos cantos da esquerda
+       cai no vão e não se lê. A assinatura passa para o topo, onde há corte. */
+    border-radius: clamp(70px, 20vw, 140px) clamp(70px, 20vw, 140px) 0 0;
+  }
+  .casa__marcos {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .casa__retrato img {
+    opacity: 1;
+    scale: 1;
+  }
+}

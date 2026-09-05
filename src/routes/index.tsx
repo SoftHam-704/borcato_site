@@ -7,6 +7,7 @@ import { Estrada } from "@/components/site/Estrada";
 import { Palavras } from "@/components/site/Palavras";
 import { PalcoPecas } from "@/components/site/PalcoPecas";
 import { empresa, regioes, casa, representadas } from "@/lib/dados";
+import fabioCasa from "@/assets/site/fabio-casa.avif";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -65,29 +66,63 @@ function Index() {
       {/* 01 — A CASA. Quem e, e de onde fala. */}
       <Capitulo id="cap-casa" className="cap--casa">
         <p className="cap__num">01 / A casa</p>
-        <h2 className="cap__titulo">
-          <Palavras texto="Catorze anos de estrada antes de a placa ter o nome dele." />
-        </h2>
-        <div className="cap__corpo">
-          <p>
-            A H.M. Borçato nasceu em setembro de {empresa.fundacao}, em {empresa.base}. Não foi um
-            começo: foi a hora em que o escritório passou a ter o nome de quem já rodava o mercado
-            mineiro de autopeças havia catorze anos.
-          </p>
-          <p>
-            São quatro pessoas para um estado inteiro, e é de propósito — quem atende conhece
-            o distribuidor pelo nome, e o industrial sabe com quem está falando.
-          </p>
-          {/* VOCABULARIO DO OFICIO, e nao e invencao nossa: e a propria bio do
-              Fabio ("representacao consultiva no aftermarket de MG", "presenca
-              real e resultado do sell in ao giro"). Sell in e o que a industria
-              vende ao distribuidor; giro e o que sai da prateleira. Um
-              representante que so olha o sell in empurra estoque; olhar o giro
-              e a diferenca — e e o distribuidor que reconhece a frase.
-              Ver PROXIMA-SESSAO.md §2. */}
-          <p>
-            Representação consultiva: do <i>sell in</i> ao giro.
-          </p>
+        <div className="casa">
+          {/* A COLUNA QUE FALA */}
+          <div className="casa__dizer">
+            <h2 className="cap__titulo">
+              <Palavras texto="Catorze anos de estrada antes de a placa ter o nome dele." />
+            </h2>
+            <div className="cap__corpo">
+              <p>
+                A H.M. Borçato nasceu em setembro de {empresa.fundacao}, em {empresa.base}. Não foi um
+                começo: foi a hora em que o escritório passou a ter o nome de quem já rodava o mercado
+                mineiro de autopeças havia catorze anos.
+              </p>
+              <p>
+                São quatro pessoas para um estado inteiro, e é de propósito — quem atende conhece
+                o distribuidor pelo nome, e o industrial sabe com quem está falando.
+              </p>
+            </div>
+
+            {/* OS MARCOS: a história em quatro paradas, não em parágrafo.
+                Nada aqui é invenção — fundação e trajetória vêm do material do
+                cliente, e a última linha é a bio dele, palavra por palavra. */}
+            <ol className="casa__marcos">
+              <li>
+                <b>2004</b>
+                <span>começa a rodar o mercado mineiro de autopeças</span>
+              </li>
+              <li>
+                <b>{empresa.fundacao}</b>
+                <span>o escritório passa a ter o nome dele</span>
+              </li>
+              <li>
+                <b>MG</b>
+                <span>um estado inteiro, praça por praça</span>
+              </li>
+              <li>
+                <b>11</b>
+                <span>indústrias na mesma pasta</span>
+              </li>
+            </ol>
+
+            <p className="casa__bio">
+              Representação consultiva: do <i>sell in</i> ao giro.
+            </p>
+          </div>
+
+          {/* O RETRATO — outro enquadramento do mesmo ensaio do hero: lá o
+              busto, aqui o close. Mesma pessoa, outra leitura. */}
+          <figure className="casa__retrato">
+            <img
+              src={fabioCasa}
+              alt="Fábio Borçato, sócio-fundador da H.M. Borçato."
+              loading="lazy"
+              decoding="async"
+              width={900}
+              height={1125}
+            />
+          </figure>
         </div>
       </Capitulo>
 
