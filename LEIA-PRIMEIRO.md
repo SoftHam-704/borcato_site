@@ -244,6 +244,40 @@ instrutivo:
 
 ---
 
+## 4-D. A RODADA DO FLIP-BOOK (05/09, fim do dia) — o que a tira de contatos mostrou
+
+Capturei o site rolando do topo ao fim em **24 quadros**, desktop e celular, e li como
+júri (`ferramentas/`… ver `juri.py` no scratchpad da sessão; vale recriar). Quatro
+achados estruturais que NENHUMA medição anterior tinha pegado, porque medição olha um
+estado e o júri olha a **sequência**:
+
+| Achado | Antes | Depois |
+|---|---|---|
+| Uma cor só do início ao fim (chão ia de `#0a0a0c` a `#121b25` — 25 níveis em 255) | 24 quadros idênticos | jornada de quase-preto a `#122a44`; contraste do texto fraco medido: 4,59:1 |
+| O palco era 8 dos 24 quadros — um terço do site na mesma composição | slideshow | pista 34vh→22vh por peça |
+| Dois quadros MORTOS na passagem 02→03 (VP sumindo, tela vazia, título chegando) | buraco | as duas cenas no mesmo quadro |
+| Capítulos 01, 02 e 03 abrindo com o mesmo esqueleto (título de 3 linhas em caixa alta) | repetição | o 03 abre com o MAPA; título vira conclusão |
+
+**A passagem 02→03 finalmente existe — e o que a destravou não foi `translate`.** Seis
+tentativas de empurrar o mapa para dentro da tela falharam porque (a) o alvo estava a
+1900px e (b) o capítulo inteiro estava recortado pelo `clip-path` de revelação. A saída
+foi **sobrepor os capítulos**: `.cap--estrada { margin-top: -60vh }` faz o 03 começar antes
+de a pista do palco acabar e pintar por cima dele; e `Capitulos.tsx` entrega o
+`--cap-entra` do 03 ao `--entrega` do palco enquanto a passagem corre. O 03 revela num
+wipe da esquerda (mapa primeiro) enquanto a peça esmaece à direita. Reversível.
+
+> **Não se empurra um elemento para dentro de uma caixa invisível — abre-se a caixa.**
+> E `getBoundingClientRect` não sabe se o pixel é pintado: reportou "371..862, 100%
+> visível" seis vezes com a tela vazia. **Só a captura prova movimento.**
+
+**O que o flip-book ainda mostra e ficou de fora, com motivo:**
+- O hero preso ocupa ~4 dos 24 quadros quase idênticos. É decisão do dono ("o site só
+  deve sair do hero após todo o BORÇATO ser visualizado"). Não mexer sem ele.
+- A entrada do palco (título do 02 em cima, primeira peça cortada embaixo) é a
+  composição mais fraca que sobrou. Candidata à próxima rodada.
+- As outras três passagens (hero→01, 01→02, 03→04) seguem sendo cortes. A linguagem
+  da 02→03 está validada; cada uma pede gesto próprio, não o mesmo wipe.
+
 ## 5. AS FERRAMENTAS (em `ferramentas/`)
 
 ```bash

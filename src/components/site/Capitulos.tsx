@@ -106,7 +106,26 @@ export function Capitulo({ id, children, className }: CapituloProps) {
         // de 900, e esta fórmula dá 1.225 — ela chega a 1 sozinha, inclusive no
         // último capítulo. Tentei "consertar" isso com uma janela de fim de página
         // e foi o conserto que quebrou o gesto (--cap-entra caiu de 0.97 p/ 0.13).
-        const t = (vh - r.top) / (vh * 0.62);
+        let t = (vh - r.top) / (vh * 0.62);
+
+        // A PASSAGEM DO PALCO GOVERNA O CAPITULO 03 (05/09).
+        //
+        // O cap 03 comeca 60vh antes de a pista do palco acabar (margin-top
+        // negativa no CSS) e pinta por cima dele. Se ele usasse a PROPRIA
+        // medida aqui, ja estaria 53% revelado no instante em que a passagem
+        // comeca — cobrindo o texto do palco antes da hora.
+        // Entao, enquanto a entrega corre (0 -> 1), e ELA que abre o capitulo:
+        // o clip-path, a opacidade e o deslocamento seguem o mesmo relogio que
+        // esmaece a peca. Zero = fechado, a peca intacta; um = aberto. Quando a
+        // entrega termina (>= 0,98), a medida propria assume — e ela ja passou
+        // de 0,65 a essa altura, entao nao ha salto.
+        // Reversivel: ao voltar, a entrega cai e o capitulo fecha de novo.
+        if (el.id === "cap-estrada") {
+          const e = parseFloat(
+            getComputedStyle(document.documentElement).getPropertyValue("--entrega"),
+          ) || 0;
+          t = e >= 0.98 ? Math.max(t, 1) : e;
+        }
         el.style.setProperty("--cap-entra", String(Math.min(1, Math.max(0, t))));
       });
     };

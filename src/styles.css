@@ -1924,6 +1924,15 @@ body.is-abrindo {
 /* 03 · A ESTRADA — da direita: vem de fora */
 .cap--estrada {
   clip-path: inset(0 0 0 calc((1 - var(--rev)) * 100%));
+  /* A PASSAGEM (05/09): o capitulo comeca 60vh ANTES de a pista do palco
+     acabar e pinta por cima dele (irmao posterior, mesmo z-index). O clip-path
+     acima — governado pela ENTREGA do palco durante a passagem, ver
+     Capitulos.tsx — o revela num wipe da esquerda enquanto a peca esmaece a
+     direita. As duas cenas no mesmo quadro.
+     Seis tentativas de `translate` no mapa falharam antes disto: o alvo
+     estava a 1900px e o capitulo inteiro recortado. Nao se empurra um
+     elemento para dentro de uma caixa invisivel — abre-se a caixa. */
+  margin-top: -60vh;
 }
 
 /* 04 · O NOME — do centro para as bordas: a revelação se abre */
@@ -2266,22 +2275,26 @@ body.is-abrindo {
 
 /* 02 · AS MARCAS — a oficina */
 .cap--marcas {
-  --br-chao: #0b1016;
+  /* JORNADA TONAL (05/09): de quase-preto a azul profundo, dentro da familia
+     da identidade. Antes ia de #0a0a0c a #121b25 — 25 niveis em 255, e a tira
+     de 24 quadros mostrava UMA cor do inicio ao fim. */
+  --br-chao: #0c1421;
   --br-superficie: #131a23;
   background: var(--br-chao);
 }
 
 /* 03 · A ESTRADA — o amanhecer */
 .cap--estrada {
-  --br-chao: #0e151d;
-  --br-superficie: #172029;
+  --br-chao: #0f1f34;
+  --br-superficie: #182c46;
   background: var(--br-chao);
 }
 
 /* 04 · O NOME — a revelação, o ponto mais claro da travessia */
 .cap--nome {
-  --br-chao: #121b25;
-  --br-superficie: #1c2733;
+  /* o mais claro: #8a8fa3 sobre #122a44 da 4,59:1, acima do minimo (medido) */
+  --br-chao: #122a44;
+  --br-superficie: #1d3a5c;
 }
 
 /* a barra de marcas acompanha o capítulo que ela introduz */
@@ -2313,10 +2326,10 @@ body.is-abrindo {
   background: linear-gradient(to bottom, #0a0a0c, transparent);
 }
 .cap--estrada::after {
-  background: linear-gradient(to bottom, #0b1016, transparent);
+  background: linear-gradient(to bottom, #0c1421, transparent);
 }
 .cap--nome::after {
-  background: linear-gradient(to bottom, #0e151d, transparent);
+  background: linear-gradient(to bottom, #0f1f34, transparent);
 }
 /* o conteúdo do capítulo passa POR CIMA da costura */
 .cap > * {
@@ -2404,7 +2417,10 @@ body.is-abrindo {
   /* 12 TRECHOS: as 11 marcas + a passagem para "A estrada".
      A passagem tinha de ganhar trecho proprio (ver PalcoPecas.tsx) — antes ela
      roubava o tempo da ultima marca, e a VP saia de cena antes de ser lida. */
-  height: calc((var(--n, 11) + 1) * 34vh);
+  /* 22vh, nao 34 (05/09): com 34 o palco era 8 dos 24 quadros da tira de
+     contatos — um terco do site na mesma composicao, lendo como slideshow.
+     A cadencia mais rapida nao tira leitura: cada peca segue tela inteira. */
+  height: calc((var(--n, 11) + 1) * 22vh);
   position: relative;
 }
 
@@ -2767,9 +2783,22 @@ body.is-abrindo {
    ═══════════════════════════════════════════════════════════════════════════ */
 .estrada {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(0, 1.05fr);
+  /* O MAPA A ESQUERDA, e PRIMEIRO no DOM (05/09). Tres motivos, um gesto:
+     1. o capitulo deixa de abrir com o mesmo esqueleto dos outros (titulo de
+        3 linhas em caixa alta) — abre com uma IMAGEM
+     2. o auditor: "o mapa ainda e um segundo bloco abaixo do texto; nao divide
+        a primeira vista com a manchete" — agora e a primeira vista
+     3. a passagem vinda do palco revela este capitulo por um wipe da ESQUERDA
+        (clip-path inset 0 0 0 X): o mapa e a primeira coisa a entrar.
+     E alterna com os vizinhos: retrato a direita (01), peca a direita (02),
+     mapa a ESQUERDA (03). Ritmo. */
+  grid-template-columns: minmax(0, 1.05fr) minmax(0, 1fr);
   align-items: center;
   gap: clamp(24px, 4vw, 72px);
+}
+/* o titulo e o corpo vem DEPOIS do mapa: viram conclusao, nao abertura */
+.cap--estrada .cap__titulo {
+  margin-top: clamp(40px, 7vh, 80px);
 }
 
 .mapa-mg {
@@ -3087,13 +3116,15 @@ body.is-abrindo {
   --sai: clamp(0, calc((var(--entrega, 0) - 0.35) / 0.45), 1);
   translate: 0 calc(var(--sai) * -8%);
   scale: calc(1 - var(--sai) * 0.16);
-  opacity: calc(1 - var(--sai) * 0.92);
+  /* a ZERO no fim, nao a 8%: a tira de contatos mostrou o fantasma da peca
+     dois quadros sobre o capitulo 03 depois da passagem. Residuo e ruido. */
+  opacity: calc(1 - var(--sai));
 }
 
 /* o texto solta antes do objeto: a leitura termina, depois a imagem sai */
 .palco-pecas__dizer {
   --sai: clamp(0, calc(var(--entrega, 0) / 0.5), 1);
-  opacity: calc(1 - var(--sai) * 0.9);
+  opacity: calc(1 - var(--sai));
   translate: calc(var(--sai) * -18px) 0;
 }
 
@@ -3132,6 +3163,12 @@ body.is-abrindo {
     translate: none;
     scale: 1;
     opacity: 1;
+  }
+  /* e sem passagem nao ha sobreposicao: com a margem negativa e o cap 03
+     aberto de saida (Capitulos.tsx forca --cap-entra=1 neste modo), ele
+     cobriria a metade de baixo da VP para sempre */
+  .cap--estrada {
+    margin-top: 0;
   }
   .palco-pecas::after {
     opacity: 0;

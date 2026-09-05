@@ -169,25 +169,17 @@ function Index() {
           os distribuidores regionais de MG e as filiais dos nacionais no estado"). */}
       <Capitulo id="cap-estrada" className="cap--estrada">
         <p className="cap__num">03 / A estrada</p>
-        <h2 className="cap__titulo">
-          <Palavras texto="Um estado inteiro cabe em muitos quilômetros." />
-        </h2>
-        <div className="cap__corpo">
-          <p>
-            Representação comercial se prova em presença, e presença se mede em estrada.
-            A H.M. Borçato atende os distribuidores regionais de Minas e as filiais dos
-            nacionais no estado — do Triângulo à Zona da Mata, do Sul ao Norte.
-          </p>
-          <p>
-            Não é um mapa de ambição. É onde o carro já chegou.
-          </p>
-        </div>
 
-        {/* O MAPA ao lado da lista. Antes a lista ERA a cena, e o parecer de
-            juri apontou: "informativa, mas visualmente ainda parece uma lista".
-            Agora Minas ocupa metade da tela e as 8 regioes acendem na ordem da
-            viagem conforme a rota avanca. */}
+        {/* O MAPA ABRE O CAPITULO (05/09). A tira de contatos de 24 quadros
+            mostrou os capitulos 01, 02 e 03 abrindo com o MESMO esqueleto: um
+            titulo de 3 linhas em caixa alta. Aqui a primeira vista passa a ser
+            o territorio — e o titulo e o corpo descem para o fim, onde viram
+            conclusao ("Nao e um mapa de ambicao. E onde o carro ja chegou.")
+            em vez de abertura. O mapa vem primeiro no DOM tambem porque a
+            passagem vinda do palco o revela por um wipe da esquerda. */}
         <div className="estrada">
+          <MapaMinas />
+
           <div className="estrada__dizer">
             <p className="estrada__casa">
               <b>{casa.uf}</b>
@@ -206,8 +198,20 @@ function Index() {
               ))}
             </ol>
           </div>
+        </div>
 
-          <MapaMinas />
+        <h2 className="cap__titulo">
+          <Palavras texto="Um estado inteiro cabe em muitos quilômetros." />
+        </h2>
+        <div className="cap__corpo">
+          <p>
+            Representação comercial se prova em presença, e presença se mede em estrada.
+            A H.M. Borçato atende os distribuidores regionais de Minas e as filiais dos
+            nacionais no estado — do Triângulo à Zona da Mata, do Sul ao Norte.
+          </p>
+          <p>
+            Não é um mapa de ambição. É onde o carro já chegou.
+          </p>
         </div>
       </Capitulo>
 
