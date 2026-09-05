@@ -149,7 +149,6 @@ function Index() {
             {regioes.map((r) => (
               <li key={r.nome}>
                 <b>{r.nome}</b>
-                <span>{r.ancoras}</span>
               </li>
             ))}
           </ul>

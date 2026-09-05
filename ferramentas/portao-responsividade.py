@@ -126,7 +126,7 @@ with sync_playwright() as pw:
         pg.on("console", _console)
         pg.on("pageerror", lambda e: erros.append(f"PAGEERROR {e}"))
         pg.goto(URL, wait_until="networkidle")
-        pg.wait_for_timeout(4600)  # ESPERA_ABERTURA: a abertura roda sempre (3,4s + saida)
+        pg.wait_for_timeout(2100)  # ESPERA_ABERTURA: a abertura roda sempre (3,4s + saida)
         pg.wait_for_timeout(1400)  # preloader + fontes
 
         a = pg.evaluate(JS_AUDITORIA)

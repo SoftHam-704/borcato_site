@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { representadas } from "@/lib/dados";
 
 // As 11 representadas como PASTILHAS na base da tela, com a ativa acesa.
@@ -23,6 +23,14 @@ function arquivoDe(id: string): string | undefined {
 
 export function BarraMarcas() {
   const [emFoco, setEmFoco] = useState<string | null>(null);
+  // EM TOQUE NAO EXISTE HOVER. A legenda de repouso convidava a "passar o
+  // cursor" — instrucao impossivel de atender em celular, e o parecer do juri
+  // (05/09) apontou. Aqui ela vira o argumento em si, e o convite so aparece
+  // onde ele funciona.
+  const [temPonteiro, setTemPonteiro] = useState(false);
+  useEffect(() => {
+    setTemPonteiro(window.matchMedia("(pointer: fine)").matches);
+  }, []);
   const atual = representadas.find((r) => r.id === emFoco);
 
   return (
@@ -32,7 +40,11 @@ export function BarraMarcas() {
         {/* a legenda muda com o foco, em vez de existir um rótulo por pastilha —
             é o que mantém a base limpa com 11 marcas */}
         <em aria-live="polite">
-          {atual ? atual.fornece : "passe o cursor para conhecer"}
+          {atual
+            ? atual.fornece
+            : temPonteiro
+              ? "passe o cursor para conhecer"
+              : "de rolamento a filtro de cabine"}
         </em>
       </p>
 

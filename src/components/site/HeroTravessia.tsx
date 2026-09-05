@@ -209,7 +209,7 @@ export function HeroTravessia() {
           <span>municípios · um estado</span>
         </li>
         {regioes.map((r) => (
-          <li key={r.nome} title={r.ancoras}>
+          <li key={r.nome}>
             {r.nome}
           </li>
         ))}

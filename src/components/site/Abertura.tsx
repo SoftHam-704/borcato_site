@@ -20,11 +20,25 @@ import { useEffect, useRef, useState } from "react";
 // O gesto é o do próprio site: a cápsula (a forma que o cliente escolheu) se abre
 // e o hero está atrás dela. A porta e a travessia são a mesma coisa.
 
+// ENCURTADA DE 3,4s PARA 1,9s (05/09, parecer de júri).
+//
+// A justificativa anterior era de negócio: o site é peça de venda, o Fábio abre
+// na frente de distribuidor, e quem recarrega na mesma reunião é ele — perder a
+// abertura na segunda vez é perdê-la onde mais importa. Isso continua valendo, e
+// por isso ela SEGUE rodando sempre.
+//
+// O que o parecer inverteu foi o custo: "para um jurado, ela custa a primeira
+// impressão". E é o júri que dá a nota. 3,4s antes da primeira tela é caro
+// demais para quem chega sem contexto.
+//
+// A saída não foi amputar tempo, foi COMPRIMIR os quatro: a luz acende, o nome
+// se monta, a cápsula abre, a camada sai — o gesto inteiro continua legível,
+// só que em 1,9s. Assinatura, não barreira.
 const TEMPOS = {
-  luz: 250, // a luz acende no escuro
-  nome: 700, // "H.M. BORÇATO" se monta, letra a letra
-  capsula: 2000, // a cápsula se abre e revela o hero
-  fim: 3400, // a camada sai do caminho
+  luz: 140, // a luz acende no escuro
+  nome: 420, // "H.M. BORÇATO" se monta, letra a letra
+  capsula: 1150, // a cápsula se abre e revela o hero
+  fim: 1900, // a camada sai do caminho
 } as const;
 
 export function Abertura() {

@@ -22,8 +22,6 @@
 /** Uma região de Minas onde a Borçato atende — a cobertura REAL. */
 export interface Regiao {
   nome: string;
-  /** as praças que ancoram a região, para o mapa e para a legenda */
-  ancoras: string;
 }
 
 /**
@@ -34,20 +32,25 @@ export interface Regiao {
  * de MG e as filiais dos nacionais presentes no estado**. Isso é cobertura
  * demonstrável; doze estados não era.
  *
- * ⚠️ As âncoras abaixo são as praças óbvias de cada região mineira. PRECISAM da
- * confirmação do Fábio (pergunta 2 da lista de 03/09) antes de irem ao ar como
- * roteiro de viagem. Se ele não confirmar, o mapa mostra as regiões sem nomear
- * cidade.
+ * 🔒 AS CIDADES SAÍRAM (05/09, decisão do dono: "apenas as regiões").
+ *
+ * Cada região trazia três praças óbvias — Belo Horizonte, Uberlândia, Juiz de
+ * Fora — marcadas aqui mesmo como "a confirmar com o Fábio". E a página já as
+ * exibia: a regra dura nº 2 sendo esticada, exatamente como no caso dos "onze
+ * estados" que ele próprio pegou.
+ *
+ * Cidade só volta com autorização explícita dele — e aí o campo volta junto.
+ * O que fica é o que se sustenta: um estado inteiro, por região.
  */
 export const regioes: readonly Regiao[] = [
-  { nome: "Central / RMBH", ancoras: "Belo Horizonte · Contagem · Betim" },
-  { nome: "Sul de Minas", ancoras: "Varginha · Poços de Caldas · Pouso Alegre" },
-  { nome: "Triângulo", ancoras: "Uberlândia · Uberaba · Araguari" },
-  { nome: "Zona da Mata", ancoras: "Juiz de Fora · Muriaé · Ubá" },
-  { nome: "Norte", ancoras: "Montes Claros · Janaúba · Pirapora" },
-  { nome: "Vale do Aço", ancoras: "Ipatinga · Governador Valadares · Coronel Fabriciano" },
-  { nome: "Centro-Oeste", ancoras: "Divinópolis · Formiga · Pará de Minas" },
-  { nome: "Alto Paranaíba", ancoras: "Patos de Minas · Patrocínio · Araxá" },
+  { nome: "Central / RMBH" },
+  { nome: "Sul de Minas" },
+  { nome: "Triângulo" },
+  { nome: "Zona da Mata" },
+  { nome: "Norte" },
+  { nome: "Vale do Aço" },
+  { nome: "Centro-Oeste" },
+  { nome: "Alto Paranaíba" },
 ] as const;
 
 /** A casa. Um estado só, e é esse o argumento. */

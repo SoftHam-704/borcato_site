@@ -1801,9 +1801,14 @@ body.is-abrindo {
   opacity: 0;
   transform: translateY(0.32em);
   /* cada letra sai um pouco depois da anterior — o nome se ESCREVE */
+  /* COMPRIMIDA JUNTO COM A ABERTURA (3,4s -> 1,9s).
+     Eram 42ms por letra: com 11 letras davam 462ms de escalonamento + 700ms de
+     transform = 1162ms, e a capsula agora abre em 1150ms. As ultimas letras
+     nao chegariam a entrar antes da camada sair.
+     Com 24ms: 264ms de escalonamento + 480ms = 744ms, dentro da janela. */
   transition:
-    opacity 0.5s ease calc(var(--i) * 42ms),
-    transform 0.7s cubic-bezier(0.16, 1, 0.3, 1) calc(var(--i) * 42ms);
+    opacity 0.34s ease calc(var(--i) * 24ms),
+    transform 0.48s cubic-bezier(0.16, 1, 0.3, 1) calc(var(--i) * 24ms);
 }
 .abertura.fase-nome .abertura__nome span,
 .abertura.fase-abrindo .abertura__nome span {
@@ -1838,7 +1843,12 @@ body.is-abrindo {
   transition: opacity 0.35s ease;
 }
 
-/* pular — 3,4s é muito para quem já viu */
+/* PULAR — o escape precisa existir DESDE O PRIMEIRO INSTANTE.
+   MEDIDO (05/09): com `transition: opacity .6s ease 1.2s` e a regra que só
+   acendia nas fases `nome`/`abrindo`, o botão ficava em opacity 0 durante toda
+   a abertura e só aparecia aos 2000ms — quando ela JÁ ESTAVA SAINDO. O único
+   escape existia exatamente quando não era mais necessário.
+   Calibrado para os 3,4s antigos; com 1,9s virou um botão inútil. */
 .abertura__pular {
   position: absolute;
   right: clamp(18px, 3vw, 40px);
@@ -1854,12 +1864,9 @@ body.is-abrindo {
   letter-spacing: 0.16em;
   text-transform: uppercase;
   cursor: pointer;
-  opacity: 0;
-  transition: opacity 0.6s ease 1.2s, color 0.3s ease, border-color 0.3s ease;
-}
-.abertura.fase-nome .abertura__pular,
-.abertura.fase-abrindo .abertura__pular {
+  /* nasce visível: sem atraso, sem depender de fase */
   opacity: 1;
+  transition: color 0.3s ease, border-color 0.3s ease;
 }
 .abertura__pular:hover,
 .abertura__pular:focus-visible {
