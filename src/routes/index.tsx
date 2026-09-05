@@ -5,7 +5,7 @@ import { BarraMarcas } from "@/components/site/BarraMarcas";
 import { Capitulo, NavCapitulos } from "@/components/site/Capitulos";
 import { Estrada } from "@/components/site/Estrada";
 import { Palavras } from "@/components/site/Palavras";
-import { PecaNoCursor, pecaDe } from "@/components/site/PecaNoCursor";
+import { PalcoPecas } from "@/components/site/PalcoPecas";
 import { empresa, regioes, casa, representadas } from "@/lib/dados";
 
 export const Route = createFileRoute("/")({
@@ -58,7 +58,6 @@ function Index() {
       <Estrada />
       {/* FORA dos capitulos: dentro deles o transform do gesto de revelacao
           vira bloco de contencao e quebra o `position: fixed` da peca. */}
-      <PecaNoCursor />
 
       <HeroTravessia />
 
@@ -92,38 +91,32 @@ function Index() {
         </div>
       </Capitulo>
 
-      {/* 02 — AS MARCAS. A amplitude do catálogo é o argumento. */}
+      {/* 02 — AS MARCAS. A amplitude do catalogo e o argumento.
+          REFEITO (05/09): era titulo + paragrafo + GRADE de 11 celulas, o mesmo
+          esqueleto dos outros tres capitulos. O dono: "isso e site de
+          principiante". Estava certo — quatro capitulos com a mesma estrutura
+          leem como template, por melhor que seja o hero.
+          Agora e PALCO: a peca ocupa metade da tela com luz, o texto fica ao
+          lado, as marcas viram pastilhas ancoradas. Ref. 26 da biblioteca
+          comprada (Ferrari 296 GTB), que ele apontou como "a que salva".
+          As 11 pecas ja existiam e apareciam so no hover: o ativo mais forte
+          do site estava escondido. */}
       <Capitulo id="cap-marcas" className="cap--marcas">
-        <p className="cap__num">02 / As marcas</p>
-        <h2 className="cap__titulo">
-          <Palavras texto="De rolamento a filtro de cabine. Onze indústrias na mesma pasta." />
-        </h2>
-        <div className="cap__corpo">
-          <p>
-            Um distribuidor que compra rolamento da NTN-SNR resolve a bomba d&apos;água, o filtro,
-            a lanterna e o óleo na mesma conversa. É essa a diferença entre representar uma marca e
-            representar um catálogo.
-          </p>
+        <div className="cap--marcas__abre">
+          <p className="cap__num">02 / As marcas</p>
+          <h2 className="cap__titulo">
+            <Palavras texto="De rolamento a filtro de cabine. Onze indústrias na mesma pasta." />
+          </h2>
+          <div className="cap__corpo">
+            <p>
+              Um distribuidor que compra rolamento da NTN-SNR resolve a bomba d&apos;água, o filtro,
+              a lanterna e o óleo na mesma conversa. É essa a diferença entre representar uma marca e
+              representar um catálogo.
+            </p>
+          </div>
         </div>
 
-        {/* Cada marca carrega a PECA que ela fornece. No desktop a peca segue o
-            cursor (PecaNoCursor); no celular ela entra no proprio card, porque
-            la nao existe cursor — e sem isso o capitulo 02 voltaria a ser uma
-            lista de texto exatamente onde parte do publico vai olhar. */}
-        <ul className="marcas-lista">
-          {representadas.map((r) => {
-            const peca = pecaDe(r.id);
-            return (
-              <li key={r.id} data-marca={r.id} data-peca={peca}>
-                <b>{r.nome}</b>
-                <span>{r.fornece}</span>
-                {peca ? (
-                  <img className="marcas-lista__peca" src={peca} alt="" aria-hidden />
-                ) : null}
-              </li>
-            );
-          })}
-        </ul>
+        <PalcoPecas />
       </Capitulo>
 
       {/* 03 — A ESTRADA. A cobertura, que e o dado publicavel mais forte que existe.

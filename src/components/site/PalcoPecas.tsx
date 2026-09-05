@@ -1,0 +1,120 @@
+import { useEffect, useRef, useState } from "react";
+
+import { representadas } from "@/lib/dados";
+import { pecaDe } from "./PecaNoCursor";
+
+// O PALCO DAS PEÇAS — o capítulo 02 deixa de ser grade.
+//
+// O dono foi direto: "isso é site de principiante", "qualquer bosta no mundo faz
+// um site assim". Estava certo, e o diagnóstico é estrutural: os quatro capítulos
+// repetiam o MESMO esqueleto — título gigante, parágrafo, bloco embaixo. Quatro
+// vezes seguidas é o esqueleto de qualquer template de landing page.
+//
+// A referência é a nº 26 da biblioteca comprada (Ferrari 296 GTB), que ele apontou
+// como "a que salva": objeto ocupando METADE DA TELA com luz dramática, texto ao
+// lado — não em cima —, e as marcas ancoradas embaixo em pastilhas.
+//
+// Aqui o objeto é a PEÇA. Elas já existiam, tratadas em duotom na paleta da casa,
+// e apareciam só no hover do cursor: o ativo mais forte do site estava escondido.
+//
+// A MECÂNICA: palco preso (sticky) enquanto a rolagem troca a peça em foco. Não é
+// carrossel automático — quem manda é o dedo. Mesmo padrão do hero e da estrada:
+// o JS escreve só o índice, o CSS compõe.
+
+const COM_PECA = representadas
+  .map((r) => ({ ...r, peca: pecaDe(r.id) }))
+  .filter((r): r is typeof r & { peca: string } => Boolean(r.peca));
+
+export function PalcoPecas() {
+  const palcoRef = useRef<HTMLDivElement>(null);
+  const [ativa, setAtiva] = useState(0);
+
+  useEffect(() => {
+    const palco = palcoRef.current;
+    if (!palco) return;
+
+    let pedido = 0;
+    const aoRolar = () => {
+      if (pedido) return;
+      pedido = window.requestAnimationFrame(() => {
+        pedido = 0;
+        // quanto da PISTA já foi percorrido (a pista é a altura extra do palco)
+        const r = palco.getBoundingClientRect();
+        const pista = Math.max(1, palco.offsetHeight - window.innerHeight);
+        const t = Math.min(1, Math.max(0, -r.top / pista));
+        // t=0 é a primeira peça, t=1 a última. O piso de 0,999 evita que o
+        // último quadro pisque de volta para a primeira ao encostar no fim.
+        const i = Math.min(COM_PECA.length - 1, Math.floor(t * 0.999 * COM_PECA.length));
+        setAtiva((antes) => (antes === i ? antes : i));
+      });
+    };
+
+    aoRolar();
+    window.addEventListener("scroll", aoRolar, { passive: true });
+    window.addEventListener("resize", aoRolar);
+    return () => {
+      window.removeEventListener("scroll", aoRolar);
+      window.removeEventListener("resize", aoRolar);
+      if (pedido) cancelAnimationFrame(pedido);
+    };
+  }, []);
+
+  const marca = COM_PECA[ativa]!;
+
+  return (
+    <div className="palco-pecas" ref={palcoRef} style={{ "--n": COM_PECA.length } as React.CSSProperties}>
+      <div className="palco-pecas__cena">
+        {/* A COLUNA DE TEXTO — ao lado do objeto, não acima dele. */}
+        <div className="palco-pecas__dizer">
+          <p className="palco-pecas__conta">
+            <b>{String(ativa + 1).padStart(2, "0")}</b>
+            <span>/ {String(COM_PECA.length).padStart(2, "0")}</span>
+          </p>
+          <h3 className="palco-pecas__marca">{marca.nome}</h3>
+          <p className="palco-pecas__fornece">{marca.fornece}</p>
+        </div>
+
+        {/* O OBJETO — todas as peças empilhadas; só a ativa aparece. Trocar
+            `src` faria a imagem piscar enquanto baixa; empilhadas, a troca é
+            só opacidade, e o navegador já tem todas em mãos. */}
+        <div className="palco-pecas__objeto">
+          {COM_PECA.map((r, i) => (
+            <img
+              key={r.id}
+              src={r.peca}
+              alt={i === ativa ? `${r.nome} — ${r.fornece}` : ""}
+              className={i === ativa ? "is-emcena" : undefined}
+              aria-hidden={i !== ativa}
+              loading={i < 2 ? "eager" : "lazy"}
+            />
+          ))}
+        </div>
+
+        {/* AS PASTILHAS — como os logos no rodapé da referência. Clicáveis:
+            quem não quer rolar onze vezes salta direto. */}
+        <ul className="palco-pecas__trilha" aria-label="As onze indústrias">
+          {COM_PECA.map((r, i) => (
+            <li key={r.id}>
+              <button
+                type="button"
+                className={i === ativa ? "is-aqui" : undefined}
+                aria-current={i === ativa ? "true" : undefined}
+                onClick={() => {
+                  const palco = palcoRef.current;
+                  if (!palco) return;
+                  const pista = palco.offsetHeight - window.innerHeight;
+                  const alvo =
+                    palco.offsetTop + (pista * (i + 0.5)) / COM_PECA.length;
+                  window.scrollTo({ top: alvo, behavior: "smooth" });
+                }}
+              >
+                <span className="sr-only">{r.nome}</span>
+                <i aria-hidden />
+              </button>
+            </li>
+          ))}
+        </ul>
+      </div>
+    </div>
+  );
+}

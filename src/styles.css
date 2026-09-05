@@ -2381,3 +2381,201 @@ body.is-abrindo {
     transition: none;
   }
 }
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   O PALCO DAS PEÇAS — o capítulo 02 deixa de ser grade
+   Ref. 26 da biblioteca (Ferrari 296 GTB): objeto ocupando METADE DA TELA com
+   luz dramática, texto AO LADO (não em cima), marcas ancoradas embaixo.
+   O que quebra a repetição dos quatro capítulos: aqui o esqueleto é OUTRO.
+   ═══════════════════════════════════════════════════════════════════════════ */
+.palco-pecas {
+  /* A PISTA. MEDIDO: com 62vh por peça a página inteira foi de 5770 para
+     11451px — o capítulo 02 sozinho passou a valer metade do site, e o
+     visitante rola 6 telas só de peça.
+     Com 34vh a troca ainda é confortável (cada peça ganha ~1/3 de tela de
+     rolagem) e o capítulo volta a ter peso proporcional ao argumento. */
+  height: calc(var(--n, 11) * 34vh);
+  position: relative;
+}
+
+.palco-pecas__cena {
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  display: grid;
+  /* 1fr / 1.15fr: o objeto manda, mas o texto nao pode ficar espremido no
+     meio. E `justify-items: start` ancora a coluna de texto na margem em vez
+     de centralizar dentro da propria celula. */
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1.15fr);
+  align-items: center;
+  justify-items: start;
+  gap: clamp(24px, 4vw, 72px);
+  /* MEDIDO: com a goteira aqui E no .cap o texto comecava quase no meio da
+     tela, deixando um terco vazio a esquerda. O .cap ja abre a goteira da nav;
+     o palco so precisa do respiro proprio. */
+  padding-inline: clamp(8px, 2vw, 40px) clamp(24px, 5vw, 96px);
+}
+
+/* ── a coluna que fala ─────────────────────────────────────────────────────── */
+.palco-pecas__conta {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  margin: 0 0 clamp(16px, 2vw, 28px);
+  font-family: var(--font-display), sans-serif;
+  letter-spacing: 0.14em;
+}
+.palco-pecas__conta b {
+  font-size: clamp(2.4rem, 4vmin, 3.4rem);
+  font-weight: 700;
+  color: var(--br-marca);
+  line-height: 1;
+}
+.palco-pecas__conta span {
+  font-size: 0.7rem;
+  color: var(--br-fraco);
+}
+
+.palco-pecas__marca {
+  margin: 0 0 clamp(10px, 1.4vw, 18px);
+  font-family: var(--font-display), sans-serif;
+  /* vmin, não vw: em tela baixa (1440x900, 1280x720) o vw estoura a coluna */
+  font-size: clamp(2rem, 5.6vmin, 4.2rem);
+  font-weight: 700;
+  line-height: 0.98;
+  letter-spacing: -0.02em;
+  text-transform: uppercase;
+  color: var(--br-tinta);
+  text-wrap: balance;
+}
+.palco-pecas__fornece {
+  margin: 0;
+  max-width: 34ch;
+  font-size: clamp(0.95rem, 1.5vmin, 1.15rem);
+  line-height: 1.5;
+  color: var(--br-fraco);
+  text-wrap: pretty;
+}
+
+/* ── o objeto: é ele que carrega a tela ───────────────────────────────────── */
+.palco-pecas__objeto {
+  position: relative;
+  aspect-ratio: 1;
+  /* o teto por ALTURA impede o objeto de estourar em tela baixa */
+  height: min(76vh, 100%);
+  margin-inline: auto;
+  justify-self: center;
+  width: 100%;
+}
+.palco-pecas__objeto img {
+  position: absolute;
+  z-index: 1;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  /* O JPG tem fundo (10,10,12) e o chao do capitulo e (15,22,32): doze niveis
+     de diferenca no azul, e a imagem quadrada vira uma CAIXA PRETA visivel,
+     com borda nitida. Moldura acidental e a definicao de acabamento amador.
+     `screen` some com o preto do arquivo (preto e o neutro desse modo) e
+     mantem a peca: nao ha recorte a fazer, o modo de mesclagem resolve. */
+  /* SEM mix-blend-mode: ele mesclava com o ::before da luz (mesmo elemento),
+     nao com o chao — a caixa continuava visivel. Medido na borda: (10,13,17)
+     dentro contra (11,16,22) fora.
+     A mascara resolve sozinha: dissolve a borda do quadrado num raio, e onde
+     nao ha aresta nao ha caixa. O corte comeca em 52% (antes do canto) e
+     termina em 88%, bem dentro do quadro. */
+  -webkit-mask-image: radial-gradient(circle at 50% 50%, #000 52%, transparent 88%);
+  mask-image: radial-gradient(circle at 50% 50%, #000 52%, transparent 88%);
+  opacity: 0;
+  /* entra crescendo de leve: a peça "assume" o palco em vez de piscar */
+  scale: 0.94;
+  transition: opacity 0.5s ease, scale 0.7s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.palco-pecas__objeto img.is-emcena {
+  opacity: 1;
+  scale: 1;
+}
+
+/* a luz que cai sobre a peça — o que a referência tem e nós não tínhamos */
+.palco-pecas__objeto::before {
+  content: "";
+  position: absolute;
+  /* z-index 0 e as imagens em 1: a luz fica ATRAS sem sair do elemento */
+  z-index: 0;
+  inset: -12%;
+  background: radial-gradient(
+    ellipse 52% 46% at 50% 44%,
+    color-mix(in srgb, var(--br-marca) 24%, transparent),
+    transparent 72%
+  );
+  filter: blur(28px);
+  pointer-events: none;
+}
+
+/* ── as pastilhas, ancoradas embaixo ──────────────────────────────────────── */
+.palco-pecas__trilha {
+  position: absolute;
+  left: clamp(8px, 2vw, 40px);
+  bottom: clamp(20px, 4vh, 44px);
+  display: flex;
+  gap: 10px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.palco-pecas__trilha button {
+  /* 44px de ALVO com pastilha de 10px dentro: o portão da casa exige o alvo,
+     o desenho pede o ponto pequeno. Os dois convivem com padding. */
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  padding: 0;
+  background: none;
+  border: 0;
+  cursor: pointer;
+}
+.palco-pecas__trilha i {
+  width: 10px;
+  height: 10px;
+  border-radius: 999px;
+  background: var(--br-fraco);
+  opacity: 0.4;
+  transition: opacity 0.3s ease, background-color 0.3s ease, scale 0.3s ease;
+}
+.palco-pecas__trilha button:hover i {
+  opacity: 0.75;
+}
+.palco-pecas__trilha button.is-aqui i {
+  background: var(--br-marca);
+  opacity: 1;
+  scale: 1.5;
+}
+
+/* ── celular: o objeto vai para cima, o texto embaixo ─────────────────────── */
+@media (max-width: 900px) {
+  .palco-pecas__cena {
+    grid-template-columns: 1fr;
+    grid-template-rows: 1fr auto;
+    align-content: center;
+    gap: clamp(16px, 3vh, 32px);
+    padding-inline: clamp(20px, 6vw, 40px);
+    padding-block: clamp(60px, 10vh, 90px) clamp(76px, 12vh, 110px);
+  }
+  .palco-pecas__objeto {
+    height: min(42vh, 100%);
+    order: -1;
+  }
+  .palco-pecas__trilha {
+    left: 50%;
+    translate: -50% 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .palco-pecas__objeto img {
+    transition: none;
+    scale: 1;
+  }
+}
