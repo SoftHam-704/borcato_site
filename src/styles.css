@@ -2433,6 +2433,10 @@ body.is-abrindo {
      meio. E `justify-items: start` ancora a coluna de texto na margem em vez
      de centralizar dentro da propria celula. */
   grid-template-columns: minmax(0, 1fr) minmax(0, 1.15fr);
+  /* areas nomeadas: a ABERTURA e a coluna de texto ocupam a MESMA celula e
+     trocam por opacidade — e o que faz o titulo do capitulo ceder o lugar ao
+     "01 NTN-SNR" sem corte (trecho 0 do palco) */
+  grid-template-areas: "dizer objeto";
   align-items: center;
   justify-items: start;
   gap: clamp(24px, 4vw, 72px);
@@ -2584,6 +2588,7 @@ body.is-abrindo {
   .palco-pecas__cena {
     grid-template-columns: 1fr;
     grid-template-rows: 1fr auto;
+    grid-template-areas: "objeto" "dizer";
     align-content: center;
     gap: clamp(16px, 3vh, 32px);
     padding-inline: clamp(20px, 6vw, 40px);
@@ -2591,7 +2596,6 @@ body.is-abrindo {
   }
   .palco-pecas__objeto {
     height: min(42vh, 100%);
-    order: -1;
   }
   /* AS 11 PASTILHAS NAO CABEM EM TELA ESTREITA.
      MEDIDO (05/09, achado da revisao do gerente): 11 alvos de 44px + 10 vaos
@@ -3117,21 +3121,33 @@ body.is-abrindo {
   translate: 0 calc(var(--sai) * -8%);
   scale: calc(1 - var(--sai) * 0.16);
   /* a ZERO no fim, nao a 8%: a tira de contatos mostrou o fantasma da peca
-     dois quadros sobre o capitulo 03 depois da passagem. Residuo e ruido. */
-  opacity: calc(1 - var(--sai));
+     dois quadros sobre o capitulo 03 depois da passagem. Residuo e ruido.
+     E `--abre` entra no produto: no trecho 0 a peca nasce junto com o texto
+     que assume o lugar da abertura. */
+  /* A PECA E UMA PROMESSA durante a abertura, nao uma ausencia. A tira de
+     contatos mostrou 4-5 quadros com METADE DA TELA VAZIA enquanto o titulo
+     subia (o objeto estava a zero). A 16% ela ja esta la, fantasma, e cresce
+     para assumir quando o texto cede.
+     42%, NAO 16%: medido, a 16% a area da peca dava luminancia 18,3 contra
+     18,9 do chao ao lado — uma imagem escura sobre preto fica MAIS ESCURA que
+     o fundo em opacidade baixa. Invisivel por construcao. */
+  opacity: calc((0.42 + var(--abre, 1) * 0.58) * (1 - var(--sai)));
+  scale: calc(1 - (1 - var(--abre, 1)) * 0.1);
+  grid-area: objeto;
 }
 
 /* o texto solta antes do objeto: a leitura termina, depois a imagem sai */
 .palco-pecas__dizer {
   --sai: clamp(0, calc(var(--entrega, 0) / 0.5), 1);
-  opacity: calc(1 - var(--sai));
+  opacity: calc(var(--abre, 1) * (1 - var(--sai)));
   translate: calc(var(--sai) * -18px) 0;
+  grid-area: dizer;
 }
 
 /* a trilha é a última a sair: ela é o mapa do próprio capítulo */
 .palco-pecas__trilha {
   --sai: clamp(0, calc((var(--entrega, 0) - 0.6) / 0.4), 1);
-  opacity: calc(1 - var(--sai));
+  opacity: calc(var(--abre, 1) * (1 - var(--sai)));
 }
 
 /* CHEGADA: a costura entre os dois chãos acende no meio da entrega — o mesmo
@@ -3200,5 +3216,50 @@ body.is-abrindo {
     translate: none;
     scale: 1;
     opacity: 1;
+  }
+}
+
+
+/* ── A ABERTURA DO PALCO (trecho 0) ──────────────────────────────────────────
+   O titulo e o paragrafo do capitulo 02 vivem AQUI, na mesma celula da coluna
+   de texto, e cedem o lugar por opacidade conforme `--abre` (0 -> 1 no
+   primeiro trecho da pista). O flip-book mostrava essa abertura em fluxo
+   normal, com a primeira peca cortada embaixo quando o palco chegava. */
+@property --abre {
+  syntax: "<number>";
+  inherits: true;
+  /* 0: sem JS a abertura e o que se le (texto), nao uma peca presa */
+  initial-value: 0;
+}
+.palco-pecas__abre {
+  grid-area: dizer;
+  max-width: 44ch;
+  opacity: calc(1 - var(--abre, 0));
+  translate: calc(var(--abre, 0) * -18px) 0;
+  pointer-events: none;
+}
+.palco-pecas__abre .cap__num {
+  margin-bottom: clamp(12px, 1.6vw, 22px);
+}
+/* o titulo no tamanho da coluna do palco, nao no do capitulo */
+.palco-pecas__titulo {
+  font-size: clamp(1.55rem, 4.6vmin, 3.1rem);
+  margin-bottom: clamp(14px, 1.8vw, 24px);
+}
+.palco-pecas__abre .cap__corpo p {
+  max-width: 36ch;
+  font-size: clamp(0.92rem, 1.45vmin, 1.08rem);
+}
+@media (max-width: 900px) {
+  .palco-pecas__abre {
+    max-width: none;
+  }
+  .palco-pecas__titulo {
+    font-size: clamp(1.35rem, 6vw, 1.9rem);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .palco-pecas__abre {
+    translate: none;
   }
 }

@@ -145,21 +145,30 @@ function Index() {
           As 11 pecas ja existiam e apareciam so no hover: o ativo mais forte
           do site estava escondido. */}
       <Capitulo id="cap-marcas" className="cap--marcas">
-        <div className="cap--marcas__abre">
-          <p className="cap__num">02 / As marcas</p>
-          <h2 className="cap__titulo">
-            <Palavras texto="De rolamento a filtro de cabine. Onze indústrias na mesma pasta." />
-          </h2>
-          <div className="cap__corpo">
-            <p>
-              Um distribuidor que compra rolamento da NTN-SNR resolve a bomba d&apos;água, o filtro,
-              a lanterna e o óleo na mesma conversa. É essa a diferença entre representar uma marca e
-              representar um catálogo.
-            </p>
-          </div>
-        </div>
-
-        <PalcoPecas />
+        {/* A ABERTURA ENTRA NO PALCO (05/09). O flip-book mostrou a entrada
+            mais fraca do site: titulo do capitulo em cima, em fluxo normal, e
+            a primeira peca CORTADA embaixo quando o palco preso chegava. Agora
+            o titulo e o paragrafo sao o TRECHO ZERO do proprio palco: ocupam a
+            coluna de texto, se escrevem na cascata, e ao rolar cedem o lugar
+            para "01 NTN-SNR" enquanto a peca assume — no mesmo palco, sem
+            corte. E a preparacao do capitulo, espelhando a passagem no fim. */}
+        <PalcoPecas
+          abre={
+            <>
+              <p className="cap__num">02 / As marcas</p>
+              <h2 className="cap__titulo palco-pecas__titulo">
+                <Palavras texto="De rolamento a filtro de cabine. Onze indústrias na mesma pasta." />
+              </h2>
+              <div className="cap__corpo">
+                <p>
+                  Um distribuidor que compra rolamento da NTN-SNR resolve a bomba d&apos;água, o
+                  filtro, a lanterna e o óleo na mesma conversa. É essa a diferença entre representar
+                  uma marca e representar um catálogo.
+                </p>
+              </div>
+            </>
+          }
+        />
       </Capitulo>
 
       {/* 03 — A ESTRADA. A cobertura, que e o dado publicavel mais forte que existe.

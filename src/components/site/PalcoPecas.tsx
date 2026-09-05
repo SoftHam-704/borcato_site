@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, type ReactNode } from "react";
 
 import { representadas } from "@/lib/dados";
 import { pecaDe } from "./PecaNoCursor";
@@ -25,7 +25,7 @@ const COM_PECA = representadas
   .map((r) => ({ ...r, peca: pecaDe(r.id) }))
   .filter((r): r is typeof r & { peca: string } => Boolean(r.peca));
 
-export function PalcoPecas() {
+export function PalcoPecas({ abre }: { abre?: ReactNode }) {
   const palcoRef = useRef<HTMLDivElement>(null);
   const trilhaRef = useRef<HTMLUListElement>(null);
   const [ativa, setAtiva] = useState(0);
@@ -55,9 +55,15 @@ export function PalcoPecas() {
         //
         // Agora as 11 marcas ocupam os 11 primeiros trechos, cada uma com
         // leitura inteira, e a passagem tem trecho proprio depois delas.
-        const TRECHOS = COM_PECA.length + 1;
+        // 13 TRECHOS (05/09): a ABERTURA (trecho 0), as 11 pecas, a passagem.
+        // O trecho 0 e o titulo e o paragrafo do capitulo dentro do palco: ao
+        // rolar, `--abre` vai de 0 a 1 e o texto cede para a primeira peca —
+        // sem o corte que havia quando a abertura ficava em fluxo normal.
+        const TRECHOS = COM_PECA.length + 2;
         const trecho = t * 0.999 * TRECHOS;
-        const i = Math.min(COM_PECA.length - 1, Math.floor(trecho));
+        const abre = Math.min(1, Math.max(0, trecho));
+        palco.style.setProperty("--abre", abre.toFixed(4));
+        const i = Math.min(COM_PECA.length - 1, Math.max(0, Math.floor(trecho - 1)));
         setAtiva((antes) => (antes === i ? antes : i));
 
         // A PASSAGEM PARA "A ESTRADA" — do objeto para o territorio.
@@ -72,7 +78,7 @@ export function PalcoPecas() {
         // parar no meio ve uma peca menor, nao um estado quebrado.
         //
         // A passagem roda no 12o trecho — DEPOIS de a VP ter sido lida.
-        const entrega = Math.min(1, Math.max(0, trecho - COM_PECA.length));
+        const entrega = Math.min(1, Math.max(0, trecho - (COM_PECA.length + 1)));
         // NA RAIZ, e nao so no palco: o capitulo 03 e IRMAO deste (nao filho),
         // entao uma variavel escrita aqui nunca chegaria la. A passagem precisa
         // que as duas cenas leiam o MESMO relogio — e o que separa uma entrega
@@ -123,6 +129,10 @@ export function PalcoPecas() {
   return (
     <div className="palco-pecas" ref={palcoRef} style={{ "--n": COM_PECA.length } as React.CSSProperties}>
       <div className="palco-pecas__cena">
+        {/* A ABERTURA: mesma celula da grade que a coluna de texto — as duas
+            se sobrepoem e trocam por opacidade conforme `--abre`. */}
+        {abre ? <div className="palco-pecas__abre">{abre}</div> : null}
+
         {/* A COLUNA DE TEXTO — ao lado do objeto, não acima dele. */}
         <div className="palco-pecas__dizer">
           <p className="palco-pecas__conta">
@@ -169,7 +179,8 @@ export function PalcoPecas() {
                   const topo =
                     palco.getBoundingClientRect().top + window.scrollY;
                   // mira o meio do trecho DA MARCA, na conta de 12 trechos
-                  const alvo = topo + (pista * (i + 0.5)) / (COM_PECA.length + 1);
+                  // +1: o trecho 0 e a abertura; a peca i vive no trecho i+1
+                  const alvo = topo + (pista * (i + 1.5)) / (COM_PECA.length + 2);
                   // MESMA REGRA DA ROLAGEM HORIZONTAL DA TRILHA (linha ~101):
                   // este salto pedia `smooth` incondicional, e o outro ja
                   // respeitava a preferencia. Duas rolagens na mesma tela com
