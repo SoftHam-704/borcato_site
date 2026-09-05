@@ -2841,3 +2841,160 @@ body.is-abrindo {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 }
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   04 · O NOME — as letras como espaço arquitetônico
+   Parecer de júri: "a homenagem a Henrique e Mateus é provavelmente o conteúdo
+   mais único do site. Hoje termina como título H.M. centralizado e um
+   parágrafo. Eu faria as letras funcionarem como espaço arquitetônico: H. e M.
+   em planos diferentes, a frase da homenagem entrando entre elas."
+   Ref. 11 da biblioteca (Coda Noir) — fecho editorial dark.
+   ═══════════════════════════════════════════════════════════════════════════ */
+.nome {
+  position: relative;
+  display: grid;
+  place-items: center;
+  margin-block: clamp(20px, 4vh, 48px);
+}
+
+.nome__marca {
+  display: grid;
+  /* as duas letras se sobrepõem numa coluna só: é a sobreposição que cria os
+     planos. Grade de uma célula, e cada letra se desloca dentro dela. */
+  grid-template-areas: "letras";
+  place-items: center;
+  margin: 0;
+  line-height: 0.82;
+}
+
+.nome__letra {
+  grid-area: letras;
+  display: block;
+  font-family: var(--font-display), sans-serif;
+  /* vmin: em tela baixa o vw estoura (regra da casa, paga em 1440×900) */
+  font-size: clamp(6rem, 26vmin, 16rem);
+  font-weight: 700;
+  letter-spacing: -0.05em;
+}
+
+/* O H fica ATRÁS e à esquerda: o plano de fundo, mais apagado */
+.nome__letra--h {
+  --t: clamp(0, calc((var(--cap-entra, 1) - 0.1) / 0.6), 1);
+  translate: calc(-26% - (1 - var(--t)) * 8%) 0;
+  color: color-mix(in srgb, var(--br-marca) 26%, transparent);
+  opacity: var(--t);
+}
+/* O M vem À FRENTE e à direita: o plano de cima, cheio */
+.nome__letra--m {
+  --t: clamp(0, calc((var(--cap-entra, 1) - 0.28) / 0.6), 1);
+  translate: calc(26% + (1 - var(--t)) * 8%) 0;
+  color: var(--br-marca);
+  opacity: var(--t);
+}
+
+/* o nome de cada filho, pequeno, sob a própria inicial */
+.nome__letra i {
+  display: block;
+  margin-top: clamp(4px, 0.8vh, 10px);
+  font-family: var(--font-sans), sans-serif;
+  font-size: clamp(0.62rem, 1.2vmin, 0.8rem);
+  font-style: normal;
+  font-weight: 500;
+  letter-spacing: 0.28em;
+  text-transform: uppercase;
+  text-align: center;
+  color: var(--br-fraco);
+}
+
+/* A HOMENAGEM PASSA ENTRE AS LETRAS — é isso que costura a cena.
+   Fica por cima do H (que está atrás) e por baixo do M (que está à frente):
+   o texto atravessa o espaço em vez de ficar embaixo dele. */
+.nome__homenagem {
+  --t: clamp(0, calc((var(--cap-entra, 1) - 0.45) / 0.55), 1);
+  position: relative;
+  z-index: 1;
+  max-width: 34ch;
+  /* A frase ENTRA na caixa das letras (margem negativa), e nao pousa abaixo.
+     MEDIDO: com -9vh o topo do texto fica 81px ACIMA da base de .nome__marca —
+     ja sobreposto. O "vao" que eu via na captura entre HENRIQUE/MATEUS e o
+     texto e o espaco INTERNO da linha das letras (line-height 0.82 numa fonte
+     de 16rem), nao margem. Quase "consertei" pela segunda vez algo que ja
+     estava certo — medir o elemento errado e como se erra aqui. */
+  margin: clamp(-96px, -9vh, -44px) auto 0;
+  padding-inline: clamp(12px, 2vw, 24px);
+  font-size: clamp(0.95rem, 1.5vmin, 1.15rem);
+  line-height: 1.6;
+  text-align: center;
+  text-wrap: pretty;
+  color: var(--br-tinta);
+  opacity: var(--t);
+  translate: 0 calc((1 - var(--t)) * 16px);
+  /* o fundo do capítulo por trás da frase, para ela se ler sobre as letras */
+  background: radial-gradient(
+    ellipse 62% 78% at 50% 50%,
+    color-mix(in srgb, var(--br-chao) 88%, transparent) 40%,
+    transparent 78%
+  );
+}
+
+@media (max-width: 900px) {
+  .nome {
+    min-height: auto;
+  }
+  .nome__letra {
+    font-size: clamp(5rem, 34vmin, 10rem);
+  }
+  /* no celular as letras se afastam menos: senão saem do quadro */
+  .nome__letra--h {
+    translate: calc(-26% - (1 - var(--t)) * 6%) 0;
+  }
+  .nome__letra--m {
+    translate: calc(26% + (1 - var(--t)) * 6%) 0;
+  }
+  /* OS NOMES SE ENCAVALAVAM e liam "HENRIQUMATEUS" (medido: -62px de
+     sobreposicao). Reduzir a fonte nao resolveu, porque a causa e estrutural:
+     cada nome e centrado sob a propria inicial, e as iniciais se sobrepoem por
+     construcao — centro sob centro colide sempre.
+     A saida e ancorar cada um no lado EXTERNO. */
+  .nome__letra i {
+    font-size: clamp(0.5rem, 2.2vw, 0.62rem);
+    letter-spacing: 0.14em;
+  }
+  .nome__letra--h i {
+    text-align: left;
+    translate: -12% 0;
+  }
+  .nome__letra--m i {
+    text-align: right;
+    translate: 12% 0;
+  }
+  /* NO CELULAR A FRASE NAO ENTRA NAS LETRAS.
+     MEDIDO na captura de 375: com -6vh o texto COBRIA as letras — "HENRIQUE" e
+     "MATEUS" sumiam por baixo e o "M." ficava ilegivel. O gesto de atravessar
+     depende de haver largura sobrando dos dois lados; em 375 nao ha.
+     Aqui a frase pousa ABAIXO, com respiro. A cena continua sendo as duas
+     letras em planos diferentes — que e o que carrega o capitulo. */
+  .nome__homenagem {
+    margin-top: clamp(12px, 2vh, 24px);
+    background: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  /* sem movimento a cena EXISTE inteira: as letras nos planos finais, a
+     homenagem cheia. O `translate` fica, porque ele e COMPOSICAO aqui (o
+     afastamento das letras), nao gesto de entrada. */
+  .nome__letra,
+  .nome__homenagem {
+    opacity: 1;
+  }
+  .nome__homenagem {
+    translate: none;
+  }
+  .nome__letra--h {
+    translate: -26% 0;
+  }
+  .nome__letra--m {
+    translate: 26% 0;
+  }
+}

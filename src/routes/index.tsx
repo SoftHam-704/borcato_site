@@ -202,15 +202,30 @@ function Index() {
       {/* 04 — O NOME. A revelação, guardada até o fim. */}
       <Capitulo id="cap-nome" className="cap--nome">
         <p className="cap__num">04 / O nome</p>
-        <h2 className="cap__titulo cap__titulo--grande">
-          {/* as letras sao spans para que o gesto de aproximacao (--cap-entra)
-              tenha o que aproximar; o leitor de tela recebe "H.M." inteiro */}
-          <span aria-hidden>H.</span>
-          <span aria-hidden>M.</span>
-          <span className="sr-only">H.M.</span>
-        </h2>
-        <div className="cap__corpo cap__corpo--centro">
-          <p className="cap__homenagem">{empresa.homenagem}</p>
+
+        {/* AS LETRAS COMO ARQUITETURA. Parecer de juri: "a homenagem a Henrique
+            e Mateus e provavelmente o conteudo mais unico do site. Hoje ela
+            termina como titulo H.M. centralizado e um paragrafo. Eu faria as
+            letras funcionarem como espaco arquitetonico: H. e M. em planos
+            diferentes, a frase da homenagem entrando entre elas."
+
+            Cada letra e a INICIAL DE UM FILHO — e o significado que estava
+            escondido num titulo. Agora cada uma carrega o nome que representa,
+            e a homenagem passa por dentro. */}
+        <div className="nome">
+          <h2 className="nome__marca">
+            <span className="sr-only">H.M.</span>
+            <span className="nome__letra nome__letra--h" aria-hidden>
+              <b>H.</b>
+              <i>Henrique</i>
+            </span>
+            <span className="nome__letra nome__letra--m" aria-hidden>
+              <b>M.</b>
+              <i>Mateus</i>
+            </span>
+          </h2>
+
+          <p className="nome__homenagem">{empresa.homenagem}</p>
         </div>
 
         <div className="fecho">
