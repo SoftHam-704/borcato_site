@@ -278,6 +278,44 @@ wipe da esquerda (mapa primeiro) enquanto a peça esmaece à direita. Reversíve
 - As outras três passagens (hero→01, 01→02, 03→04) seguem sendo cortes. A linguagem
   da 02→03 está validada; cada uma pede gesto próprio, não o mesmo wipe.
 
+## 4-E. AS QUATRO PASSAGENS E A ENTRADA DO PALCO (05/09, ultima rodada)
+
+O dono pediu que cada troca de capitulo fosse uma TRANSFORMACAO com gesto proprio, nao
+o mesmo efeito quatro vezes. Feito e provado em varredura fina (10 quadros por passagem,
+1440 e 375), com o Lenis assentando 1100ms antes de cada captura:
+
+| Passagem | O gesto | Como |
+|---|---|---|
+| hero → 01 | a capsula conduz: recua e esmaece ate 35% no fim do pino; o retrato do 01 nasce ABERTO (escala 1,24 ≈ enquadramento do busto) e fecha no close, com origem nos olhos | `--hero-t` exposto pelo JS; `.casa__retrato img` |
+| 01 → 02 | o cap 02 revela pela DIREITA — a coluna onde estava o retrato — e a peca-promessa (42%) aparece no lugar da pessoa | `clip-path inset(0 0 0 X)` em `.cap--marcas` |
+| 02 → 03 | a peca cede, o territorio entra por um wipe da esquerda, no MESMO quadro | `margin-top:-60vh` no 03 + `Capitulos.tsx` entrega o `--cap-entra` a `--entrega` |
+| 03 → 04 | o ritmo desacelera: abre do centro em 0,92 da entrada (os outros, 0,55); H e M vem de 18% e assentam | `--rev-lento` em `.cap--nome`, recortando so o conteudo |
+
+**A entrada do palco** virou trecho zero: o titulo e o paragrafo do 02 vivem na mesma celula
+da grade que a coluna de texto e cedem por opacidade ao "01 NTN-SNR" (`--abre`). A peca ja
+esta la a 42% como promessa — medido: a 16% uma imagem escura sobre preto fica MAIS
+ESCURA que o chao (18,3 contra 18,9) e nao le.
+
+**Dois defeitos do modelo de entrada que a jornada tonal expos** — e um principio que
+vale para tudo que vier: **o gesto de entrada pertence ao CONTEUDO, nao ao CHAO.** O
+`clip-path` na secao e a `opacity` na secao deixavam o preto da raiz vazar por tras do
+capitulo enquanto ele entrava (medido no 04: 12,25,41 onde o chao e 18,42,68). Os dois
+desceram para os filhos (`.cap > *`); o `translateY` fica na secao.
+
+**Instrumento, de novo:** tres capturas "identicas" da entrada do palco eram a varredura
+lendo antes de o Lenis assentar (560ms). O DOM dizia 0,42 e os pixels diziam nada, e os
+dois estavam certos em instantes diferentes. **1100ms por quadro.**
+
+Flip-book final (24 quadros): 8,0 telas em 1440 (era 10,5), jornada tonal visivel,
+nenhum quadro morto, palco em 4 quadros (era 8).
+
+**O que segue aberto, com motivo:**
+- o hero preso ocupa ~4 quadros quase identicos — decisao do dono, nao mexer sem ele
+- a passagem 01 → 02 e a mais discreta das quatro; uma linha local ligando o retrato a
+  primeira peca (a ideia original do dono) exigiria reorganizar a camada da estrada
+  global, que hoje fica ATRAS dos capitulos — decisao fechada na fase 3
+- fotos reais de evento (dependem do Fabio)
+
 ## 5. AS FERRAMENTAS (em `ferramentas/`)
 
 ```bash
