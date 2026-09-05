@@ -103,8 +103,13 @@ export function PalcoPecas() {
                   const palco = palcoRef.current;
                   if (!palco) return;
                   const pista = palco.offsetHeight - window.innerHeight;
-                  const alvo =
-                    palco.offsetTop + (pista * (i + 0.5)) / COM_PECA.length;
+                  // `offsetTop` e relativo ao ancestral posicionado, e o .cap
+                  // tem `transform` — o salto caia no lugar errado. O proprio
+                  // LEIA-PRIMEIRO ja registrava essa armadilha e eu a repeti
+                  // horas depois, neste arquivo. Achado na revisao de 05/09.
+                  const topo =
+                    palco.getBoundingClientRect().top + window.scrollY;
+                  const alvo = topo + (pista * (i + 0.5)) / COM_PECA.length;
                   window.scrollTo({ top: alvo, behavior: "smooth" });
                 }}
               >

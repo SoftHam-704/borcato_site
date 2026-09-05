@@ -95,6 +95,13 @@ export const empresa = {
   // A frase que o próprio Fábio publicou. É o fecho do site.
   homenagem: "O nome da empresa é uma homenagem aos dois filhos do sócio-fundador — Henrique e Mateus — e ao nome de sua família.",
   telefone: { rotulo: "(31) 3146-1975", href: "tel:+553131461975" },
-  celular: { rotulo: "(31) 99656-8022", href: "tel:+5531996568022" },
+  /* O rotulo diz "Celular · WhatsApp" e o href era `tel:` — anunciava uma coisa
+     e fazia outra. O CTA do hero ja usava wa.me; o fecho da pagina, nao.
+     Achado pela revisao do gerente em 05/09. */
+  celular: {
+    rotulo: "(31) 99656-8022",
+    href: "https://wa.me/5531996568022",
+    href_ligar: "tel:+5531996568022",
+  },
   email: "contato@hmborcato.com.br",
 } as const;

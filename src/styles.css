@@ -2567,9 +2567,33 @@ body.is-abrindo {
     height: min(42vh, 100%);
     order: -1;
   }
+  /* AS 11 PASTILHAS NAO CABEM EM TELA ESTREITA.
+     MEDIDO (05/09, achado da revisao do gerente): 11 alvos de 44px + 10 vaos
+     de 10px = 584px de trilha. Em 375 ela ia de x=-104 a 480: as duas
+     primeiras ficavam FORA DA TELA pela esquerda.
+     E o portao nao pegou porque `translate: -50%` sangra para os DOIS lados —
+     `overflow do documento: 0px` com conteudo inalcancavel. Overflow zero nao
+     prova que cabe.
+     A saida nao e encolher o alvo (44px e o piso da casa): e deixar a trilha
+     ROLAR de lado, com o alvo intacto. */
   .palco-pecas__trilha {
-    left: 50%;
-    translate: -50% 0;
+    left: 0;
+    right: 0;
+    translate: none;
+    justify-content: flex-start;
+    gap: 4px;
+    padding-inline: clamp(20px, 6vw, 40px);
+    overflow-x: auto;
+    scroll-snap-type: x proximity;
+    /* a barra some, o gesto fica */
+    scrollbar-width: none;
+  }
+  .palco-pecas__trilha::-webkit-scrollbar {
+    display: none;
+  }
+  .palco-pecas__trilha li {
+    scroll-snap-align: center;
+    flex: 0 0 auto;
   }
 }
 

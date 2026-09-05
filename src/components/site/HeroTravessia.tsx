@@ -181,7 +181,10 @@ export function HeroTravessia() {
         <div className="hero-tr__acoes">
           <a
             className="btn-falar"
-            href={`https://wa.me/55${empresa.celular.rotulo.replace(/\D/g, "")}`}
+            /* a URL vem pronta de dados.ts (fonte unica). Antes era montada
+               aqui, extraindo digitos do ROTULO — dois lugares para a mesma
+               coisa, e o fecho da pagina ja tinha divergido para `tel:`. */
+            href={empresa.celular.href}
             target="_blank"
             rel="noopener noreferrer"
           >

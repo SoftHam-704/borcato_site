@@ -62,8 +62,49 @@ JS_AUDITORIA = """
     }
   }
 
+  // CONTROLE FORA DA TELA — o furo que este portao TINHA.
+  // Em 05/09 as 11 pastilhas do palco somavam 584px e, centralizadas com
+  // `translate: -50%`, sangravam para os DOIS lados: comecavam em x=-104 numa
+  // tela de 375. Duas ficavam inalcancaveis — e o teste de overflow do
+  // documento dava ZERO, porque sangrar simetricamente nao cria barra de
+  // rolagem. **Overflow zero nao prova que cabe.**
+  // Aqui a pergunta e outra: existe algo CLICAVEL fora da area visivel?
+  const foraDaTela = [];
+  for (const el of document.querySelectorAll('a,button,[role=button],input,select,textarea')) {
+    const r = el.getBoundingClientRect();
+    if (r.width === 0 || r.height === 0) continue;
+    const s = getComputedStyle(el);
+    if (s.visibility === 'hidden' || s.display === 'none') continue;
+    // DOIS casos legitimos de estar fora da tela, e o teste precisa saber:
+    //  1. um pai que ROLA de lado — o item e alcancavel rolando
+    //  2. uma MARQUISE (o pai anda em translateX): por construcao ela sempre
+    //     tem itens fora do quadro, e sao copias do que ja passou. Sem esta
+    //     excecao o portao acusava 12 falhas em TODA largura, inclusive 1440
+    //     onde nao ha problema — 12 iguais em toda largura e assinatura de
+    //     falso positivo, nao de defeito.
+    let ignorar = false;
+    for (let p = el.parentElement; p; p = p.parentElement) {
+      const ps = getComputedStyle(p);
+      if (ps.overflowX === 'auto' || ps.overflowX === 'scroll') { ignorar = true; break; }
+      if (ps.transform && ps.transform !== 'none' && /matrix/.test(ps.transform)) {
+        // so conta como marquise se o pai realmente desloca no eixo X
+        const m = new DOMMatrixReadOnly(ps.transform);
+        if (Math.abs(m.m41) > 1) { ignorar = true; break; }
+      }
+    }
+    if (ignorar) continue;
+    if (r.right < 2 || r.left > vw - 2) {
+      foraDaTela.push({
+        tag: el.tagName.toLowerCase(),
+        cls: (el.className || '').toString().slice(0, 40),
+        txt: (el.textContent || '').trim().slice(0, 26),
+        left: Math.round(r.left), right: Math.round(r.right), vw,
+      });
+    }
+  }
+
   return { overflow, pequenos, truncados, estouram: estouram.slice(0, 12),
-           altura: doc.scrollHeight };
+           foraDaTela: foraDaTela.slice(0, 12), altura: doc.scrollHeight };
 }
 """
 
@@ -101,6 +142,11 @@ with sync_playwright() as pw:
         print(f"  estouram a dir.  : {len(a['estouram'])}")
         for e in a["estouram"][:6]:
             print(f"      {e['tag']}.{e['cls']} right={e['right']} vw={e['vw']}")
+        fora = a.get("foraDaTela", [])
+        print(f"  clicavel FORA da tela: {len(fora)}",
+              "OK" if not fora else "<<< FALHA (inalcancavel)")
+        for f in fora[:6]:
+            print(f"      {f['tag']}.{f['cls']} x={f['left']}..{f['right']} vw={f['vw']} :: {f['txt']!r}")
         print(f"  erros de console : {len(erros)}")
         for e in erros[:5]:
             print(f"      {e[:150]}")

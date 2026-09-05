@@ -173,6 +173,44 @@ com a média do que já viu — **que é a definição de genérico**. Referênc
 
 ---
 
+## 4-B. REVISÃO DO GERENTE (05/09) — seis achados, todos confirmados no código
+
+Uma revisão independente conferiu meus documentos **contra o código** e achou seis
+coisas que eu deixei passar. **Todas verificadas e corrigidas.** Ficam aqui porque
+o padrão importa mais que os defeitos.
+
+| Achado | O que era | Estado |
+|---|---|---|
+| Contato do fecho | rótulo dizia "Celular · WhatsApp", `href` era `tel:` | ✅ corrigido; hero e fecho agora leem a mesma fonte |
+| Botão Pular | `aria-hidden` no contêiner engolia o único controle da cena | ✅ agora só a decoração se esconde |
+| Telas de erro | "Page not found", "Go home" num documento `pt-BR` | ✅ traduzidas |
+| Pastilhas do palco | 584px de trilha; em 375px começavam em **x = −104** | ✅ trilha rola de lado, alvo de 44px intacto |
+| `offsetTop` no palco | a armadilha que este próprio arquivo documenta | ✅ trocado por `getBoundingClientRect` |
+| Âncoras de cidade | `dados.ts` pede confirmação; a página já as exibe | ⚠️ **em aberto** — ver abaixo |
+
+### O furo do portão, que é a lição maior
+
+As pastilhas ficavam fora da tela **e o portão dava "overflow: 0px OK"**. Motivo:
+`translate: -50%` faz o elemento sangrar para os **dois lados**, e sangria simétrica
+não cria barra de rolagem.
+
+> **Overflow zero não prova que cabe.**
+
+O portão ganhou um teste novo — **controle clicável fora da área visível** — que ignora
+quem tem pai rolável ou é item de marquise. **E foi validado reintroduzindo o bug:**
+com o defeito de volta ele acusa 4 e nomeia os certos; sem, acusa zero.
+
+### O que continua em aberto (decisão do cliente, não técnica)
+
+`src/lib/dados.ts` marca as cidades-âncora como **a confirmar com o Fábio**, e
+`src/routes/index.tsx` já as renderiza. É a regra dura nº 2 sendo esticada: as cidades
+são plausíveis, mas ninguém confirmou que são roteiro real.
+
+**Duas saídas:** perguntar a ele (uma pergunta, não pessoal), ou mostrar as regiões sem
+nomear cidade. **Não deixar como está sem decidir.**
+
+---
+
 ## 5. AS FERRAMENTAS (em `ferramentas/`)
 
 ```bash

@@ -80,12 +80,15 @@ export function Abertura() {
     <div
       className={`abertura fase-${fase}${saindo ? " is-saindo" : ""}`}
       role="presentation"
-      aria-hidden
     >
       {/* a luz que acende — o mesmo cone que recorta o rosto do Fábio na foto */}
-      <span className="abertura__luz" />
+      <span className="abertura__luz" aria-hidden />
 
-      <div className="abertura__nome">
+      {/* ACESSIBILIDADE: o `aria-hidden` vivia no CONTAINER e engolia junto o
+          botao Pular — o unico controle da cena ficava invisivel para leitor de
+          tela, mas continuava focavel. Achado na revisao de 05/09.
+          Agora cada peca decorativa se esconde sozinha e o botao permanece. */}
+      <div className="abertura__nome" aria-hidden>
         {/* cada letra entra por conta própria: o nome se MONTA, não aparece */}
         {"H.M.".split("").map((c, i) => (
           <span key={`a${i}`} style={{ "--i": i } as React.CSSProperties}>
@@ -101,7 +104,7 @@ export function Abertura() {
         </b>
       </div>
 
-      <p className="abertura__pe">Representação comercial · Belo Horizonte</p>
+      <p className="abertura__pe" aria-hidden>Representação comercial · Belo Horizonte</p>
 
       <button type="button" className="abertura__pular" onClick={encerrar}>
         Pular
