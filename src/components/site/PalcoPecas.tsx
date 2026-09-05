@@ -47,6 +47,23 @@ export function PalcoPecas() {
         // último quadro pisque de volta para a primeira ao encostar no fim.
         const i = Math.min(COM_PECA.length - 1, Math.floor(t * 0.999 * COM_PECA.length));
         setAtiva((antes) => (antes === i ? antes : i));
+
+        // A PASSAGEM PARA "A ESTRADA" — do objeto para o territorio.
+        //
+        // Nas quatro auditorias a mesma leitura voltou: as cenas se SUCEDEM em
+        // vez de se transformarem. Aqui a ultima peca nao some para o mapa
+        // entrar: ela CEDE o palco. Enquanto o ultimo trecho da pista corre, a
+        // peca recua e esmaece e o capitulo seguinte ja esta subindo por tras.
+        //
+        // Um gesto so, esfregado pelo scroll: reversivel ao voltar, sem
+        // relogio proprio, e o conteudo continua legivel o tempo todo — quem
+        // parar no meio ve uma peca menor, nao um estado quebrado.
+        //
+        // A janela e o ULTIMO 1/11 da pista (o tempo da 11a peca), para a
+        // entrega acontecer na virada e nao ao longo do capitulo inteiro.
+        const limiar = 1 - 1 / COM_PECA.length;
+        const entrega = Math.min(1, Math.max(0, (t - limiar) / (1 - limiar)));
+        palco.style.setProperty("--entrega", entrega.toFixed(4));
       });
     };
 
@@ -138,7 +155,17 @@ export function PalcoPecas() {
                   const topo =
                     palco.getBoundingClientRect().top + window.scrollY;
                   const alvo = topo + (pista * (i + 0.5)) / COM_PECA.length;
-                  window.scrollTo({ top: alvo, behavior: "smooth" });
+                  // MESMA REGRA DA ROLAGEM HORIZONTAL DA TRILHA (linha ~101):
+                  // este salto pedia `smooth` incondicional, e o outro ja
+                  // respeitava a preferencia. Duas rolagens na mesma tela com
+                  // regras diferentes — achado da 4a auditoria.
+                  window.scrollTo({
+                    top: alvo,
+                    behavior: window.matchMedia("(prefers-reduced-motion: reduce)")
+                      .matches
+                      ? "auto"
+                      : "smooth",
+                  });
                 }}
               >
                 <span className="sr-only">{r.nome}</span>

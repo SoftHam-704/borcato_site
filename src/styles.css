@@ -3056,3 +3056,81 @@ body.is-abrindo {
   color: var(--br-luz);
   opacity: 1;
 }
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   A PASSAGEM · As marcas → A estrada
+   Do OBJETO para o TERRITÓRIO onde ele circula.
+
+   As quatro auditorias trouxeram a mesma leitura: as cenas se sucedem em vez de
+   se transformarem. Aqui a última peça não some para o mapa entrar — ela CEDE
+   o palco, e a troca de capítulo passa a ter função.
+
+   Três tempos, todos no mesmo `--entrega` (0→1) esfregado pelo scroll:
+     · PREPARAÇÃO  (0 → 0,35) a peça recua, o texto começa a soltar
+     · TRANSFORMAÇÃO (0,35 → 0,8) ela sobe e esmaece, o palco se abre
+     · CHEGADA (0,8 → 1) o palco entrega a tela
+
+   Reversível ao rolar de volta, porque não há relógio próprio. E legível em
+   qualquer ponto: quem parar no meio vê uma peça menor, não um estado quebrado.
+   ═══════════════════════════════════════════════════════════════════════════ */
+@property --entrega {
+  syntax: "<number>";
+  inherits: true;
+  initial-value: 0;
+}
+
+/* PREPARAÇÃO + TRANSFORMAÇÃO: o objeto recua e sobe, cedendo o lugar */
+.palco-pecas__objeto {
+  --sai: clamp(0, calc((var(--entrega, 0) - 0.35) / 0.45), 1);
+  translate: 0 calc(var(--sai) * -8%);
+  scale: calc(1 - var(--sai) * 0.16);
+  opacity: calc(1 - var(--sai) * 0.92);
+}
+
+/* o texto solta antes do objeto: a leitura termina, depois a imagem sai */
+.palco-pecas__dizer {
+  --sai: clamp(0, calc(var(--entrega, 0) / 0.5), 1);
+  opacity: calc(1 - var(--sai) * 0.9);
+  translate: calc(var(--sai) * -18px) 0;
+}
+
+/* a trilha é a última a sair: ela é o mapa do próprio capítulo */
+.palco-pecas__trilha {
+  --sai: clamp(0, calc((var(--entrega, 0) - 0.6) / 0.4), 1);
+  opacity: calc(1 - var(--sai));
+}
+
+/* CHEGADA: a costura entre os dois chãos acende no meio da entrega — o mesmo
+   recurso das transições de capítulo, agora marcando a passagem */
+.palco-pecas::after {
+  content: "";
+  position: absolute;
+  z-index: 2;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 1px;
+  pointer-events: none;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    color-mix(in srgb, var(--br-luz) 60%, transparent),
+    transparent
+  );
+  /* parábola: acende no meio do gesto e apaga quando assenta */
+  opacity: calc(4 * var(--entrega, 0) * (1 - var(--entrega, 0)) * 0.7);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  /* sem movimento a cena EXISTE inteira: nada recua, nada esmaece */
+  .palco-pecas__objeto,
+  .palco-pecas__dizer,
+  .palco-pecas__trilha {
+    translate: none;
+    scale: 1;
+    opacity: 1;
+  }
+  .palco-pecas::after {
+    opacity: 0;
+  }
+}

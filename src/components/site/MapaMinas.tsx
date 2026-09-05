@@ -86,6 +86,22 @@ export function MapaMinas() {
     if (!svg) return;
 
 
+    // COM MOVIMENTO REDUZIDO O JS NAO CALCULA NADA.
+    // O CSS ja entrega a cena inteira (rota completa, regioes acesas) — o
+    // scroll ficava recalculando classes que o proprio CSS sobrepoe. Trabalho
+    // por quadro sem efeito nenhum; achado da 4a auditoria.
+    const semMovimento = window.matchMedia("(prefers-reduced-motion: reduce)");
+    if (semMovimento.matches) {
+      svg.style.setProperty("--rota", "1");
+      svg.querySelectorAll<SVGGElement>("[data-regiao]").forEach((g) => {
+        g.classList.add("is-acesa");
+      });
+      document
+        .querySelectorAll<HTMLElement>("#cap-estrada .estrada__ufs li")
+        .forEach((li) => li.classList.add("is-percorrida"));
+      return;
+    }
+
     let pedido = 0;
     const aoRolar = () => {
       if (pedido) return;
