@@ -1500,18 +1500,50 @@
 }
 
 /* 03 · A ESTRADA — o MG cresce, e as regiões chegam depois dele.
-   A hierarquia do gesto repete a hierarquia do argumento: a casa primeiro. */
+   A hierarquia do gesto repete a hierarquia do argumento: a casa primeiro.
+
+   ── PROFUNDIDADE POR CAMADAS (parallax) ──────────────────────────────────
+   O capítulo tinha DUAS velocidades e as duas no mesmo plano: o MG e a lista
+   subiam juntos, na mesma direção. A cena lia como lista que acende, não como
+   território com distância — e o assunto do capítulo é justamente DISTÂNCIA
+   PERCORRIDA.
+
+   A física do parallax: o que está PERTO move-se DEVAGAR, o que está longe
+   move-se mais. É a paisagem pela janela do carro. E a profundidade não está
+   em nenhuma velocidade sozinha — está no INTERVALO entre elas (com todas
+   iguais, o efeito simplesmente some).
+
+   Aqui os fatores vêm da metáfora, não de gosto:
+     · o título e o corpo   — o mais longe, viaja mais (60px)
+     · as regiões           — os destinos, meio-termo (38px)
+     · o MG                 — a casa, quase não sai do lugar (10px)
+
+   Não é GSAP: `--cap-entra` já existe e já herda. Um multiplicador diferente
+   por camada é exatamente o que o `data-speed` do ScrollSmoother faz. */
+
+/* a camada MAIS DISTANTE: o texto do capítulo viaja mais que tudo */
+.cap--estrada .cap__titulo,
+.cap--estrada .cap__corpo {
+  --t: clamp(0, calc((var(--cap-entra, 1) - 0.1) / 0.7), 1);
+  transform: translateY(calc((1 - var(--t)) * 60px));
+}
+
+/* a casa: quase parada, porque é o ponto de onde tudo sai */
 .cap--estrada .estrada__casa b {
   --t: clamp(0, calc((var(--cap-entra, 1) - 0.2) / 0.6), 1);
   display: inline-block;
-  transform: scale(calc(0.82 + var(--t) * 0.18));
+  transform:
+    translateY(calc((1 - var(--t)) * 10px))
+    scale(calc(0.82 + var(--t) * 0.18));
   transform-origin: 0 100%;
   opacity: var(--t);
 }
+
+/* os destinos: viajam mais que a casa e menos que o fundo */
 .cap--estrada .estrada__ufs {
   --t: clamp(0, calc((var(--cap-entra, 1) - 0.45) / 0.55), 1);
   opacity: var(--t);
-  transform: translateY(calc((1 - var(--t)) * 22px));
+  transform: translateY(calc((1 - var(--t)) * 38px));
 }
 
 /* 04 · O NOME — já tem o gesto próprio (as letras se aproximam). O que falta é
@@ -1529,6 +1561,10 @@
   .cap--casa .cap__titulo,
   .cap--casa .cap__corpo,
   .cap--marcas .marcas-lista li,
+  /* as duas camadas de profundidade do cap 03 tambem param aqui: sem isto,
+     quem desliga movimento veria o titulo deslocado 60px e parado la */
+  .cap--estrada .cap__titulo,
+  .cap--estrada .cap__corpo,
   .cap--estrada .estrada__casa b,
   .cap--estrada .estrada__ufs,
   .cap--nome .cap__corpo,
