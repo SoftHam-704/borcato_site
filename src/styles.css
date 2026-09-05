@@ -795,6 +795,14 @@
 .hero-tr__capsula {
   position: relative;
   justify-self: end;
+  /* A PASSAGEM hero -> 01: a capsula CEDE no ultimo quarto do pino — recua e
+     esmaece — enquanto o retrato do capitulo 01 nasce aberto e fecha no close.
+     --hero-t e o progresso cru do pino, escrito pelo JS; a curva fica aqui. */
+  --cede: clamp(0, calc((var(--hero-t, 0) - 0.82) / 0.18), 1);
+  /* piso de 35%, nao 15%: a tira mostrou o hero terminando o pino com o Fabio
+     fantasma e o capitulo 01 ainda fora da tela — um quadro de hero vazio.
+     Ele cede, mas continua presente ate o retrato do 01 assumir. */
+  opacity: calc(1 - var(--cede) * 0.65);
   width: min(46vw, 620px);
   aspect-ratio: 780 / 936;
   /* O teto desconta TUDO o que ja ocupa altura no hero: o padding de topo e o
@@ -992,9 +1000,15 @@
   position: relative;
   padding: clamp(96px, 16vh, 200px) clamp(20px, 6vw, 104px);
   padding-left: var(--br-goteira);
-  opacity: calc(0.25 + var(--cap-entra, 1) * 0.75);
+  /* A OPACIDADE DA ENTRADA E DO CONTEUDO, NAO DO CHAO (05/09). Estava na
+     secao inteira: durante a entrada o capitulo ficava a 25% e o fundo da
+     raiz (#0a0a0c) vazava por tras do chao dele. Nos capitulos escuros nao se
+     via; com a jornada tonal o 04 tem o chao mais claro e aparecia uma faixa
+     escura (medido: 12,25,41 onde o chao e 18,42,68) — o mesmo defeito que o
+     clip-path na secao tinha. O gesto de subir (34px) fica na secao; a
+     opacidade desce para os filhos, em `.cap > *` logo abaixo. */
   transform: translateY(calc((1 - var(--cap-entra, 1)) * 34px));
-  will-change: opacity, transform;
+  will-change: transform;
 }
 
 @media (max-width: 900px) {
@@ -1918,7 +1932,13 @@ body.is-abrindo {
 
 /* 02 · AS MARCAS — da esquerda, como uma pasta abrindo */
 .cap--marcas {
-  clip-path: inset(0 calc((1 - var(--rev)) * 100%) 0 0);
+  /* A PASSAGEM 01 -> 02 (05/09): revela pela DIREITA, nao pela esquerda. A
+     coluna da direita e onde estava o retrato do Fabio no capitulo 01 — e e
+     onde a peca-promessa do palco (42%) espera. Revelando por ali, o objeto
+     aparece exatamente no lugar da pessoa: ela apresenta o que representa.
+     Antes a revelacao vinha da esquerda e o que aparecia primeiro era o vao
+     de texto. */
+  clip-path: inset(0 0 0 calc((1 - var(--rev)) * 100%));
 }
 
 /* 03 · A ESTRADA — da direita: vem de fora */
@@ -1937,7 +1957,23 @@ body.is-abrindo {
 
 /* 04 · O NOME — do centro para as bordas: a revelação se abre */
 .cap--nome {
-  clip-path: inset(0 calc((1 - var(--rev)) * 50%) 0 calc((1 - var(--rev)) * 50%));
+  /* A PASSAGEM 03 -> 04 (05/09): o ritmo DESACELERA. Os outros capitulos
+     abrem em 0,55 da entrada; este abre em 0,92 — quase o dobro de rolagem
+     para a mesma revelacao. E o unico que abre do CENTRO: a rota terminou, e
+     o espaco se abre devagar para o H.M. — peso para a homenagem antes do
+     contato. */
+  --rev-lento: clamp(0, calc(var(--cap-entra, 1) / 0.92), 1);
+  /* O CHAO NAO SE RECORTA — so o conteudo. Com a secao inteira no clip-path,
+     a abertura lenta expunha por dois quadros o fundo da raiz (#0a0a0c) atras
+     do capitulo: uma FAIXA PRETA entre o azul do 03 e o do 04. Agora o chao
+     do 04 continua o do 03 (a costura ::after faz a passagem de cor) e o que
+     se abre do centro e o conteudo, nomeado peca a peca. */
+  clip-path: none;
+}
+.cap--nome > .cap__num,
+.cap--nome > .nome,
+.cap--nome > .fecho {
+  clip-path: inset(0 calc((1 - var(--rev-lento)) * 50%) 0 calc((1 - var(--rev-lento)) * 50%));
 }
 
 /* A costura entre capítulos: uma linha fina de luz na borda que está sendo
@@ -1970,7 +2006,8 @@ body.is-abrindo {
   top: 0;
   bottom: 0;
   width: 1px;
-  right: calc((1 - var(--rev)) * 100%);
+  /* a costura vai na borda que esta sendo revelada — agora a da esquerda */
+  left: calc((1 - var(--rev)) * 100%);
 }
 .cap--estrada::before {
   --costura-dir: 180deg;
@@ -1985,7 +2022,8 @@ body.is-abrindo {
   top: 0;
   bottom: 0;
   width: 1px;
-  left: calc((1 - var(--rev)) * 50%);
+  left: calc((1 - var(--rev-lento, var(--rev))) * 50%);
+  opacity: calc(4 * var(--rev-lento, 0) * (1 - var(--rev-lento, 0)) * 0.55);
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -2331,10 +2369,12 @@ body.is-abrindo {
 .cap--nome::after {
   background: linear-gradient(to bottom, #0f1f34, transparent);
 }
-/* o conteúdo do capítulo passa POR CIMA da costura */
+/* o conteúdo do capítulo passa POR CIMA da costura — e é ELE que esmaece na
+   entrada, não o chão (ver o comentário em `.cap`) */
 .cap > * {
   position: relative;
   z-index: 1;
+  opacity: calc(0.25 + var(--cap-entra, 1) * 0.75);
 }
 
 /* ═══════════════════════════════════════════════════════════════════════════
@@ -2710,10 +2750,16 @@ body.is-abrindo {
   display: block;
   width: 100%;
   height: auto;
-  /* o gesto: entra com o capítulo, um pouco depois do texto */
-  --t: clamp(0, calc((var(--cap-entra, 1) - 0.25) / 0.75), 1);
-  opacity: var(--t);
-  scale: calc(1.06 - var(--t) * 0.06);
+  /* A PASSAGEM hero -> 01 (05/09): o mesmo homem MUDANDO DE QUADRO, nao outra
+     foto entrando. O retrato nasce ABERTO — escala 1,24, que aproxima o close
+     do enquadramento do busto que a capsula do hero mostra — e FECHA no close
+     conforme o capitulo entra. A origem fica nos olhos (60% 34%), para o
+     rosto nao deslizar durante o zoom. E ele entra ANTES do texto (0,05, nao
+     0,25): a imagem conduz, a historia vem atras. */
+  --t: clamp(0, calc((var(--cap-entra, 1) - 0.05) / 0.7), 1);
+  opacity: calc(0.35 + var(--t) * 0.65);
+  scale: calc(1.24 - var(--t) * 0.24);
+  transform-origin: 60% 34%;
   transition: none;
 }
 /* a luz que sobe do canto — o mesmo cone da cápsula */
@@ -2940,15 +2986,16 @@ body.is-abrindo {
 
 /* O H fica ATRÁS e à esquerda: o plano de fundo, mais apagado */
 .nome__letra--h {
-  --t: clamp(0, calc((var(--cap-entra, 1) - 0.1) / 0.6), 1);
-  translate: calc(-26% - (1 - var(--t)) * 8%) 0;
+  /* mais tarde (0,25) e de mais longe (18%): as letras ASSENTAM, nao chegam */
+  --t: clamp(0, calc((var(--cap-entra, 1) - 0.25) / 0.65), 1);
+  translate: calc(-26% - (1 - var(--t)) * 18%) 0;
   color: color-mix(in srgb, var(--br-marca) 26%, transparent);
   opacity: var(--t);
 }
 /* O M vem À FRENTE e à direita: o plano de cima, cheio */
 .nome__letra--m {
-  --t: clamp(0, calc((var(--cap-entra, 1) - 0.28) / 0.6), 1);
-  translate: calc(26% + (1 - var(--t)) * 8%) 0;
+  --t: clamp(0, calc((var(--cap-entra, 1) - 0.4) / 0.6), 1);
+  translate: calc(26% + (1 - var(--t)) * 18%) 0;
   color: var(--br-marca);
   opacity: var(--t);
 }
@@ -3261,5 +3308,23 @@ body.is-abrindo {
 @media (prefers-reduced-motion: reduce) {
   .palco-pecas__abre {
     translate: none;
+  }
+}
+
+
+@media (prefers-reduced-motion: reduce) {
+  /* as passagens nao existem sem movimento: cada cena nasce inteira */
+  .hero-tr__capsula {
+    opacity: 1;
+  }
+  .casa__retrato img {
+    opacity: 1;
+    scale: 1;
+  }
+  .cap--nome,
+  .cap--nome > .cap__num,
+  .cap--nome > .nome,
+  .cap--nome > .fecho {
+    clip-path: none;
   }
 }

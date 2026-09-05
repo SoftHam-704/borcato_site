@@ -109,6 +109,9 @@ export function HeroTravessia() {
         if (secao && fant) {
           const sobra = Math.max(0, fant.scrollWidth - document.documentElement.clientWidth);
           secao.style.setProperty("--fant-x", `${(-t * (sobra + 40)).toFixed(1)}px`);
+          // o progresso do pino, cru, para o CSS compor a SAIDA da capsula
+          // (a passagem hero -> 01: ela recua e esmaece no ultimo quarto)
+          secao.style.setProperty("--hero-t", t.toFixed(4));
         }
       });
     };
