@@ -6,6 +6,7 @@ import { Capitulo, NavCapitulos } from "@/components/site/Capitulos";
 import { Estrada } from "@/components/site/Estrada";
 import { Palavras } from "@/components/site/Palavras";
 import { PalcoPecas } from "@/components/site/PalcoPecas";
+import { MapaMinas } from "@/components/site/MapaMinas";
 import { empresa, regioes, casa, representadas } from "@/lib/dados";
 import fabioCasa from "@/assets/site/fabio-casa.avif";
 
@@ -175,18 +176,26 @@ function Index() {
           </p>
         </div>
 
+        {/* O MAPA ao lado da lista. Antes a lista ERA a cena, e o parecer de
+            juri apontou: "informativa, mas visualmente ainda parece uma lista".
+            Agora Minas ocupa metade da tela e as 8 regioes acendem na ordem da
+            viagem conforme a rota avanca. */}
         <div className="estrada">
-          <p className="estrada__casa">
-            <b>{casa.uf}</b>
-            <span>{casa.municipios} municípios · um estado</span>
-          </p>
-          <ul className="estrada__ufs">
-            {regioes.map((r) => (
-              <li key={r.nome}>
-                <b>{r.nome}</b>
-              </li>
-            ))}
-          </ul>
+          <div className="estrada__dizer">
+            <p className="estrada__casa">
+              <b>{casa.uf}</b>
+              <span>{casa.municipios} municípios · um estado</span>
+            </p>
+            <ul className="estrada__ufs">
+              {regioes.map((r) => (
+                <li key={r.nome}>
+                  <b>{r.nome}</b>
+                </li>
+              ))}
+            </ul>
+          </div>
+
+          <MapaMinas />
         </div>
       </Capitulo>
 

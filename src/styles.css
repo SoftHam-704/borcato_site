@@ -2730,3 +2730,114 @@ body.is-abrindo {
     scale: 1;
   }
 }
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   03 · A ESTRADA — o mapa de Minas, visível
+   Parecer de júri: "a lista de regiões é informativa, mas visualmente ainda
+   parece uma lista. O mapa precisa ocupar metade da tela, com as oito regiões
+   acendendo conforme a rolagem. No celular, não pode simplesmente desaparecer."
+   ═══════════════════════════════════════════════════════════════════════════ */
+.estrada {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1.05fr);
+  align-items: center;
+  gap: clamp(24px, 4vw, 72px);
+}
+
+.mapa-mg {
+  width: 100%;
+  height: auto;
+  max-height: 76vh;
+  overflow: visible;
+}
+
+/* o corpo do estado: presença sem peso — é o palco, não o assunto */
+.mapa-mg__chao {
+  fill: color-mix(in srgb, var(--br-marca) 7%, transparent);
+}
+.mapa-mg__borda {
+  fill: none;
+  stroke: color-mix(in srgb, var(--br-marca) 34%, transparent);
+  stroke-width: 0.5;
+  stroke-linejoin: round;
+}
+
+/* A ROTA. Linear, nunca ease: um ease faz a ponta correr ~1,5x o dedo no
+   trecho central, e o cliente percebe na hora (lição da fita da SoftHam). */
+.mapa-mg__rota {
+  fill: none;
+  stroke: var(--br-luz);
+  stroke-width: 0.6;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-dasharray: 1;
+  stroke-dashoffset: calc(1 - var(--rota, 0));
+  opacity: 0.85;
+}
+
+/* as paradas */
+.mapa-mg [data-regiao] .mapa-mg__ponto {
+  fill: var(--br-fraco);
+  opacity: 0.4;
+  transition: fill 0.45s ease, opacity 0.45s ease;
+}
+.mapa-mg [data-regiao] .mapa-mg__halo {
+  fill: none;
+  stroke: var(--br-luz);
+  stroke-width: 0.4;
+  opacity: 0;
+  scale: 0.5;
+  transform-box: fill-box;
+  transform-origin: center;
+  transition: opacity 0.5s ease, scale 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.mapa-mg [data-regiao].is-acesa .mapa-mg__ponto {
+  fill: var(--br-luz);
+  opacity: 1;
+}
+.mapa-mg [data-regiao].is-acesa .mapa-mg__halo {
+  opacity: 0.5;
+  scale: 1;
+}
+
+/* ── celular: o mapa FICA, e a lista vira uma coluna abaixo dele ─────────── */
+@media (max-width: 900px) {
+  .estrada {
+    grid-template-columns: 1fr;
+    gap: clamp(20px, 4vh, 34px);
+  }
+  .mapa-mg {
+    order: -1;
+    max-height: 46vh;
+    margin-inline: auto;
+    max-width: 340px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  /* sem movimento a rota existe inteira e as regiões ficam acesas */
+  .mapa-mg__rota {
+    stroke-dashoffset: 0;
+  }
+  .mapa-mg [data-regiao] .mapa-mg__ponto {
+    fill: var(--br-luz);
+    opacity: 1;
+    transition: none;
+  }
+  .mapa-mg [data-regiao] .mapa-mg__halo {
+    opacity: 0.5;
+    scale: 1;
+    transition: none;
+  }
+}
+
+
+/* a lista agora divide a cena com o mapa: coluna unica, nao grade larga */
+.estrada__dizer .estrada__ufs {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+@media (max-width: 900px) {
+  .estrada__dizer .estrada__ufs {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
