@@ -92,8 +92,6 @@ export function Estrada() {
     // curva caíam SOBRE o texto. No celular não existe vão por onde a estrada passe:
     // ela é um efeito de desktop, e no mobile simplesmente não existe.
     const estreito = window.matchMedia("(max-width: 900px)");
-    /** onde, ao longo do traco, cada regiao acende */
-    let marcos: { el: HTMLElement; emQue: number }[] = [];
 
     /** Remonta a curva a partir de onde os capítulos estão AGORA. */
     const montar = () => {
@@ -169,39 +167,11 @@ export function Estrada() {
       // ONDE, ao longo do traco, cada regiao fica. Mede-se o comprimento do path
       // ate o ponto dela — assim a luz acende no instante em que a ponta passa,
       // e nao num palpite de porcentagem.
-      marcos = [];
-      const lis = document.querySelectorAll<HTMLElement>("#cap-estrada .estrada__ufs li");
-      if (lis.length === REGIOES_MAPA.length) {
-        const passos = 260;
-        REGIOES_MAPA.forEach((g, i) => {
-          const alvoX = larg * g.x;
-          const capEl = document.getElementById("cap-estrada");
-          if (!capEl) return;
-          const rc = capEl.getBoundingClientRect();
-          const alvoY = rc.top + window.scrollY + rc.height * g.y;
-          // procura o ponto do path mais proximo do marco
-          let melhor = 0;
-          let menor = Infinity;
-          for (let k = 0; k <= passos; k++) {
-            const l = (compr * k) / passos;
-            const pt = path.getPointAtLength(l);
-            const d = (pt.x - alvoX) ** 2 + (pt.y - alvoY) ** 2;
-            if (d < menor) {
-              menor = d;
-              melhor = l;
-            }
-          }
-          const el = lis[i];
-          if (el) marcos.push({ el, emQue: melhor });
-        });
-      }
-
       path.style.strokeDasharray = `${compr}`;
       // reduced-motion: a estrada existe inteira E as regioes ficam acesas —
       // e o que a spec exige, para quem nao ve movimento nao perder a cena.
       path.style.strokeDashoffset = reduzido.matches ? "0" : `${compr}`;
       if (reduzido.matches) {
-        for (const m of marcos) m.el.classList.add("is-percorrida");
       }
 
       return compr;
@@ -221,17 +191,12 @@ export function Estrada() {
         const t = Math.min(1, Math.max(0, window.scrollY / rolavel));
         path.style.strokeDashoffset = (compr * (1 - t)).toFixed(1);
 
-        // AS REGIOES ACENDEM QUANDO A PONTA CHEGA NELAS.
-        // O que separa "rota percorrida" de "mapa de calor" (que a spec proibe):
-        // existe uma ponta que anda, e o que ficou para tras esta aceso. A fonte
-        // de progresso e a MESMA da linha — nao ha segundo relogio, entao a luz
-        // nao pode se desencontrar do traco.
-        if (marcos.length) {
-          const andado = compr * t;
-          for (const m of marcos) {
-            m.el.classList.toggle("is-percorrida", andado >= m.emQue);
-          }
-        }
+        // AS REGIOES DA LISTA NAO SAO MAIS DAQUI.
+        // Elas acendiam por esta linha global, casadas com REGIOES_MAPA. Desde
+        // que o capitulo 03 ganhou o mapa proprio (que mede a si mesmo), passou
+        // a haver DOIS relogios na mesma cena — medido: em +700 o mapa tinha 4
+        // acesas e a lista 8. Quem o visitante olha e o mapa, e e ele que
+        // governa a lista (ver MapaMinas.tsx). Aqui sobrou so o traco.
       });
     };
     esfregar();

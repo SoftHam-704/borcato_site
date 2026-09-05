@@ -6,8 +6,8 @@ import { Capitulo, NavCapitulos } from "@/components/site/Capitulos";
 import { Estrada } from "@/components/site/Estrada";
 import { Palavras } from "@/components/site/Palavras";
 import { PalcoPecas } from "@/components/site/PalcoPecas";
-import { MapaMinas } from "@/components/site/MapaMinas";
-import { empresa, regioes, casa, representadas } from "@/lib/dados";
+import { MapaMinas, PONTOS } from "@/components/site/MapaMinas";
+import { empresa, casa, representadas } from "@/lib/dados";
 import fabioCasa from "@/assets/site/fabio-casa.avif";
 
 export const Route = createFileRoute("/")({
@@ -89,9 +89,16 @@ function Index() {
                 Nada aqui é invenção — fundação e trajetória vêm do material do
                 cliente, e a última linha é a bio dele, palavra por palavra. */}
             <ol className="casa__marcos">
+              {/* "14 ANOS", NAO "2004". A 3a auditoria pegou: 2004 nao aparece
+                  em lugar nenhum no material do cliente — era deducao minha
+                  (2018 menos 14), apresentada como fato. O que ele escreveu e
+                  a DURACAO: "com um know how de 14 anos em representacao
+                  comercial de auto pecas atuando no mercado mineiro".
+                  Se a duracao era aproximada, o ano derivado inventa precisao
+                  que ninguem afirmou. Regra dura n2. */}
               <li>
-                <b>2004</b>
-                <span>começa a rodar o mercado mineiro de autopeças</span>
+                <b>14 anos</b>
+                <span>rodando o mercado mineiro antes de abrir a empresa</span>
               </li>
               <li>
                 <b>{empresa.fundacao}</b>
@@ -186,13 +193,18 @@ function Index() {
               <b>{casa.uf}</b>
               <span>{casa.municipios} municípios · um estado</span>
             </p>
-            <ul className="estrada__ufs">
-              {regioes.map((r) => (
-                <li key={r.nome}>
-                  <b>{r.nome}</b>
+            {/* A LISTA SEGUE A ORDEM DA VIAGEM, e nao uma propria: e o mesmo
+                array que posiciona os pontos no mapa. Com o numero dos dois
+                lados, da para ligar "05" no mapa ao Vale do Aco na lista sem
+                deduzir pela geografia (R3-03). */}
+            <ol className="estrada__ufs">
+              {PONTOS.map((p, i) => (
+                <li key={p.nome}>
+                  <em aria-hidden>{String(i + 1).padStart(2, "0")}</em>
+                  <b>{p.nome}</b>
                 </li>
               ))}
-            </ul>
+            </ol>
           </div>
 
           <MapaMinas />
@@ -215,13 +227,19 @@ function Index() {
         <div className="nome">
           <h2 className="nome__marca">
             <span className="sr-only">H.M.</span>
+            {/* OS NOMES PEQUENOS SAIRAM (3a auditoria, R3-01).
+                Medido em 1440 e 1024: a 4a linha da homenagem (y=463..479)
+                cruzava "Henrique" e "Mateus" (y=456..467) — 4px de sobreposicao,
+                e o conteudo mais pessoal do site ficava ilegivel.
+                Das duas saidas possiveis, escolhi a que NAO soma efeito: a
+                homenagem ja diz "Henrique e Mateus" por extenso, entao o rotulo
+                sob cada inicial era redundancia. A cena continua sendo as duas
+                letras em planos diferentes — que e o gesto do capitulo. */}
             <span className="nome__letra nome__letra--h" aria-hidden>
               <b>H.</b>
-              <i>Henrique</i>
             </span>
             <span className="nome__letra nome__letra--m" aria-hidden>
               <b>M.</b>
-              <i>Mateus</i>
             </span>
           </h2>
 

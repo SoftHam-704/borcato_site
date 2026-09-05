@@ -2892,20 +2892,6 @@ body.is-abrindo {
   opacity: var(--t);
 }
 
-/* o nome de cada filho, pequeno, sob a própria inicial */
-.nome__letra i {
-  display: block;
-  margin-top: clamp(4px, 0.8vh, 10px);
-  font-family: var(--font-sans), sans-serif;
-  font-size: clamp(0.62rem, 1.2vmin, 0.8rem);
-  font-style: normal;
-  font-weight: 500;
-  letter-spacing: 0.28em;
-  text-transform: uppercase;
-  text-align: center;
-  color: var(--br-fraco);
-}
-
 /* A HOMENAGEM PASSA ENTRE AS LETRAS — é isso que costura a cena.
    Fica por cima do H (que está atrás) e por baixo do M (que está à frente):
    o texto atravessa o espaço em vez de ficar embaixo dele. */
@@ -2914,13 +2900,13 @@ body.is-abrindo {
   position: relative;
   z-index: 1;
   max-width: 34ch;
-  /* A frase ENTRA na caixa das letras (margem negativa), e nao pousa abaixo.
-     MEDIDO: com -9vh o topo do texto fica 81px ACIMA da base de .nome__marca —
-     ja sobreposto. O "vao" que eu via na captura entre HENRIQUE/MATEUS e o
-     texto e o espaco INTERNO da linha das letras (line-height 0.82 numa fonte
-     de 16rem), nao margem. Quase "consertei" pela segunda vez algo que ja
-     estava certo — medir o elemento errado e como se erra aqui. */
-  margin: clamp(-96px, -9vh, -44px) auto 0;
+  /* A frase encosta na BASE das letras, sem cruzar os traços.
+     Com -9vh ela atravessava o meio do H e do M: legível (zero colisão de
+     tinta, medido), mas confuso — texto sobre tipografia não é "atravessar o
+     espaço", é ruído. Depois que os nomes pequenos saíram (R3-01), o vão
+     abaixo ficou livre, e é lá que ela respira.
+     -3vh mantém a sobreposição do RODAPÉ das letras — o gesto continua. */
+  margin: clamp(-40px, -3vh, -14px) auto 0;
   padding-inline: clamp(12px, 2vw, 24px);
   font-size: clamp(0.95rem, 1.5vmin, 1.15rem);
   line-height: 1.6;
@@ -2951,23 +2937,10 @@ body.is-abrindo {
   .nome__letra--m {
     translate: calc(26% + (1 - var(--t)) * 6%) 0;
   }
-  /* OS NOMES SE ENCAVALAVAM e liam "HENRIQUMATEUS" (medido: -62px de
-     sobreposicao). Reduzir a fonte nao resolveu, porque a causa e estrutural:
-     cada nome e centrado sob a propria inicial, e as iniciais se sobrepoem por
-     construcao — centro sob centro colide sempre.
-     A saida e ancorar cada um no lado EXTERNO. */
-  .nome__letra i {
-    font-size: clamp(0.5rem, 2.2vw, 0.62rem);
-    letter-spacing: 0.14em;
-  }
-  .nome__letra--h i {
-    text-align: left;
-    translate: -12% 0;
-  }
-  .nome__letra--m i {
-    text-align: right;
-    translate: 12% 0;
-  }
+  /* os nomes pequenos sob as iniciais foram REMOVIDOS na 3a auditoria (R3-01):
+     colidiam com a homenagem no desktop, e ela ja diz "Henrique e Mateus" por
+     extenso. As regras que os tratavam saíram junto — código morto engana quem
+     lê depois. */
   /* NO CELULAR A FRASE NAO ENTRA NAS LETRAS.
      MEDIDO na captura de 375: com -6vh o texto COBRIA as letras — "HENRIQUE" e
      "MATEUS" sumiam por baixo e o "M." ficava ilegivel. O gesto de atravessar
@@ -2997,4 +2970,42 @@ body.is-abrindo {
   .nome__letra--m {
     translate: 26% 0;
   }
+}
+
+/* ── a chave que liga o mapa à lista (R3-03) ──────────────────────────────── */
+.mapa-mg__num {
+  font-family: var(--font-display), sans-serif;
+  font-size: 3.2px;
+  font-weight: 700;
+  text-anchor: middle;
+  fill: var(--br-fraco);
+  opacity: 0.55;
+  transition: fill 0.45s ease, opacity 0.45s ease;
+  pointer-events: none;
+}
+.mapa-mg [data-regiao].is-acesa .mapa-mg__num {
+  fill: var(--br-luz);
+  opacity: 1;
+}
+
+/* a lista numerada, na MESMA ordem da viagem */
+.estrada__ufs {
+  counter-reset: none;
+}
+.estrada__ufs li em {
+  display: inline-block;
+  min-width: 2.4ch;
+  margin-right: 8px;
+  font-family: var(--font-display), sans-serif;
+  font-size: 0.72em;
+  font-style: normal;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  color: var(--br-fraco);
+  opacity: 0.6;
+  transition: color 0.45s ease, opacity 0.45s ease;
+}
+.estrada__ufs li.is-percorrida em {
+  color: var(--br-luz);
+  opacity: 1;
 }

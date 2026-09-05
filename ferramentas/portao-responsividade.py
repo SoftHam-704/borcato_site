@@ -124,6 +124,12 @@ JS_AUDITORIA = """
 }
 """
 
+# REPROVA DE VERDADE (achado da 3a auditoria).
+# Antes este script so IMPRIMIA as falhas e sempre saia com codigo 0 — quem o
+# usasse como bloqueio de publicacao (num hook, num CI) veria "passou" com
+# defeito na tela. Agora acumula e sai com codigo 1.
+falhas_totais = []
+
 with sync_playwright() as pw:
     nav = pw.chromium.launch()
     for w, h in LARGURAS:
@@ -164,6 +170,15 @@ with sync_playwright() as pw:
         for f in fora[:6]:
             print(f"      {f['tag']}.{f['cls']} x={f['left']}..{f['right']} "
                   f"visivel {f.get('visivel','?')}px ({f.get('pct','?')}%) :: {f['txt']!r}")
+        for rotulo, cond in (
+            ("overflow horizontal", a["overflow"] > 0),
+            ("alvo < 44px", bool(a["pequenos"])),
+            ("clicavel fora da tela", bool(a.get("foraDaTela"))),
+        ):
+            if cond:
+                falhas_totais.append(f"{w}px: {rotulo}")
+        if erros:
+            falhas_totais.append(f"{w}px: {len(erros)} erro(s) de console")
         print(f"  erros de console : {len(erros)}")
         for e in erros[:5]:
             print(f"      {e[:150]}")
@@ -174,3 +189,16 @@ with sync_playwright() as pw:
     nav.close()
 
 print(f"\nscreenshots em {SAIDA}")
+
+# ── O VEREDITO, e ele REPROVA ───────────────────────────────────────────────
+print("\n" + "=" * 62)
+if falhas_totais:
+    print(f">>> REPROVOU em {len(falhas_totais)} ponto(s):")
+    for f in falhas_totais:
+        print(f"      {f}")
+    print("=" * 62)
+    raise SystemExit(1)
+print(">>> PASSOU nas cinco larguras.")
+print("    ATENCAO: isto mede a pagina CARREGADA, sem percorrer as cenas.")
+print("    Nao e prova de que a experiencia inteira esta aprovada.")
+print("=" * 62)

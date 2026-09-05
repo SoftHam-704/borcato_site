@@ -43,7 +43,13 @@ const SILHUETA =
  * (Belo Horizonte, Uberlândia, Montes Claros…). As cidades NÃO são publicadas
  * (decisão do dono, 05/09): elas só ancoram o ponto na geografia certa.
  */
-const PONTOS: { nome: string; cx: number; cy: number }[] = [
+/**
+ * A ORDEM AQUI E A DA VIAGEM (por proximidade, saindo de casa em BH) — e agora
+ * ela e a FONTE UNICA: a lista do capitulo 03 lê daqui, em vez de ter ordem
+ * propria. Antes as duas divergiam, e o visitante nao tinha como ligar um ponto
+ * do mapa ao nome na lista (achado R3-03 da 3a auditoria).
+ */
+export const PONTOS: { nome: string; cx: number; cy: number }[] = [
   { nome: "Central / RMBH", cx: 62.0, cy: 58.5 },
   { nome: "Centro-Oeste", cx: 54.6, cy: 60.5 },
   { nome: "Sul de Minas", cx: 46.3, cy: 73.5 },
@@ -60,26 +66,49 @@ export function MapaMinas() {
   useEffect(() => {
     const svg = svgRef.current;
     if (!svg) return;
-    const cap = svg.closest<HTMLElement>(".cap");
-    if (!cap) return;
+
 
     let pedido = 0;
     const aoRolar = () => {
       if (pedido) return;
       pedido = window.requestAnimationFrame(() => {
         pedido = 0;
-        const r = cap.getBoundingClientRect();
+        // A ROTA SE MEDE PELO MAPA, NÃO PELO CAPÍTULO.
+        //
+        // MEDIDO (05/09, 3ª auditoria): medindo o capítulo inteiro, título e
+        // parágrafos entravam na conta e a rota chegava a 40% COM O MAPA AINDA
+        // FORA DA TELA (topo em 953px numa viewport de 900). Quando ele
+        // aparecia, mais de 60% da viagem já tinha passado — o visitante
+        // perdia justamente o gesto que o capítulo promete.
+        //
+        // Agora a janela é a do próprio SVG: a primeira parada acende quando
+        // ele já entrou de verdade, e a última enquanto ainda está legível.
+        const r = svg.getBoundingClientRect();
         const vh = window.innerHeight;
-        // a rota é percorrida ENQUANTO o capítulo atravessa a tela: começa
-        // quando ele chega ao meio e termina quando o rodapé dele passa
-        const t = Math.min(
-          1,
-          Math.max(0, (vh * 0.72 - r.top) / Math.max(1, r.height * 0.62)),
-        );
+        // começa quando o topo do mapa sobe acima de 82% da tela (ele já
+        // apareceu) e termina quando a base dele chega a 28% (ainda visível)
+        const inicio = vh * 0.82;
+        const fim = vh * 0.28;
+        const percorrido = inicio - r.top;
+        const total = Math.max(1, inicio - fim + r.height);
+        const t = Math.min(1, Math.max(0, percorrido / total));
         svg.style.setProperty("--rota", t.toFixed(4));
         const acesas = Math.round(t * PONTOS.length);
         svg.querySelectorAll<SVGGElement>("[data-regiao]").forEach((g, i) => {
           g.classList.toggle("is-acesa", i < acesas);
+        });
+
+        // A LISTA SEGUE O MAPA, e nao a estrada global.
+        //
+        // MEDIDO: em +700 o mapa tinha 4 acesas e a lista 8 — dois relogios
+        // diferentes na mesma cena. A estrada global mede a rota dela (que
+        // atravessa a pagina inteira); o mapa mede a si proprio, desde o R3-02.
+        // Quem o visitante esta olhando e o mapa: e ele que manda.
+        const lis = document.querySelectorAll<HTMLElement>(
+          "#cap-estrada .estrada__ufs li",
+        );
+        lis.forEach((li, i) => {
+          li.classList.toggle("is-percorrida", i < acesas);
         });
       });
     };
@@ -116,6 +145,13 @@ export function MapaMinas() {
         <g key={p.nome} data-regiao={p.nome} style={{ "--i": i } as React.CSSProperties}>
           <circle className="mapa-mg__halo" cx={p.cx} cy={p.cy} r={3.4} />
           <circle className="mapa-mg__ponto" cx={p.cx} cy={p.cy} r={1.5} />
+          {/* O NUMERO DA PARADA. Sem ele o mapa mostrava cobertura e percurso,
+              mas nao dava chave para identificar QUAL regiao e cada ponto — e o
+              nome em `data-regiao` nao e legenda visivel. A lista ao lado usa a
+              mesma numeracao e a mesma ordem. */}
+          <text className="mapa-mg__num" x={p.cx} y={p.cy - 5.2}>
+            {i + 1}
+          </text>
         </g>
       ))}
     </svg>

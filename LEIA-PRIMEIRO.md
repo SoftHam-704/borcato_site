@@ -22,16 +22,20 @@ O que ele aprovou: **o hero** (e só). Única parte a não mexer sem motivo fort
 
 ### O que já foi refeito
 
-| Capítulo | Estado |
-|---|---|
-| Hero | ✅ **aprovado pelo dono** — não mexer |
-| 01 · A casa | ❌ ainda é título + parágrafo |
-| 02 · As marcas | ✅ **REFEITO** — palco, peça ocupando meia tela |
-| 03 · A estrada | ❌ ainda é lista com bolinhas |
-| 04 · O nome | ❌ ainda é texto centralizado |
-| Abertura | ❌ o dono citou o "preloader" na crítica |
+| Capítulo | Estado | Cena |
+|---|---|---|
+| Hero | ✅ **aprovado pelo dono** — não mexer | a cápsula, a palavra atravessando |
+| 01 · A casa | ✅ **REFEITO** | retrato ao lado do texto + 4 marcos |
+| 02 · As marcas | ✅ **REFEITO** | peça ocupando meia tela, 11 pastilhas |
+| 03 · A estrada | ✅ **REFEITO** | mapa de MG numerado, regiões acendendo |
+| 04 · O nome | ✅ **REFEITO** | H. e M. em planos, homenagem entre elas |
+| Abertura | ✅ encurtada para 1,9s, "Pular" visível desde o início | |
 
-**O capítulo 02 é o modelo a seguir.** Ver `src/components/site/PalcoPecas.tsx`.
+**Os quatro capítulos saíram do esqueleto repetido** (título gigante → parágrafo →
+bloco) que fazia o site ler como template. Cada um tem imagem, ação e razão própria.
+
+> **O que falta NÃO é composição.** É evidência real da operação — fotos de evento
+> com legenda de cidade e ano — e isso depende do Fábio (ver §7).
 
 ---
 
@@ -313,21 +317,20 @@ negócio.
 
 ## 8. POR ONDE COMEÇAR (ordem de impacto)
 
+**Os quatro capítulos já foram refeitos** (ver §1). O que sobra:
+
 1. **Ler as 15 skills de motion** em `extras/skills-15/`. Material pago que nunca foi
-   aberto, e trata exatamente do que falta.
-2. **Capítulo 03 · A estrada** — o mais fraco. Hoje é lista com bolinhas. Precisa do
-   **mapa de Minas visível**: silhueta em SVG ocupando meia tela, as 8 regiões
-   acendendo sobre ela. Os dados já existem em `REGIOES_MAPA`
-   (`src/components/site/Estrada.tsx`).
-3. **Capítulo 01 · A casa** — a foto do Fábio dividindo a tela com o texto.
-   Referência: nº 15 (Lineage Hot).
-4. **Capítulo 04 · O nome** — parar de ser texto centralizado. Referência: nº 11
-   (Coda Noir).
-5. **A abertura** — o dono citou o "preloader" na crítica.
-6. **A esteira horizontal** (ref. Norris) — vai no **capítulo 01**, não no 03 (o 03 já
-   tem a cena das regiões; dois gestos fortes competem). Depende das fotos de evento.
+   aberto, e trata exatamente de sincronização e acabamento — que é onde está o
+   próximo ganho, segundo a 3ª auditoria.
+2. **As fotos de evento** — o único item que muda a nota e não depende de nós.
+   Sem elas o site fala de "presença e estrada" mostrando só o Fábio, logos e peças
+   geradas. Ver §7.
+3. **A esteira horizontal** (ref. Norris) — vai no **capítulo 01**, não no 03 (o 03 já
+   tem a cena do mapa; dois gestos fortes competem). Depende das fotos.
    **Resolve um achado do júri em aberto: não aparece outra pessoa além do Fábio no
    site inteiro.**
+4. **Composição do capítulo 03** — o mapa ainda é um segundo bloco abaixo do texto;
+   não divide a primeira vista com a manchete. Oportunidade, não defeito.
 
 ---
 
