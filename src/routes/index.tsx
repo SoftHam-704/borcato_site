@@ -79,6 +79,16 @@ function Index() {
             São quatro pessoas para um estado inteiro, e é de propósito — quem atende conhece
             o distribuidor pelo nome, e o industrial sabe com quem está falando.
           </p>
+          {/* VOCABULARIO DO OFICIO, e nao e invencao nossa: e a propria bio do
+              Fabio ("representacao consultiva no aftermarket de MG", "presenca
+              real e resultado do sell in ao giro"). Sell in e o que a industria
+              vende ao distribuidor; giro e o que sai da prateleira. Um
+              representante que so olha o sell in empurra estoque; olhar o giro
+              e a diferenca — e e o distribuidor que reconhece a frase.
+              Ver PROXIMA-SESSAO.md §2. */}
+          <p>
+            Representação consultiva: do <i>sell in</i> ao giro.
+          </p>
         </div>
       </Capitulo>
 
