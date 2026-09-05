@@ -585,12 +585,25 @@
     margin: -13px 0 0 -13px;
   }
 
+  /* O ROTULO DO CURSOR EXISTE NO COMPONENTE E NAO E USADO — de proposito.
+     Tentei ligar (05/09) em CTA, contatos e nav. Em todos ele COLIDIU com o
+     texto do proprio alvo: sobre o botao saiu "FALAR COM A BORCAT[WHATSAPP]",
+     e na nav "A ESTRADAA ESTRADA", porque ela ja expande o rotulo no hover.
+     A conclusao vale mais que o efeito: neste site nenhum alvo precisa de
+     rotulo, porque todos ja dizem o que sao. Rotulo de cursor presta onde o
+     alvo e mudo (uma miniatura, um retangulo de imagem) — nao aqui.
+     Fica registrado para nao ser "consertado" de novo. */
   .cursor-label {
+    position: absolute;
+    left: 100%;
+    top: 50%;
+    translate: 14px -50%;
     font-family: var(--font-display), sans-serif;
     font-size: 0.55rem;
     font-weight: 600;
     letter-spacing: 0.18em;
     text-transform: uppercase;
+    white-space: nowrap;
     color: white;
   }
 
