@@ -316,6 +316,45 @@ nenhum quadro morto, palco em 4 quadros (era 8).
   global, que hoje fica ATRAS dos capitulos — decisao fechada na fase 3
 - fotos reais de evento (dependem do Fabio)
 
+## 4-F. ⚠️ PARADO NO MEIO (05/09, ~17h) — a esteira Norris esta APLICADA, NAO REVISADA
+
+O dono pediu pausa com o limite em 90%. Estado exato:
+
+**Feito e commitado (WIP):**
+- `dados.ts`: campo `site` nas 11 (pesquisado, conferido pelo ramo). **Dois a confirmar com o
+  Fabio:** a marca escreve-se **HEXXLUB** (dois X, hexxlub.com.br) — o site diz "Hexlub"
+  desde a carta, NAO corrigi; e a Nidec respondeu em http (nidec-gpm.com.br), conferir https.
+- `EsteiraMarcas.tsx` + CSS: a secao inteira anda de lado 1:1 com o scroll (ref. Norris),
+  11 cartoes em 3 larguras x 3 alturas, cada um E o link do portal. Abre o capitulo 02,
+  antes do palco (o palco FICA — pedido explicito). Titulo do capitulo foi para a esteira;
+  o trecho zero do palco ficou so com o paragrafo. Celular e reduced-motion: trilho livre
+  com snap, sem pino.
+- **Medido, funciona:** em 1440 `--esteira-x` vai de 0 a -3542px linear ao longo da pista;
+  o ultimo cartao termina em x=1368 (dentro da tela) no fim. Em 375 e livre. Zero erros.
+- **NAO OLHEI as tiras** (`esteira-1440/`, `esteira-375/`, `juri4-1440/` no scratchpad da
+  sessao). Pela regra de hoje, ISSO NAO ESTA APROVADO: so a captura prova.
+
+**O portao reprovou (codigo 1) por falso positivo:** os cartoes a direita, que o scroll
+traz, contavam como "clicavel fora da tela" — a excecao so conhecia `marcas__trilho`.
+Adicionei `esteira__trilho` a lista NOMEADA. **Nao rodei de novo.** Primeira coisa da
+proxima sessao: `python ferramentas/portao-responsividade.py` e as tres tiras.
+
+**Preocupacao real, nao resolvida:** a pagina foi de 8,0 para **12,9 telas** em 1440 — a
+pista da esteira (100vh + 3542px) devolveu tudo o que a compressao do palco ganhou. Duas
+saidas a decidir: cartoes menores/menos sobra, ou aceitar (o Norris tem 15 telas).
+
+**Decisao pendente do dono:** a barra pequena de logos no rodape do hero FICOU (o hero e
+aprovado, nao mexi). Com a esteira, as 11 marcas aparecem TRES vezes (barra, esteira,
+palco). Sugestao: tirar a barra do hero — mas e o hero, entao e ele quem decide.
+
+**A terceira critica dele, sem resposta ainda:** "as transicoes ainda estao fracas; o
+carinha do YouTube (Gustavo Campelo) tem ideias muito melhores; fizemos leitura em 4 aulas
+dele". Das 3 transcricoes que li, a ideia mais forte de transicao e **"a secao dois vem
+COMENDO a secao um"** — a proxima secao sobe POR CIMA da anterior presa (empilhamento),
+nao o wipe que temos. E outra linguagem de passagem, estrutural. **Pedir a ele o link do
+video/trecho da transicao que mais gostou** (transcricao via `yt-dlp`, como hoje) antes de
+reescrever as quatro passagens. Nao fazer no chute.
+
 ## 5. AS FERRAMENTAS (em `ferramentas/`)
 
 ```bash

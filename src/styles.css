@@ -3328,3 +3328,196 @@ body.is-abrindo {
     clip-path: none;
   }
 }
+
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   A ESTEIRA DAS INDÚSTRIAS (ref. landonorris.com)
+   A seção gruda e o trilho anda de lado, 1:1 com a rolagem. A profundidade vem
+   de três larguras e três alturas que se alternam — composição, não 3D.
+   ═══════════════════════════════════════════════════════════════════════════ */
+.esteira {
+  position: relative;
+  /* escapa do padding do capítulo: a esteira é de borda a borda */
+  margin-inline: calc(-1 * var(--br-goteira)) calc(-1 * clamp(20px, 6vw, 104px));
+  /* a altura real é escrita pelo JS: 100vh + a sobra do trilho */
+  height: 100vh;
+}
+.esteira__cena {
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  overflow: hidden;
+  display: grid;
+  grid-template-rows: auto 1fr;
+  align-content: center;
+  gap: clamp(20px, 3vh, 40px);
+  padding-block: clamp(70px, 10vh, 110px) clamp(40px, 6vh, 70px);
+}
+.esteira__cabeca {
+  padding-left: var(--br-goteira);
+  padding-right: clamp(20px, 6vw, 104px);
+  max-width: min(760px, 70vw);
+}
+.esteira__titulo {
+  font-size: clamp(1.7rem, 4.8vmin, 3.4rem);
+  margin-bottom: 0;
+}
+
+/* ── o trilho ─────────────────────────────────────────────────────────────── */
+.esteira__trilho {
+  display: flex;
+  align-items: stretch;
+  gap: clamp(14px, 1.6vw, 26px);
+  width: max-content;
+  height: min(58vh, 560px);
+  margin: 0;
+  padding: 0 clamp(24px, 5vw, 96px) 0 var(--br-goteira);
+  list-style: none;
+  /* o JS escreve só a peça; aqui se compõe. LINEAR — o scroll é o relógio. */
+  translate: var(--esteira-x, 0px) 0;
+  will-change: translate;
+}
+
+/* ── os cartões: três larguras, três alturas ──────────────────────────────── */
+.esteira__item {
+  flex: 0 0 auto;
+  display: flex;
+}
+.esteira__item--p { width: clamp(220px, 20vw, 300px); }
+.esteira__item--m { width: clamp(270px, 27vw, 400px); }
+.esteira__item--g { width: clamp(330px, 36vw, 540px); }
+.esteira__item--alto  { align-self: flex-start; height: 84%; }
+.esteira__item--meio  { align-self: center;     height: 92%; }
+.esteira__item--baixo { align-self: flex-end;   height: 84%; }
+
+.esteira__item > a {
+  position: relative;
+  display: grid;
+  grid-template-rows: auto 1fr auto;
+  gap: clamp(10px, 1.4vh, 18px);
+  width: 100%;
+  padding: clamp(16px, 1.8vw, 26px);
+  border-radius: clamp(14px, 1.4vw, 22px);
+  background: var(--br-superficie);
+  border: 1px solid color-mix(in srgb, var(--br-tinta) 8%, transparent);
+  color: var(--br-tinta);
+  text-decoration: none;
+  transition:
+    translate 0.5s cubic-bezier(0.16, 1, 0.3, 1),
+    border-color 0.35s ease,
+    background-color 0.35s ease;
+}
+.esteira__item > a:hover,
+.esteira__item > a:focus-visible {
+  translate: 0 -8px;
+  border-color: color-mix(in srgb, var(--br-marca) 55%, transparent);
+  background: color-mix(in srgb, var(--br-marca) 10%, var(--br-superficie));
+  outline: none;
+}
+.esteira__num {
+  font-family: var(--font-display), sans-serif;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  color: var(--br-marca);
+}
+/* o logo grande — o que a barra do hero não conseguia ser */
+.esteira__logo {
+  display: grid;
+  place-items: center;
+  min-height: 0;
+}
+.esteira__logo img {
+  width: min(78%, 360px);
+  max-height: 100%;
+  object-fit: contain;
+  opacity: 0.86;
+  transition: opacity 0.35s ease, scale 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.esteira__item > a:hover .esteira__logo img,
+.esteira__item > a:focus-visible .esteira__logo img {
+  opacity: 1;
+  scale: 1.04;
+}
+.esteira__dizer {
+  display: grid;
+  gap: 4px;
+}
+.esteira__dizer b {
+  font-family: var(--font-display), sans-serif;
+  font-size: clamp(1rem, 1.7vmin, 1.3rem);
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  text-transform: uppercase;
+}
+.esteira__dizer span {
+  font-size: clamp(0.8rem, 1.25vmin, 0.95rem);
+  color: var(--br-fraco);
+  line-height: 1.4;
+}
+.esteira__portal {
+  position: absolute;
+  top: clamp(16px, 1.8vw, 26px);
+  right: clamp(16px, 1.8vw, 26px);
+  font-size: 0.7rem;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--br-fraco);
+  transition: color 0.35s ease;
+}
+.esteira__portal i {
+  font-style: normal;
+  display: inline-block;
+  transition: translate 0.35s ease;
+}
+.esteira__item > a:hover .esteira__portal {
+  color: var(--br-marca);
+}
+.esteira__item > a:hover .esteira__portal i {
+  translate: 2px -2px;
+}
+
+/* ── LIVRE: celular e movimento reduzido — rolagem nativa de lado, sem pino ── */
+.esteira.is-livre {
+  height: auto;
+}
+.esteira.is-livre .esteira__cena {
+  position: static;
+  height: auto;
+  overflow: visible;
+}
+.esteira.is-livre .esteira__trilho {
+  width: auto;
+  height: min(52vh, 440px);
+  translate: none;
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  scrollbar-width: none;
+  padding-inline: clamp(20px, 6vw, 40px);
+}
+.esteira.is-livre .esteira__trilho::-webkit-scrollbar {
+  display: none;
+}
+.esteira.is-livre .esteira__item {
+  scroll-snap-align: center;
+  align-self: stretch;
+  height: 100%;
+}
+@media (max-width: 900px) {
+  .esteira {
+    margin-inline: calc(-1 * clamp(20px, 6vw, 40px));
+  }
+  .esteira__cabeca {
+    padding-inline: clamp(20px, 6vw, 40px);
+    max-width: none;
+  }
+  .esteira__titulo {
+    font-size: clamp(1.4rem, 6vw, 2rem);
+  }
+  .esteira__item--p,
+  .esteira__item--m,
+  .esteira__item--g {
+    width: 78vw;
+  }
+}

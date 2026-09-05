@@ -89,7 +89,8 @@ JS_AUDITORIA = """
     // translacao. Provado em 05/09 — um botao fora da tela sob um pai com
     // `translateX(20px)` passava despercebido. Excecao por FORMA e cega;
     // excecao por NOME e auditavel.
-    const MARQUISES = ['marcas__trilho'];
+    // esteira__trilho: a esteira Norris — os cartoes a direita SAO trazidos pelo scroll
+  const MARQUISES = ['marcas__trilho', 'esteira__trilho'];
     let ignorar = false;
     for (let p = el.parentElement; p; p = p.parentElement) {
       const ps = getComputedStyle(p);

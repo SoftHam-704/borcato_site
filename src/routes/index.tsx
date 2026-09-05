@@ -6,6 +6,7 @@ import { Capitulo, NavCapitulos } from "@/components/site/Capitulos";
 import { Estrada } from "@/components/site/Estrada";
 import { Palavras } from "@/components/site/Palavras";
 import { PalcoPecas } from "@/components/site/PalcoPecas";
+import { EsteiraMarcas } from "@/components/site/EsteiraMarcas";
 import { MapaMinas, PONTOS } from "@/components/site/MapaMinas";
 import { empresa, casa, representadas } from "@/lib/dados";
 import fabioCasa from "@/assets/site/fabio-casa.avif";
@@ -152,13 +153,27 @@ function Index() {
             coluna de texto, se escrevem na cascata, e ao rolar cedem o lugar
             para "01 NTN-SNR" enquanto a peca assume — no mesmo palco, sem
             corte. E a preparacao do capitulo, espelhando a passagem no fim. */}
+        {/* A ESTEIRA ABRE O CAPITULO (05/09): as onze industrias GRANDES,
+            andando de lado conforme se rola (ref. landonorris.com), cada uma
+            com o link do portal. Depois o palco detalha uma a uma — o dono foi
+            explicito: "sem remover o que temos mostrando cada peca". Largo
+            primeiro, fundo depois. */}
+        <EsteiraMarcas
+          cabeca={
+            <>
+              <p className="cap__num">02 / As marcas</p>
+              <h2 className="cap__titulo esteira__titulo">
+                <Palavras texto="De rolamento a filtro de cabine. Onze indústrias na mesma pasta." />
+              </h2>
+            </>
+          }
+        />
+
         <PalcoPecas
           abre={
             <>
-              <p className="cap__num">02 / As marcas</p>
-              <h2 className="cap__titulo palco-pecas__titulo">
-                <Palavras texto="De rolamento a filtro de cabine. Onze indústrias na mesma pasta." />
-              </h2>
+              {/* o titulo do capitulo ja esta na esteira; aqui so o paragrafo
+                  que prepara as pecas */}
               <div className="cap__corpo">
                 <p>
                   Um distribuidor que compra rolamento da NTN-SNR resolve a bomba d&apos;água, o

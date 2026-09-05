@@ -72,22 +72,30 @@ export const casa = {
  *
  * `fornece` vem da carta de apresentação. Onde a carta não deixa claro qual descrição
  * pertence a qual marca, o campo fica vazio — não inventar.
+ *
+ * `site` (05/09/2026): o portal oficial de cada indústria, pesquisado na web e conferido
+ * pelo ramo (autopeças) para não linkar homônimo. É fato público, não afirmação sobre o
+ * cliente — mas link errado num site de cliente real é erro real. Dois pontos a confirmar
+ * com o Fábio:
+ *   · a Nidec responde em http (não https) em nidec-gpm.com.br — conferir se o https existe
+ *   · a marca de lubrificante escreve-se **HEXXLUB**, com dois X (hexxlub.com.br). Aqui está
+ *     "Hexlub" desde a carta. NÃO corrigi o nome por conta — pergunta ao Fábio.
  */
 export const representadas = [
-  { id: "ntn-snr", nome: "NTN-SNR", fornece: "Rolamentos" },
-  { id: "filtros-brasil", nome: "Filtros Brasil", fornece: "Filtros de ar, óleo, combustível e cabine" },
-  { id: "nidec", nome: "Nidec", fornece: "Bombas d'água e de óleo" },
-  { id: "cofran", nome: "Cofran", fornece: "Lanternas e retrovisores" },
-  { id: "pysko", nome: "Pysko", fornece: "Kits de suspensão" },
-  { id: "hexlub", nome: "Hexlub", fornece: "Óleo lubrificante" },
+  { id: "ntn-snr", nome: "NTN-SNR", fornece: "Rolamentos", site: "https://ntn.com.br/" },
+  { id: "filtros-brasil", nome: "Filtros Brasil", fornece: "Filtros de ar, óleo, combustível e cabine", site: "https://www.filtrosbrasil.com.br/" },
+  { id: "nidec", nome: "Nidec", fornece: "Bombas d'água e de óleo", site: "http://www.nidec-gpm.com.br/" },
+  { id: "cofran", nome: "Cofran", fornece: "Lanternas e retrovisores", site: "https://cofranlanternas.com.br/" },
+  { id: "pysko", nome: "Pysko", fornece: "Kits de suspensão", site: "https://www.pysko.com.br/" },
+  { id: "hexlub", nome: "Hexlub", fornece: "Óleo lubrificante", site: "https://hexxlub.com.br/" },
   // As cinco que estavam sem descricao foram preenchidas em 03/09/2026 pela carta
   // de apresentacao (Agosto/26, versao da Valeria) — casadas marca a marca pela
   // pagina do PDF, nao adivinhadas.
-  { id: "meca-brazil", nome: "Meca Brazil", fornece: "Bicos injetores, sensores, conectores e cabo de vela" },
-  { id: "auto-america", nome: "Auto América", fornece: "Química automotiva, óleo de transmissão e aromatizantes" },
-  { id: "mundial-prime", nome: "Mundial Prime", fornece: "Desengripante, limpa-contato, descarbonizante e sprays" },
-  { id: "sintech", nome: "Sintech", fornece: "Peças para motor" },
-  { id: "vp", nome: "VP", fornece: "Peças plásticas automotivas" },
+  { id: "meca-brazil", nome: "Meca Brazil", fornece: "Bicos injetores, sensores, conectores e cabo de vela", site: "https://mecabrazil.com/" },
+  { id: "auto-america", nome: "Auto América", fornece: "Química automotiva, óleo de transmissão e aromatizantes", site: "https://www.autoamerica.com.br/" },
+  { id: "mundial-prime", nome: "Mundial Prime", fornece: "Desengripante, limpa-contato, descarbonizante e sprays", site: "https://mundialprime.com.br/" },
+  { id: "sintech", nome: "Sintech", fornece: "Peças para motor", site: "https://www.sintechdobrasil.com.br/" },
+  { id: "vp", nome: "VP", fornece: "Peças plásticas automotivas", site: "https://vp.ind.br/" },
 ] as const;
 
 export const empresa = {
