@@ -1,0 +1,113 @@
+# -*- coding: utf-8 -*-
+"""Portao de responsividade da espinha do Borcato — as cinco larguras da casa.
+
+Mede, nao opina: overflow horizontal, alvo tatil < 44px, truncamento e erro de
+console. Screenshot de cada largura para inspecao visual.
+"""
+import pathlib
+from playwright.sync_api import sync_playwright
+
+SAIDA = pathlib.Path(__file__).parent / "vistoria"
+SAIDA.mkdir(exist_ok=True)
+URL = "http://localhost:8080/"
+LARGURAS = [(375, 812), (430, 932), (768, 1024), (1024, 768), (1440, 900)]
+
+JS_AUDITORIA = """
+() => {
+  const doc = document.documentElement;
+  const overflow = doc.scrollWidth - doc.clientWidth;
+
+  // alvos tateis abaixo de 44px (o portao da casa)
+  const pequenos = [];
+  for (const el of document.querySelectorAll('a,button,[role=button]')) {
+    const r = el.getBoundingClientRect();
+    if (r.width === 0 || r.height === 0) continue;      // oculto, nao conta
+    if (r.width < 44 || r.height < 44) {
+      pequenos.push({
+        tag: el.tagName.toLowerCase(),
+        cls: (el.className || '').toString().slice(0, 60),
+        txt: (el.textContent || '').trim().slice(0, 34),
+        w: Math.round(r.width), h: Math.round(r.height),
+      });
+    }
+  }
+
+  // texto cortado por overflow hidden/clip
+  const truncados = [];
+  for (const el of document.querySelectorAll('h1,h2,h3,p,li,span,b,em,a')) {
+    if (el.children.length) continue;                    // so folhas
+    const s = getComputedStyle(el);
+    if (s.overflow === 'visible' || s.display === 'none') continue;
+    if (el.scrollWidth > el.clientWidth + 1 || el.scrollHeight > el.clientHeight + 1) {
+      truncados.push({
+        cls: (el.className || '').toString().slice(0, 50),
+        txt: (el.textContent || '').trim().slice(0, 34),
+        sw: el.scrollWidth, cw: el.clientWidth,
+      });
+    }
+  }
+
+  // elementos que estouram a direita da viewport
+  const estouram = [];
+  const vw = doc.clientWidth;
+  for (const el of document.querySelectorAll('body *')) {
+    const r = el.getBoundingClientRect();
+    if (r.width === 0) continue;
+    if (r.right > vw + 2) {
+      estouram.push({
+        tag: el.tagName.toLowerCase(),
+        cls: (el.className || '').toString().slice(0, 50),
+        right: Math.round(r.right), vw,
+      });
+    }
+  }
+
+  return { overflow, pequenos, truncados, estouram: estouram.slice(0, 12),
+           altura: doc.scrollHeight };
+}
+"""
+
+with sync_playwright() as pw:
+    nav = pw.chromium.launch()
+    for w, h in LARGURAS:
+        pg = nav.new_page(viewport={"width": w, "height": h})
+        erros = []
+        # ignora o aviso de hidratacao do dev server do TanStack: ele vem do
+        # atributo `data-tsd-source` que o proprio dev injeta e que nao
+        # existe no HTML do servidor. NAO ocorre em producao — e nenhum
+        # outro erro e filtrado aqui.
+        def _console(m):
+            if m.type != "error":
+                return
+            if "hydrated but some attributes" in m.text:
+                return
+            erros.append(m.text)
+        pg.on("console", _console)
+        pg.on("pageerror", lambda e: erros.append(f"PAGEERROR {e}"))
+        pg.goto(URL, wait_until="networkidle")
+        pg.wait_for_timeout(4600)  # ESPERA_ABERTURA: a abertura roda sempre (3,4s + saida)
+        pg.wait_for_timeout(1400)  # preloader + fontes
+
+        a = pg.evaluate(JS_AUDITORIA)
+        print(f"\n=== {w}x{h} ===")
+        print(f"  altura da pagina : {a['altura']}px")
+        print(f"  overflow horiz.  : {a['overflow']}px", "OK" if a["overflow"] <= 0 else "<<< FALHA")
+        print(f"  alvos < 44px     : {len(a['pequenos'])}")
+        for p in a["pequenos"][:8]:
+            print(f"      {p['tag']}.{p['cls']} {p['w']}x{p['h']} :: {p['txt']!r}")
+        print(f"  truncados        : {len(a['truncados'])}")
+        for t in a["truncados"][:6]:
+            print(f"      .{t['cls']} {t['sw']}>{t['cw']} :: {t['txt']!r}")
+        print(f"  estouram a dir.  : {len(a['estouram'])}")
+        for e in a["estouram"][:6]:
+            print(f"      {e['tag']}.{e['cls']} right={e['right']} vw={e['vw']}")
+        print(f"  erros de console : {len(erros)}")
+        for e in erros[:5]:
+            print(f"      {e[:150]}")
+
+        pg.screenshot(path=str(SAIDA / f"topo-{w}.png"))
+        pg.screenshot(path=str(SAIDA / f"inteira-{w}.png"), full_page=True)
+        pg.close()
+    nav.close()
+
+print(f"\nscreenshots em {SAIDA}")
