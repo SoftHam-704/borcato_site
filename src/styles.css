@@ -1059,7 +1059,7 @@
   }
   /* espaço para a barra de capítulos no rodapé */
   .cap--nome {
-    padding-bottom: calc(clamp(96px, 16vh, 200px) + 100svh);
+    padding-bottom: calc(clamp(96px, 16vh, 200px) + 76px);
   }
 }
 
@@ -1199,7 +1199,7 @@
      sem isto o bloco inteiro ficava ~105px a direita do centro real em 1440 */
   padding-left: clamp(20px, 6vw, 104px);
   padding-right: clamp(20px, 6vw, 104px);
-  padding-bottom: calc(clamp(96px, 16vh, 200px) + 100svh);
+  padding-bottom: 76px;
   background:
     radial-gradient(
       ellipse 80% 60% at 50% 34%,
@@ -1339,9 +1339,9 @@
   text-transform: uppercase;
 }
 .fecho__conteudo {
-  align-self: center;
+  align-self: end;
   max-width: 390px;
-  padding-bottom: clamp(20px, 6vh, 72px);
+  padding-bottom: 0;
 }
 .fecho__chamada {
   max-width: 12ch;
@@ -1370,7 +1370,7 @@
   .fecho {
     grid-template-columns: 1fr;
     align-items: start;
-    gap: clamp(18px, 5vh, 42px);
+    gap: 18px;
     min-height: 100svh;
     padding-block: clamp(32px, 6vh, 64px);
   }
