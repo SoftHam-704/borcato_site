@@ -198,3 +198,59 @@ larguras · zero erros de console.
 da abertura), I-06 (prazo), I-09 (o vídeo de referência — o dono confirmou que **ainda não
 tem**; quando vier, calibra ritmo e composição **sem reabrir a estrutura aprovada**), I-10
 (sticky em aparelho físico, nunca testado fora do Chromium headless).
+
+
+---
+
+## G. D-13 concluída — a rota ganha fonte própria (06/09)
+
+**Autorização do dono, em duas etapas:** (1) tocar na sincronização para separar progresso da
+passagem e progresso da rota; (2) criar um marcador próprio, depois que a medição provou que
+`--cap-entra` estava saturado.
+
+### A arquitetura final — dois atos consecutivos, não relógios concorrentes
+
+| Fonte | Governa | Elemento medido |
+|---|---|---|
+| `--entrega` | a transição peça → território | a pista do palco |
+| `.mapa-mg-marco` | a viagem dentro do mapa | um marcador de layout, altura 0, sem transform |
+| `.mapa-mg-ref` | (wrapper) — separa a camada visual da referência | um div que nunca recebe transform |
+
+`--rota` é derivado do marcador numa janela explícita (128% → 58% da altura da tela), e
+**traço, pontos e lista leem o mesmo valor**.
+
+### O que a medição derrubou pelo caminho
+
+1. **`parseFloat` de expressão CSS dava sempre 0.** `getPropertyValue` devolve o `calc(...)`
+   em texto; `parseFloat` disso é `NaN`, que o `|| 0` engolia. O desconto nunca existiu — a
+   rota funcionava por acidente, e qualquer mudança na curva a quebrava (chegou a andar para
+   trás: 0,69 → 0,29 → 0,02). **Regra que fica: nunca extrair número de expressão CSS.**
+2. **`--cap-entra` satura em 1 antes de o mapa aparecer** (salta de 0 a 1 num passo). A
+   `margin-top: -60vh` da passagem, que é o que faz as cenas dividirem o quadro, consome a
+   janela do capítulo. Por isso a rota precisou de fonte própria.
+3. **A primeira medição da janela quase me fez parar por engano:** olhei só o espaço abaixo
+   do mapa (542px) e concluí "janela curta". A janela real são **900px** — ela começa
+   enquanto o mapa ainda sobe.
+4. **Os limiares iniciais (78%→12%) atrasavam a viagem em quase uma tela:** a rota fechava
+   com o mapa a 0% visível. Com 128%→58% ela fecha com o mapa **inteiro**.
+
+### Validado (desktop 1440 e celular 375)
+
+| Critério | 1440 | 375 |
+|---|---|---|
+| progresso crescente na ida | ✅ | ✅ |
+| regressão equivalente na volta | ✅ | ✅ |
+| continuidade (maior salto) | ✅ 0,23 | ✅ 0,21 |
+| rota completa com o mapa legível | ✅ **100% visível** | ✅ 65% |
+| pontos e lista no mesmo progresso | ✅ | ✅ |
+
+**A emenda:** 2 quadros (~100px) entre a passagem terminar e a rota começar — e neles o mapa
+cresce de 58% para 77%. Não é período morto: é o território assentando. Depois a rota corre
+contínua (0,069 → 0,942) com o mapa em 100% durante quase toda a viagem.
+
+**Portões:** responsividade código 0 · `reduced-motion` com rota inteira e 8/8 · zero erros.
+
+> **Nota sobre o critério 6 do aceite anterior:** o teste `prova_d13_final.py` mede a rota
+> *durante* a passagem e agora acusa 0. É o comportamento correto, não uma falha — a viagem
+> começa depois que o território chega, como o dono reinterpretou: "a rota não precisa estar
+> completa quando a passagem termina; basta que continue sem descontinuidade".

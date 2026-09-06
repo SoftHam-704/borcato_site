@@ -3307,16 +3307,28 @@ body.is-abrindo {
    entregue ao capítulo no estado normal, porque em `--entrega` 1 o capítulo
    03 já rolou para a tela por conta própria.
    ═══════════════════════════════════════════════════════════════════════════ */
-.cap--estrada .mapa-mg {
-  --mapa-sobe: clamp(0, calc((var(--entrega, 0) - 0.18) / 0.62), 1);
-  --mapa-sobe-px: calc(var(--mapa-sobe) * -74vh);
-  translate: 0 var(--mapa-sobe-px);
-  /* pinta SOBRE o palco, que ainda está preso enquanto a passagem corre */
+/* O WRAPPER — a âncora. Fica no fluxo, no lugar onde o mapa vive, e NUNCA
+   recebe transform: é ele que o JS mede para calcular a rota. */
+.cap--estrada .mapa-mg-ref {
   position: relative;
   z-index: 2;
-  /* cresce conforme assume: chega inteiro quando a peça já cedeu */
-  scale: calc(0.86 + var(--mapa-sobe) * 0.14);
-  transform-origin: 50% 40%;
+  display: block;
+}
+
+/* A CAMADA VISUAL — só ela se move. Chega INTEIRA e ganha presença; não desliza
+   pela borda de baixo (o dono viu: "o mapa já nasce no meio"). MEDIDO na versão
+   anterior: 997px fora da tela em `--entrega` 0, ainda 171px fora em 0,44. */
+.cap--estrada .mapa-mg {
+  --mapa-sobe: clamp(0, calc((var(--entrega, 0) - 0.08) / 0.5), 1);
+  /* posiciona de uma vez na cena e sai de vez no fim, sem meio-caminho
+     cortado: o degrau acontece fora da faixa em que a peça está viva */
+  --entra: clamp(0, calc(var(--entrega, 0) / 0.08), 1);
+  --sai: clamp(0, calc((var(--entrega, 0) - 0.9) / 0.1), 1);
+  translate: 0 calc((var(--entra) - var(--sai)) * -74vh);
+  /* a presença: nasce fraca e pequena, assume conforme a peça cede */
+  opacity: calc(0.12 + var(--mapa-sobe) * 0.88);
+  scale: calc(0.9 + var(--mapa-sobe) * 0.1);
+  transform-origin: 50% 45%;
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -3326,10 +3338,14 @@ body.is-abrindo {
     scale: 1;
     opacity: 1;
   }
-  /* sem movimento não há passagem: o desconto do JS também zera */
+  /* sem movimento a composição é a final, sem deslocamento nenhum */
   .cap--estrada .mapa-mg {
-    --mapa-sobe: 0;
-    --mapa-sobe-px: 0px;
+    --mapa-sobe: 1;
+    --entra: 0;
+    --sai: 0;
+    translate: none;
+    opacity: 1;
+    scale: 1;
   }
 }
 
@@ -3647,4 +3663,14 @@ body.is-abrindo {
     opacity: 1;
     transition: none;
   }
+}
+
+
+/* A ÂNCORA DA ROTA — marcador de layout, nunca transformado.
+   Ela entra na tela junto com o mapa e sua travessia pela viewport é a viagem.
+   Altura zero: não ocupa espaço, não alonga o capítulo. */
+.cap--estrada .mapa-mg-marco {
+  display: block;
+  height: 0;
+  pointer-events: none;
 }
