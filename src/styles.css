@@ -3495,7 +3495,21 @@ body.is-abrindo {
   gap: clamp(20px, 3vh, 40px);
   padding-block: clamp(70px, 10vh, 110px) clamp(40px, 6vh, 70px);
 }
+.esteira__prancha {
+  --esteira-x: 0px;
+  display: grid;
+  grid-template-rows: auto 1fr;
+  align-content: center;
+  gap: clamp(24px, 5vh, 64px);
+  width: max-content;
+  min-width: 100vw;
+  height: 100%;
+  translate: var(--esteira-x) 0;
+  will-change: translate;
+}
 .esteira__cabeca {
+  width: min(760px, 70vw);
+  min-width: 0;
   padding-left: var(--br-goteira);
   padding-right: clamp(20px, 6vw, 104px);
   max-width: min(760px, 70vw);
@@ -3515,9 +3529,7 @@ body.is-abrindo {
   margin: 0;
   padding: 0 clamp(24px, 5vw, 96px) 0 var(--br-goteira);
   list-style: none;
-  /* o JS escreve só a peça; aqui se compõe. LINEAR — o scroll é o relógio. */
-  translate: var(--esteira-x, 0px) 0;
-  will-change: translate;
+  /* A prancha, e não este trilho isolado, é o relógio da composição. */
 }
 
 /* ── os cartões: três larguras, três alturas ──────────────────────────────── */
@@ -3525,9 +3537,9 @@ body.is-abrindo {
   flex: 0 0 auto;
   display: flex;
 }
-.esteira__item--p { width: clamp(220px, 20vw, 300px); }
-.esteira__item--m { width: clamp(270px, 27vw, 400px); }
-.esteira__item--g { width: clamp(330px, 36vw, 540px); }
+.esteira__item--p { width: clamp(180px, 16vw, 240px); }
+.esteira__item--m { width: clamp(240px, 23vw, 330px); }
+.esteira__item--g { width: clamp(300px, 31vw, 440px); }
 .esteira__item--alto  { align-self: flex-start; height: 84%; }
 .esteira__item--meio  { align-self: center;     height: 92%; }
 .esteira__item--baixo { align-self: flex-end;   height: 84%; }
@@ -3538,10 +3550,11 @@ body.is-abrindo {
   grid-template-rows: auto 1fr auto;
   gap: clamp(10px, 1.4vh, 18px);
   width: 100%;
-  padding: clamp(16px, 1.8vw, 26px);
-  border-radius: clamp(14px, 1.4vw, 22px);
-  background: var(--br-superficie);
-  border: 1px solid color-mix(in srgb, var(--br-tinta) 8%, transparent);
+  padding: clamp(10px, 1.2vw, 18px) 0;
+  border-radius: 0;
+  background: transparent;
+  border: 0;
+  border-top: 1px solid color-mix(in srgb, var(--br-tinta) 26%, transparent);
   color: var(--br-tinta);
   text-decoration: none;
   transition:
@@ -3551,9 +3564,9 @@ body.is-abrindo {
 }
 .esteira__item > a:hover,
 .esteira__item > a:focus-visible {
-  translate: 0 -8px;
-  border-color: color-mix(in srgb, var(--br-marca) 55%, transparent);
-  background: color-mix(in srgb, var(--br-marca) 10%, var(--br-superficie));
+  translate: 0 -5px;
+  border-color: var(--br-marca);
+  background: color-mix(in srgb, var(--br-marca) 5%, transparent);
   outline: none;
 }
 .esteira__num {
@@ -3570,7 +3583,7 @@ body.is-abrindo {
   min-height: 0;
 }
 .esteira__logo img {
-  width: min(78%, 360px);
+  width: min(92%, 440px);
   max-height: 100%;
   object-fit: contain;
   opacity: 0.86;
@@ -3627,22 +3640,23 @@ body.is-abrindo {
 .esteira.is-livre .esteira__cena {
   position: static;
   height: auto;
-  overflow: visible;
+  overflow-x: auto;
+  overflow-y: visible;
+  overscroll-behavior-inline: contain;
+}
+.esteira.is-livre .esteira__prancha {
+  translate: none;
+  min-width: max-content;
+  height: auto;
+  padding-block: clamp(28px, 8vw, 64px);
 }
 .esteira.is-livre .esteira__trilho {
-  width: auto;
+  width: max-content;
   height: min(52vh, 440px);
-  translate: none;
-  overflow-x: auto;
-  scroll-snap-type: x mandatory;
-  scrollbar-width: none;
+  overflow: visible;
   padding-inline: clamp(20px, 6vw, 40px);
 }
-.esteira.is-livre .esteira__trilho::-webkit-scrollbar {
-  display: none;
-}
 .esteira.is-livre .esteira__item {
-  scroll-snap-align: center;
   align-self: stretch;
   height: 100%;
 }
@@ -3651,8 +3665,12 @@ body.is-abrindo {
     margin-inline: calc(-1 * clamp(20px, 6vw, 40px));
   }
   .esteira__cabeca {
+    width: auto;
     padding-inline: clamp(20px, 6vw, 40px);
     max-width: none;
+  }
+  .esteira__prancha {
+    gap: 28px;
   }
   .esteira__titulo {
     font-size: clamp(1.4rem, 6vw, 2rem);

@@ -44,13 +44,15 @@ const ALTURA = ["meio", "alto", "baixo"] as const;
 export function EsteiraMarcas({ cabeca }: { cabeca?: ReactNode }) {
   const pistaRef = useRef<HTMLDivElement>(null);
   const cenaRef = useRef<HTMLDivElement>(null);
+  const pranchaRef = useRef<HTMLDivElement>(null);
   const trilhoRef = useRef<HTMLUListElement>(null);
 
   useEffect(() => {
     const pista = pistaRef.current;
     const cena = cenaRef.current;
+    const prancha = pranchaRef.current;
     const trilho = trilhoRef.current;
-    if (!pista || !cena || !trilho) return;
+    if (!pista || !cena || !prancha || !trilho) return;
 
     const livre = window.matchMedia(
       "(max-width: 900px), (prefers-reduced-motion: reduce)",
@@ -63,11 +65,11 @@ export function EsteiraMarcas({ cabeca }: { cabeca?: ReactNode }) {
       if (livre.matches) {
         pista.classList.add("is-livre");
         pista.style.height = "";
-        trilho.style.removeProperty("--esteira-x");
+        prancha.style.removeProperty("--esteira-x");
         return;
       }
       pista.classList.remove("is-livre");
-      sobra = Math.max(0, trilho.scrollWidth - cena.clientWidth);
+      sobra = Math.max(0, prancha.scrollWidth - cena.clientWidth);
       // O PASSO É 0,55×, NÃO 1:1 (D-14, 06/09).
       //
       // O Norris move o trilho um pixel por pixel rolado, e eu copiei. MEDIDO:
@@ -91,7 +93,10 @@ export function EsteiraMarcas({ cabeca }: { cabeca?: ReactNode }) {
         if (livre.matches || !sobra) return;
         const r = pista.getBoundingClientRect();
         const t = Math.min(1, Math.max(0, -r.top / (sobra * PASSO)));
-        trilho.style.setProperty("--esteira-x", `${(-t * sobra).toFixed(1)}px`);
+        // A prancha inteira anda: manchete, vazios, logos e legendas preservam
+        // suas relações. O trilho sozinho criava um carrossel dentro de uma
+        // seção parada, que era justamente o defeito visto na referência.
+        prancha.style.setProperty("--esteira-x", `${(-t * sobra).toFixed(1)}px`);
         // o indicador: quanto do trilho já passou (a auditoria pediu um
         // progresso claro — sem ele o visitante não sabe onde está nas 11)
         pista.style.setProperty("--esteira-t", t.toFixed(4));
@@ -113,46 +118,47 @@ export function EsteiraMarcas({ cabeca }: { cabeca?: ReactNode }) {
   return (
     <div className="esteira" ref={pistaRef}>
       <div className="esteira__cena" ref={cenaRef}>
-        {cabeca ? <div className="esteira__cabeca">{cabeca}</div> : null}
+        <div className="esteira__prancha" ref={pranchaRef}>
+          {cabeca ? <div className="esteira__cabeca">{cabeca}</div> : null}
 
-        {/* O INDICADOR: uma régua fina que enche conforme o trilho anda. */}
+          <ul className="esteira__trilho" ref={trilhoRef} aria-label="As onze indústrias">
+            {representadas.map((r, i) => {
+              const src = arquivoDe(r.id);
+              return (
+                <li
+                  key={r.id}
+                  className={`esteira__item esteira__item--${RITMO[i % 3]} esteira__item--${ALTURA[(i * 2) % 3]}`}
+                >
+                  <a
+                    href={r.site}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    aria-label={`${r.nome} — ${r.fornece}. Abrir o portal em nova aba.`}
+                  >
+                    <span className="esteira__num" aria-hidden>
+                      {String(i + 1).padStart(2, "0")}
+                    </span>
+                    <span className="esteira__logo">
+                      {src ? <img src={src} alt="" aria-hidden loading="lazy" /> : <b>{r.nome}</b>}
+                    </span>
+                    <span className="esteira__dizer">
+                      <b>{r.nome}</b>
+                      <span>{r.fornece}</span>
+                    </span>
+                    <span className="esteira__portal" aria-hidden>
+                      Portal <i>↗</i>
+                    </span>
+                  </a>
+                </li>
+              );
+            })}
+          </ul>
+        </div>
+
+        {/* O INDICADOR: uma régua fina que enche conforme a prancha anda. */}
         <div className="esteira__regua" aria-hidden>
           <span />
         </div>
-
-        <ul className="esteira__trilho" ref={trilhoRef} aria-label="As onze indústrias">
-          {representadas.map((r, i) => {
-            const src = arquivoDe(r.id);
-            return (
-              <li
-                key={r.id}
-                className={`esteira__item esteira__item--${RITMO[i % 3]} esteira__item--${ALTURA[(i * 2) % 3]}`}
-              >
-                {/* O CARTÃO INTEIRO É O LINK para o portal da indústria. */}
-                <a
-                  href={r.site}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  aria-label={`${r.nome} — ${r.fornece}. Abrir o portal em nova aba.`}
-                >
-                  <span className="esteira__num" aria-hidden>
-                    {String(i + 1).padStart(2, "0")}
-                  </span>
-                  <span className="esteira__logo">
-                    {src ? <img src={src} alt="" aria-hidden loading="lazy" /> : <b>{r.nome}</b>}
-                  </span>
-                  <span className="esteira__dizer">
-                    <b>{r.nome}</b>
-                    <span>{r.fornece}</span>
-                  </span>
-                  <span className="esteira__portal" aria-hidden>
-                    Portal <i>↗</i>
-                  </span>
-                </a>
-              </li>
-            );
-          })}
-        </ul>
       </div>
     </div>
   );
