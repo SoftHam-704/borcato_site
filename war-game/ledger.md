@@ -125,3 +125,45 @@ _(vazio — nenhuma D-* aprovada ate agora)_
 
 | ID | Decisao | Aprovada em | Por |
 |---|---|---|---|
+
+
+---
+
+## E. Frente nova (06/09/2026) — a fronteira 02 → 03
+
+Spec: `war-game/specs/wg-fronteira-02-03.md`. Metade 1 rodada depois de **seis tentativas
+fracassadas** de fazer a peça e o mapa dividirem o quadro.
+
+**A causa raiz, medida** (e diferente do que eu vinha supondo em todas as seis): não é o
+`clip-path` (já abre) nem a distância no documento (o mapa nasce 112px ACIMA do fim do
+palco). É que `.palco-pecas__cena` é `height: 100vh` e ocupa a tela inteira — no auge da
+passagem só 154px dos 491px do mapa cabem embaixo. **A tela está ocupada; não há para onde
+o mapa entrar.**
+
+### Decisões abertas
+
+| ID | Decisão | Opções | Recomendação da IA | Estado |
+|---|---|---|---|---|
+| D-13 | Arquitetura da fronteira 02→03 | A (o palco cede altura) · B (o mapa vive no palco) · C (trocar o gesto) | (a) A, com aborto para C após 2 tentativas | **aguarda humano** |
+| D-14 | 12,9 telas de altura: aceitar ou comprimir a esteira | manter · encurtar | — | aguarda humano |
+| D-15 | A barra de logos do hero sai, agora que a esteira existe? | sai · fica | — | aguarda humano |
+| D-16 | Mais pausa na abertura, ou tratá-la como sequência única com a escrita do hero | somar · tratar junto | — | aguarda humano |
+
+### Indefinidos novos
+
+| ID | O que falta | Por que importa | Fase que depende | Pode assumir? | Risco de assumir errado |
+|---|---|---|---|---|---|
+| I-09 | **O link do vídeo** (Gustavo Campelo) com a transição que o dono aprovou | "a seção dois vem comendo a seção um" pode ser exatamente a opção A — ou outra coisa | D-13 | **não** | planejar e executar a arquitetura errada |
+| I-10 | O `sticky` com altura variável salta no Safari/iOS? | todas as medições foram em Chromium headless | Fase 1 | não | aprovar em headless algo que quebra no aparelho do Fábio |
+
+**I-06 (prazo) segue sem resposta desde a primeira rodada** — e agora ele decide se vale
+tentar A/B ou ir direto para C.
+
+### Achados da revisão externa (06/09), estado
+
+| Achado | Estado |
+|---|---|
+| `scale` declarado duas vezes no objeto do palco | ✅ corrigido e validado nos dois sentidos (`3edc24b`) |
+| Atalho "Ver as peças" no capítulo 02 | ⏸ Fase 3 da spec — **não depende de D-13** |
+| Não somar pausas na abertura | ⏸ virou D-16 |
+| Validar a passagem nos dois sentidos | ✅ feito — reversibilidade OK, **mas revelou que o mapa chega a só 31%** |
