@@ -3193,20 +3193,29 @@ body.is-abrindo {
 .palco-pecas__objeto {
   --sai: clamp(0, calc((var(--entrega, 0) - 0.35) / 0.45), 1);
   translate: 0 calc(var(--sai) * -8%);
-  scale: calc(1 - var(--sai) * 0.16);
-  /* a ZERO no fim, nao a 8%: a tira de contatos mostrou o fantasma da peca
-     dois quadros sobre o capitulo 03 depois da passagem. Residuo e ruido.
-     E `--abre` entra no produto: no trecho 0 a peca nasce junto com o texto
-     que assume o lugar da abertura. */
-  /* A PECA E UMA PROMESSA durante a abertura, nao uma ausencia. A tira de
-     contatos mostrou 4-5 quadros com METADE DA TELA VAZIA enquanto o titulo
-     subia (o objeto estava a zero). A 16% ela ja esta la, fantasma, e cresce
+
+  /* A PEÇA É UMA PROMESSA durante a abertura, não uma ausência. A tira de
+     contatos mostrou 4-5 quadros com METADE DA TELA VAZIA enquanto o título
+     subia (o objeto estava a zero). A 42% ela já está lá, fantasma, e cresce
      para assumir quando o texto cede.
-     42%, NAO 16%: medido, a 16% a area da peca dava luminancia 18,3 contra
-     18,9 do chao ao lado — uma imagem escura sobre preto fica MAIS ESCURA que
-     o fundo em opacidade baixa. Invisivel por construcao. */
+     42%, NÃO 16%: medido, a 16% a área da peça dava luminância 18,3 contra
+     18,9 do chão ao lado — uma imagem escura sobre preto fica MAIS ESCURA que
+     o fundo em opacidade baixa. Invisível por construção.
+     E some a ZERO no fim (não a 8%): a tira mostrou o fantasma da peça dois
+     quadros sobre o capítulo 03 depois da passagem. Resíduo é ruído. */
   opacity: calc((0.42 + var(--abre, 1) * 0.58) * (1 - var(--sai)));
-  scale: calc(1 - (1 - var(--abre, 1)) * 0.1);
+
+  /* UMA EXPRESSÃO SÓ PARA A ESCALA — entrada e saída no mesmo cálculo.
+     BUG ACHADO NA REVISÃO (06/09): esta regra declarava `scale` DUAS VEZES.
+     A segunda (a entrada, `--abre`) sobrescrevia a primeira (a saída, `--sai`),
+     e a redução de 16% na passagem nunca acontecia — a peça esmaecia sem
+     recuar. Duas declarações da mesma propriedade no mesmo seletor: a última
+     vence, silenciosamente, e nada acusa erro.
+     Agora os dois gestos se compõem: nasce em 0,90 durante a abertura, chega a
+     1 quando o texto cede, e recua até 0,84 na saída. */
+  scale: calc(
+    (1 - (1 - var(--abre, 1)) * 0.1) * (1 - var(--sai) * 0.16)
+  );
   grid-area: objeto;
 }
 
