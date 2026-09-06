@@ -34,11 +34,24 @@ import { useEffect, useRef, useState } from "react";
 // A saída não foi amputar tempo, foi COMPRIMIR os quatro: a luz acende, o nome
 // se monta, a cápsula abre, a camada sai — o gesto inteiro continua legível,
 // só que em 1,9s. Assinatura, não barreira.
+// AJUSTADO PARA 2,9s (05/09, fim do dia). Eu tinha comprimido de 3,4s para 1,9s
+// respondendo ao parecer de juri ("para um jurado, ela custa a primeira
+// impressao") — e comprimi DEMAIS: o dono viu e disse que a passagem para o
+// hero ficou "extremamente rapida, precisamos de mais pausa ali".
+//
+// O erro foi tratar o tempo como uma coisa so. A ABERTURA em si podia encolher
+// (a luz, o nome se montando); o que nao podia era a ENTREGA — o instante em
+// que a capsula abre e o hero aparece. Ali o visitante precisa de um tempo
+// para perceber que chegou em algum lugar.
+//
+// Agora: o nome se monta rapido (a parte que o juri achava cara), e a pausa
+// vai toda para a entrega — 800ms entre o nome montado e a capsula abrir, mais
+// 1200ms de camada saindo (era 700).
 const TEMPOS = {
-  luz: 140, // a luz acende no escuro
-  nome: 420, // "H.M. BORÇATO" se monta, letra a letra
-  capsula: 1150, // a cápsula se abre e revela o hero
-  fim: 1900, // a camada sai do caminho
+  luz: 160, // a luz acende no escuro
+  nome: 460, // "H.M. BORÇATO" se monta, letra a letra
+  capsula: 1700, // a cápsula se abre e revela o hero — a PAUSA vive aqui
+  fim: 2900, // a camada sai do caminho
 } as const;
 
 export function Abertura() {
@@ -55,7 +68,9 @@ export function Abertura() {
     // o hero escuta isto para comecar a escrever o titulo — no instante em que a
     // capsula abre, nao antes (estaria escondido) nem depois (estaria atrasado)
     window.dispatchEvent(new CustomEvent("hmb:abriu"));
-    window.setTimeout(() => setFora(true), 700);
+    // 1200ms, nao 700: a camada leva mais tempo para sair de cena, e a
+    // travessia entre a abertura e o hero deixa de ser um corte.
+    window.setTimeout(() => setFora(true), 1200);
   };
 
   useEffect(() => {

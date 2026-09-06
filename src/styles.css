@@ -1854,7 +1854,8 @@ body.is-abrindo {
 .abertura.is-saindo .abertura__pe,
 .abertura.is-saindo .abertura__pular {
   opacity: 0;
-  transition: opacity 0.35s ease;
+  /* 0,6s: o nome nao pisca para fora, ele se apaga enquanto a capsula abre */
+  transition: opacity 0.6s ease;
 }
 
 /* PULAR — o escape precisa existir DESDE O PRIMEIRO INSTANTE.
@@ -2087,9 +2088,15 @@ body.is-abrindo {
   transform: translateY(112%);
 }
 .hero-tr.is-pronta .pal {
-  animation: pal-sobe 0.95s cubic-bezier(0.16, 1, 0.3, 1) both;
-  /* 80ms entre palavras: 6 palavras = meio segundo de escrita */
-  animation-delay: calc(var(--i) * 80ms + 120ms);
+  /* MAIS LENTO (05/09, pedido do dono: "a barra que sai da esquerda para a
+     direita revelando o texto precisa ser mais lenta").
+     A "barra" e a borda do `.berco` (overflow hidden) enquanto a palavra sobe
+     de dentro dele — o que se le como varredura e o gesto de escrita.
+     De 0,95s para 1,5s por palavra, e de 80ms para 190ms entre elas: o titulo
+     leva ~2,6s para se escrever inteiro em vez de ~1,4s. O atraso inicial sobe
+     para 260ms, para o texto comecar depois de a capsula ter aberto. */
+  animation: pal-sobe 1.5s cubic-bezier(0.16, 1, 0.3, 1) both;
+  animation-delay: calc(var(--i) * 190ms + 260ms);
 }
 @keyframes pal-sobe {
   from { opacity: 0; transform: translateY(112%); }
