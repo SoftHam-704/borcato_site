@@ -355,6 +355,38 @@ nao o wipe que temos. E outra linguagem de passagem, estrutural. **Pedir a ele o
 video/trecho da transicao que mais gostou** (transcricao via `yt-dlp`, como hoje) antes de
 reescrever as quatro passagens. Nao fazer no chute.
 
+## 4-G. ⏸️ RODADA ENCERRADA (06/09) — e por ONDE a proxima comeca
+
+A auditoria do dono (quatro pontos) esta **fechada e commitada**, mais a remocao
+do "853 municipios". Portao codigo 0 nas cinco larguras, `tsc` limpo.
+
+O que foi feito, em quatro commits:
+- **passagem VP -> mapa**: a causa era o TSX contar 13 trechos e o CSS reservar 12.
+  MEDIDO: 280px (era ~110), na faixa 250-350 que o dono pediu.
+- **"As marcas"**: frase-guia, atalho "Ver as pecas" e regua de progresso.
+- **"A casa"**: sai a defesa ("e e de proposito") e o eco de "do sell in ao giro".
+- **abertura**: contador e hero viraram UMA passagem — a porta abre com dois anos
+  ainda por contar (2450ms: 15% aberta com "2025" correndo). 3,6s -> ~2,7s.
+- **853 municipios**: removido do hero, da estrada e do `dados.ts`.
+
+### ⚠️ A PROXIMA RODADA COMECA PELA MANCHETE. Nao mexer em nada antes.
+
+Ordem direta do dono (06/09), na sequencia dele:
+
+1. **eliminar o "O" orfao** — "TODO DISTRIBUIDOR DE MINAS CONHECE **O** NOME" quebra
+   deixando um "O" solto ao lado de "CONHECE";
+2. **devolver protagonismo e legibilidade a "NOME"** — e o desfecho da frase e o
+   gancho do capitulo 04, e hoje fica ilegivel atras da marca d'agua;
+3. **preservar a marca d'agua como profundidade**, sem competir com a manchete.
+   Ela NAO deve ser removida.
+
+*"Nao mexeria em mais nada antes de resolver esse ponto, porque ele afeta
+diretamente a primeira impressao e o fechamento narrativo do site."*
+
+Visto em captura em **375px e 1440px**. Nenhuma medicao pega: sem overflow, sem
+alvo pequeno, portao em codigo 0. **So a captura mostra** — mais um caso da regra
+do §4: medicao REPROVA, nunca aprova.
+
 ## 5. AS FERRAMENTAS (em `ferramentas/`)
 
 ```bash
