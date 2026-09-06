@@ -749,10 +749,19 @@
   letter-spacing: -0.01em;
   color: var(--br-luz);
 }
-.hero-tr__titulo .ln--3 {
+.hero-tr__titulo .ln--3,
+.hero-tr__titulo .ln--4 {
   font-weight: 300;
   font-stretch: 100%;
   letter-spacing: 0.06em;
+}
+/* "O NOME." NUNCA SE SEPARA. A linha ja e bloco proprio, mas em tela estreita
+   ela ainda podia quebrar por dentro e devolver o orfao — o defeito voltaria
+   pela porta dos fundos. O nowrap fecha essa porta.
+   O `text-wrap` nao resolveria sozinho: `balance` reequilibra, mas nada impede
+   que o equilibrio escolhido seja justamente "O" em cima e "NOME." embaixo. */
+.hero-tr__titulo .ln--4 {
+  white-space: nowrap;
 }
 
 
@@ -1657,7 +1666,15 @@
 @media (max-width: 900px) {
   .hero-tr__fantasma {
     font-size: 34vw;                 /* em tela estreita precisa ser maior p/ cortar */
-    top: 50%;
+    /* DESCE E ENFRAQUECE — ela competia com a manchete (06/09, revisao do dono
+       em 375px: "compete principalmente com CONHECE O").
+       Em tela estreita ela ia para 50% e engordava para 34vw: subia justamente
+       para a faixa onde o titulo mora. Aqui ela volta para baixo do texto.
+       O que NAO se faz: apagar. Ela e quem recorta a capsula (preto sobre preto
+       sem ela), e o dono pediu para preservar a presenca. E profundidade, nao
+       enfeite — por isso desce e desbota, em vez de sair. */
+    top: 68%;
+    opacity: 0.55;
   }
 }
 

@@ -157,12 +157,22 @@ export function HeroTravessia() {
             todos os distribuidores regionais de MG e as filiais dos nacionais no
             estado. Deixa de ser quantidade de UF e vira reputacao.
 
-            As tres linhas dividem UMA cascata de 6 palavras: a contagem continua
-            de uma linha para a outra, entao o titulo se escreve na ordem da leitura. */}
+            As linhas dividem UMA cascata de 6 palavras: a contagem continua de
+            uma linha para a outra, entao o titulo se escreve na ordem da leitura.
+
+            O "O" ORFAO (06/09, revisao do dono em 1440 e 375): "conhece o nome."
+            era UMA linha so, longa demais para caber — e o navegador quebrava
+            onde dava, deixando "CONHECE O" junto e "NOME." descendo sozinho. O
+            desfecho da frase, que e o gancho do capitulo 04, virava sobra.
+
+            A quebra agora e ESTRUTURAL, nao sorte de largura: "conhece" e "o
+            nome." sao linhas proprias (recomendacao do dono). Os indices da
+            cascata seguem 4, 5, 6 — a animacao nao sabe que mudou nada. */}
         <h1 className="hero-tr__titulo">
           <span className="ln ln--1"><Palavras texto="Todo distribuidor" total={6} /></span>{" "}
           <em className="ln ln--2"><Palavras texto="de Minas" desde={2} total={6} /></em>{" "}
-          <span className="ln ln--3"><Palavras texto="conhece o nome." desde={4} total={6} /></span>
+          <span className="ln ln--3"><Palavras texto="conhece" desde={4} total={6} /></span>{" "}
+          <span className="ln ln--4"><Palavras texto="o nome." desde={5} total={6} /></span>
         </h1>
 
         <p className="hero-tr__sub">
