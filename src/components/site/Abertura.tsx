@@ -49,13 +49,28 @@ import { anosDeEstrada, INICIO } from "@/lib/dados";
 // Agora: o nome se monta rapido (a parte que o juri achava cara), e a pausa
 // vai toda para a entrega — 800ms entre o nome montado e a capsula abrir, mais
 // 1200ms de camada saindo (era 700).
+// UMA PASSAGEM SÓ, não duas esperas empilhadas (06/09, auditoria do dono):
+// "experimentaria começar a revelar o hero enquanto os últimos anos passam,
+// transformando contador e hero em uma única passagem".
+//
+// Ele estava certo sobre o defeito. A contagem terminava aos 2100ms, a cápsula
+// só abria aos 2400 e a camada só saía aos 3600: 1,5s em que os anos já tinham
+// parado e o visitante olhava para uma porta fechada. Duas esperas em fila —
+// primeiro conte, depois entre — quando o gesto é um só.
+//
+// Agora a porta começa a abrir com os DOIS ÚLTIMOS anos ainda correndo: o hero
+// aparece por trás enquanto a contagem termina. Não é a abertura encurtada com
+// pressa; é a mesma abertura em que as duas coisas acontecem JUNTAS.
+//
+// Os tempos derivam da contagem em vez de serem digitados soltos ao lado dela —
+// se um dia forem 20 anos, o encaixe se mantém sozinho. Dois números que
+// precisam concordar não podem ser escritos duas vezes.
+const PASSO_ANO = 190; // 190ms por ano: dá para LER cada um (medido)
+const ANOS_JUNTOS = 2; // quantos anos ainda correm com a porta já abrindo
+
 const TEMPOS = {
   luz: 160, // a luz acende no escuro
   nome: 460, // "H.M. BORÇATO" se monta, letra a letra
-  // a cápsula espera a contagem terminar: 460 + 120 de respiro + 8 anos a
-  // 190ms = 2100, mais 300ms para o último ano assentar antes de abrir
-  capsula: 2400,
-  fim: 3600, // a camada sai do caminho
 } as const;
 
 export function Abertura() {
@@ -67,10 +82,25 @@ export function Abertura() {
   const [fase, setFase] = useState<"escuro" | "luz" | "nome" | "abrindo">("escuro");
   const relogios = useRef<number[]>([]);
 
-  const encerrar = () => {
-    setContados(alvo); // quem pula não vê o número pela metade
-    relogios.current.forEach(clearTimeout);
-    relogios.current = [];
+  // DOIS CAMINHOS, não um.
+  //
+  // MEDIDO (06/09): adiantar só a `fase-abrindo` não fundiu nada — a tira
+  // quadro a quadro mostrou a porta PARADA nos frames 2350→2700ms, com o ano
+  // trocando e mais nada acontecendo. `fase-abrindo` apenas prepara; quem
+  // revela o hero é o `clip-path` de `is-saindo`. Eu tinha adiantado o ensaio,
+  // não a entrada.
+  //
+  // Agora a saída começa com os últimos anos ainda correndo — e para isso ela
+  // NÃO pode zerar a contagem: `setContados(alvo)` existia para quem PULA (não
+  // ver o número pela metade), e aplicado à entrega natural mataria justamente
+  // o que se quer ver. Quem pula corta; quem fica vê os anos terminarem já com
+  // o hero aparecendo por trás.
+  const encerrar = (cortando = false) => {
+    if (cortando) {
+      setContados(alvo); // quem pula não vê o número pela metade
+      relogios.current.forEach(clearTimeout);
+      relogios.current = [];
+    }
     setSaindo(true);
     document.body.classList.remove("is-abrindo");
     // o hero escuta isto para comecar a escrever o titulo — no instante em que a
@@ -109,21 +139,30 @@ export function Abertura() {
     // MEDIDO: espremendo 9 paradas na janela que existia dava 100ms cada — no
     // limite do borrao, e o dono quer VER os anos passando. Com 190ms a
     // sequencia 2018→2026 leva 1,5s e cada ano da para ler.
-    const PASSO_ANO = 190;
     const inicio = TEMPOS.nome + 120;
     const passo = PASSO_ANO;
     for (let k = 0; k <= alvo; k++) {
       t(inicio + passo * k, () => setContados(k));
     }
+    // o instante do último ano — daqui saem os outros dois tempos
+    const ultimoAno = inicio + passo * alvo;
+
+    // A PORTA ABRE COM A CONTAGEM AINDA CORRENDO — é isto que faz das duas
+    // uma passagem só. `abre` prepara, `sai` é quem de fato revela (o
+    // `clip-path`), e ele acontece com `ANOS_JUNTOS` anos ainda por contar.
+    const abre = Math.max(TEMPOS.nome + 200, ultimoAno - passo * (ANOS_JUNTOS + 1));
+    const sai = Math.max(abre + 120, ultimoAno - passo * ANOS_JUNTOS);
 
     t(TEMPOS.luz, () => setFase("luz"));
     t(TEMPOS.nome, () => setFase("nome"));
-    t(TEMPOS.capsula, () => setFase("abrindo"));
-    t(TEMPOS.fim, encerrar);
+    t(abre, () => setFase("abrindo"));
+    t(sai, () => encerrar());
+    // a camada só é removida do DOM depois que o último ano assentou
+    t(ultimoAno + 420, () => setFora(true));
 
     // Esc pula, como em qualquer coisa que segura o visitante
     const aoTeclar = (e: KeyboardEvent) => {
-      if (e.key === "Escape") encerrar();
+      if (e.key === "Escape") encerrar(true);
     };
     window.addEventListener("keydown", aoTeclar);
 
@@ -185,7 +224,8 @@ export function Abertura() {
 
       <p className="abertura__pe" aria-hidden>Representação comercial · Belo Horizonte</p>
 
-      <button type="button" className="abertura__pular" onClick={encerrar}>
+      {/* PULAR corta: quem pula não fica vendo o número pela metade */}
+      <button type="button" className="abertura__pular" onClick={() => encerrar(true)}>
         Pular
       </button>
     </div>
