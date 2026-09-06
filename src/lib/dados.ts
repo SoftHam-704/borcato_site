@@ -99,21 +99,32 @@ export const representadas = [
 ] as const;
 
 /**
- * OS ANOS DE ESTRADA, calculados — nunca escritos à mão.
+ * OS ANOS DA H.M. BORÇATO — calculados, nunca escritos à mão.
  *
- * O material do Fábio diz: "com um know how de 14 anos em representação comercial
- * de auto peças atuando no mercado mineiro" **antes de abrir**. Ele abriu em 2018.
- * Logo: 2018 − 14 = 2004 é quando a estrada começou, e HOJE são os anos desde lá.
+ * 🔒 A FONTE É O SITE DO PRÓPRIO CLIENTE (hmborcato.com.br, raspado em 05/09/2026),
+ * que afirma textualmente: **em setembro de 2018 iniciaram a trajetória da H.M.
+ * Borçato**. Isso é fato publicado por ele — não dedução nossa.
  *
- * ⚠️ O SITE NÃO PUBLICA "2004" como fato (regra dura nº 2 — o ano é dedução nossa,
- * o cliente afirmou a DURAÇÃO). O que se publica é o total de anos, que é a mesma
- * afirmação dele levada até hoje. O contador da abertura usa este número.
+ * ⚠️ POR QUE NÃO SÃO OS "14 ANOS DE ESTRADA":
+ * O mesmo texto diz que os 14 anos de know-how vieram **antes de abrir** (boa parte
+ * como gerente de OUTRO escritório). Contar 14 até hoje daria início em 2012 —
+ * depois da própria fundação, o que não fecha. E derivar 2004 (2018 − 14) para
+ * publicar "22 anos" seria inventar um ano que ninguém afirmou: foi o que eu fiz
+ * primeiro, e é exatamente a regra dura nº 2.
  *
- * Derivado do relógio: em 2027 vira 23 sozinho, sem ninguém lembrar de editar.
+ * Os 14 anos anteriores continuam no capítulo 01, com as palavras dele.
+ *
+ * Um dado que NÃO usamos, e por quê: o CNPJ 28.427.986/0001-08 registra constituição
+ * em 16/08/2017. O site dele diz setembro de 2018 (quando a operação começou). Onde
+ * as duas fontes divergem, vale a que o cliente publica sobre si.
+ *
+ * Deriva do relógio: vira 9 em setembro de 2027 sozinho.
  */
-export const ANOS_ANTES = 14;
+export const INICIO = { ano: 2018, mes: 9 };
 export function anosDeEstrada(hoje = new Date()): number {
-  return hoje.getFullYear() - (2018 - ANOS_ANTES);
+  const anos = hoje.getFullYear() - INICIO.ano;
+  // o aniversário é em setembro: antes disso ainda não completou o ano
+  return hoje.getMonth() + 1 >= INICIO.mes ? anos : anos - 1;
 }
 
 export const empresa = {

@@ -158,10 +158,12 @@ export function Abertura() {
           progresso falso, que é o que a abertura recusa desde o início) e o
           número se corrige sozinho — `anosDeEstrada()` deriva do relógio.
           Conta de 0 até o total enquanto o nome está montado: a espera passa a
-          ser a própria trajetória correndo. */}
+          ser a própria trajetória correndo.
+          O número são os anos DA EMPRESA (desde set/2018, fato publicado no
+          site dele), não os "14 anos de estrada" — ver dados.ts. */}
       <p className="abertura__conta" aria-hidden>
         <b>{contados}</b>
-        <span>anos de estrada</span>
+        <span>anos de H.M. Borçato</span>
       </p>
 
       <p className="abertura__pe" aria-hidden>Representação comercial · Belo Horizonte</p>
