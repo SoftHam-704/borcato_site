@@ -1200,13 +1200,9 @@
   padding-left: clamp(20px, 6vw, 104px);
   padding-right: clamp(20px, 6vw, 104px);
   padding-bottom: 76px;
-  background:
-    radial-gradient(
-      ellipse 80% 60% at 50% 34%,
-      color-mix(in srgb, var(--br-marca) 18%, transparent),
-      transparent 70%
-    ),
-    var(--br-chao);
+  /* O fundo entra pelo rodapé e cobre a estrada; deixar o chão transparente
+     aqui é o que torna a transformação visível, sem mover o mapa nem seu relógio. */
+  background: transparent;
 }
 .cap__titulo--grande {
   max-width: none;
@@ -2547,7 +2543,16 @@ body.is-abrindo {
   background: linear-gradient(to bottom, #0c1421, transparent);
 }
 .cap--nome::after {
-  background: linear-gradient(to bottom, #0f1f34, transparent);
+  top: calc((1 - var(--rev-lento, 0)) * 100vh);
+  height: 110vh;
+  background:
+    radial-gradient(
+      ellipse 80% 60% at 50% 34%,
+      color-mix(in srgb, var(--br-marca) 18%, transparent),
+      transparent 70%
+    ),
+    var(--br-chao);
+  z-index: 0;
 }
 /* o conteúdo do capítulo passa POR CIMA da costura — e é ELE que esmaece na
    entrada, não o chão (ver o comentário em `.cap`) */
@@ -3183,14 +3188,14 @@ body.is-abrindo {
 /* O H fica ATRÁS e à esquerda: o plano de fundo, mais apagado */
 .nome__letra--h {
   /* mais tarde (0,25) e de mais longe (18%): as letras ASSENTAM, nao chegam */
-  --t: clamp(0, calc((var(--cap-entra, 1) - 0.25) / 0.65), 1);
+  --t: clamp(0, calc((var(--cap-entra, 1) - 0.35) / 0.55), 1);
   translate: calc(-26% - (1 - var(--t)) * 18%) 0;
   color: color-mix(in srgb, var(--br-marca) 26%, transparent);
   opacity: var(--t);
 }
 /* O M vem À FRENTE e à direita: o plano de cima, cheio */
 .nome__letra--m {
-  --t: clamp(0, calc((var(--cap-entra, 1) - 0.4) / 0.6), 1);
+  --t: clamp(0, calc((var(--cap-entra, 1) - 0.42) / 0.58), 1);
   translate: calc(26% + (1 - var(--t)) * 18%) 0;
   color: var(--br-marca);
   opacity: var(--t);
@@ -3200,7 +3205,7 @@ body.is-abrindo {
    Fica por cima do H (que está atrás) e por baixo do M (que está à frente):
    o texto atravessa o espaço em vez de ficar embaixo dele. */
 .nome__homenagem {
-  --t: clamp(0, calc((var(--cap-entra, 1) - 0.45) / 0.55), 1);
+  --t: clamp(0, calc((var(--cap-entra, 1) - 0.5) / 0.5), 1);
   position: relative;
   z-index: 1;
   max-width: 34ch;
@@ -3607,6 +3612,7 @@ body.is-abrindo {
 }
 .esteira__prancha {
   --esteira-x: 0px;
+  --esteira-ato: 0;
   display: grid;
   grid-template-rows: auto 1fr;
   align-content: center;
@@ -3640,6 +3646,9 @@ body.is-abrindo {
   padding: 0 clamp(24px, 5vw, 96px) 0 var(--br-goteira);
   list-style: none;
   /* A prancha, e não este trilho isolado, é o relógio da composição. */
+  opacity: clamp(0, calc(var(--esteira-ato, 0) * 3.2), 1);
+  translate: calc((1 - var(--esteira-ato, 0)) * 100vw) 0;
+  transition: opacity 0.2s linear;
 }
 
 /* ── os cartões: três larguras, três alturas ──────────────────────────────── */
@@ -3805,6 +3814,7 @@ body.is-abrindo {
   overscroll-behavior-inline: contain;
 }
 .esteira.is-livre .esteira__prancha {
+  --esteira-ato: 1;
   translate: none;
   min-width: max-content;
   height: auto;
@@ -3817,6 +3827,9 @@ body.is-abrindo {
   overflow: visible;
   padding-inline: clamp(20px, 6vw, 40px);
   gap: clamp(14px, 1.6vw, 26px);
+  opacity: 1;
+  translate: none;
+  transition: none;
 }
 .esteira.is-livre .esteira__item {
   position: relative;
