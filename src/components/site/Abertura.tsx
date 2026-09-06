@@ -1,5 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 
+import { anosDeEstrada } from "@/lib/dados";
+
 // A ABERTURA — o evento antes do hero.
 //
 // O preloader anterior era do Lovable: um contador FALSO (`Math.random()`) que
@@ -55,12 +57,16 @@ const TEMPOS = {
 } as const;
 
 export function Abertura() {
+  // o contador sobe de 0 até os anos de estrada durante a fase do nome
+  const alvo = anosDeEstrada();
+  const [contados, setContados] = useState(0);
   const [saindo, setSaindo] = useState(false);
   const [fora, setFora] = useState(false);
   const [fase, setFase] = useState<"escuro" | "luz" | "nome" | "abrindo">("escuro");
   const relogios = useRef<number[]>([]);
 
   const encerrar = () => {
+    setContados(alvo); // quem pula não vê o número pela metade
     relogios.current.forEach(clearTimeout);
     relogios.current = [];
     setSaindo(true);
@@ -76,6 +82,7 @@ export function Abertura() {
   useEffect(() => {
     const semMovimento = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     if (semMovimento) {
+      setContados(alvo);
       setFora(true);
       window.dispatchEvent(new CustomEvent("hmb:abriu"));
       return;
@@ -83,6 +90,18 @@ export function Abertura() {
 
     document.body.classList.add("is-abrindo");
     const t = (ms: number, fn: () => void) => relogios.current.push(window.setTimeout(fn, ms));
+
+    // A CONTAGEM ocupa a pausa: começa quando o nome se monta e termina pouco
+    // antes de a cápsula abrir. 26 passos num intervalo fixo — a duração é a
+    // mesma qualquer que seja o total, então em 2035 ela não fica lenta.
+    const PASSOS = 26;
+    const inicio = TEMPOS.nome + 120;
+    const janela = TEMPOS.capsula - inicio - 220;
+    for (let k = 1; k <= PASSOS; k++) {
+      t(inicio + (janela * k) / PASSOS, () =>
+        setContados(Math.round((alvo * k) / PASSOS)),
+      );
+    }
 
     t(TEMPOS.luz, () => setFase("luz"));
     t(TEMPOS.nome, () => setFase("nome"));
@@ -132,6 +151,18 @@ export function Abertura() {
           ))}
         </b>
       </div>
+
+      {/* O CONTADOR DE ANOS — ideia do dono (05/09): "sao 14 anos, um contador de
+          anos poderia nos dar o tempo que esperamos no preloader".
+          Ele resolve duas coisas de uma vez: dá CONTEÚDO à espera (em vez de um
+          progresso falso, que é o que a abertura recusa desde o início) e o
+          número se corrige sozinho — `anosDeEstrada()` deriva do relógio.
+          Conta de 0 até o total enquanto o nome está montado: a espera passa a
+          ser a própria trajetória correndo. */}
+      <p className="abertura__conta" aria-hidden>
+        <b>{contados}</b>
+        <span>anos de estrada</span>
+      </p>
 
       <p className="abertura__pe" aria-hidden>Representação comercial · Belo Horizonte</p>
 

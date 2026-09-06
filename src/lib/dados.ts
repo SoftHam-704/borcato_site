@@ -98,6 +98,24 @@ export const representadas = [
   { id: "vp", nome: "VP", fornece: "Peças plásticas automotivas", site: "https://vp.ind.br/" },
 ] as const;
 
+/**
+ * OS ANOS DE ESTRADA, calculados — nunca escritos à mão.
+ *
+ * O material do Fábio diz: "com um know how de 14 anos em representação comercial
+ * de auto peças atuando no mercado mineiro" **antes de abrir**. Ele abriu em 2018.
+ * Logo: 2018 − 14 = 2004 é quando a estrada começou, e HOJE são os anos desde lá.
+ *
+ * ⚠️ O SITE NÃO PUBLICA "2004" como fato (regra dura nº 2 — o ano é dedução nossa,
+ * o cliente afirmou a DURAÇÃO). O que se publica é o total de anos, que é a mesma
+ * afirmação dele levada até hoje. O contador da abertura usa este número.
+ *
+ * Derivado do relógio: em 2027 vira 23 sozinho, sem ninguém lembrar de editar.
+ */
+export const ANOS_ANTES = 14;
+export function anosDeEstrada(hoje = new Date()): number {
+  return hoje.getFullYear() - (2018 - ANOS_ANTES);
+}
+
 export const empresa = {
   nome: "H.M. Borçato",
   descritor: "Representação Comercial e Marketing",

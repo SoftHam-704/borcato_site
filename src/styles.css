@@ -795,6 +795,13 @@
 .hero-tr__capsula {
   position: relative;
   justify-self: end;
+  /* A FOTO ENTRA, nao aparece (05/09). O dono pediu o texto E a foto mais
+     lentos; a capsula nao tinha gesto proprio — surgia pronta junto com o hero.
+     A REGRA ESTA EM `.hero-tr.is-pronta` (abaixo), nao aqui: MEDIDO, com a
+     animacao no elemento ela disparava no CARREGAMENTO e terminava aos 1,76s,
+     enquanto a capsula da abertura so abre aos 3,47s — a foto fazia a entrada
+     inteira escondida atras da camada, e o gesto nao existia para ninguem.
+     Presa ao `is-pronta`, ela entra quando o hero e entregue, junto do texto. */
   /* A PASSAGEM hero -> 01: a capsula CEDE no ultimo quarto do pino — recua e
      esmaece — enquanto o retrato do capitulo 01 nasce aberto e fecha no close.
      --hero-t e o progresso cru do pino, escrito pelo JS; a curva fica aqui. */
@@ -2087,6 +2094,14 @@ body.is-abrindo {
   opacity: 0;
   transform: translateY(112%);
 }
+/* a foto entra junto com a escrita, no mesmo compasso e no mesmo gatilho */
+.hero-tr__capsula {
+  opacity: 0;
+}
+.hero-tr.is-pronta .hero-tr__capsula {
+  animation: capsula-entra 2.4s cubic-bezier(0.22, 1, 0.28, 1) 120ms both;
+}
+
 .hero-tr.is-pronta .pal {
   /* MAIS LENTO (05/09, pedido do dono: "a barra que sai da esquerda para a
      direita revelando o texto precisa ser mais lenta").
@@ -2095,8 +2110,13 @@ body.is-abrindo {
      De 0,95s para 1,5s por palavra, e de 80ms para 190ms entre elas: o titulo
      leva ~2,6s para se escrever inteiro em vez de ~1,4s. O atraso inicial sobe
      para 260ms, para o texto comecar depois de a capsula ter aberto. */
-  animation: pal-sobe 1.5s cubic-bezier(0.16, 1, 0.3, 1) both;
-  animation-delay: calc(var(--i) * 190ms + 260ms);
+  /* SEGUNDO PASSE (05/09): o dono viu 1,5s/190ms e disse que "a barra que revela
+     o texto e a foto na hero ainda esta muito rapida". Agora 2,1s por palavra e
+     300ms entre elas — o titulo de 7 palavras leva ~4,2s para se escrever
+     inteiro, contra 2,6s. A curva tambem mudou: (0.22, 1, 0.28, 1) desacelera
+     mais no fim, e e o fim que se le como a barra passando. */
+  animation: pal-sobe 2.1s cubic-bezier(0.22, 1, 0.28, 1) both;
+  animation-delay: calc(var(--i) * 300ms + 320ms);
 }
 @keyframes pal-sobe {
   from { opacity: 0; transform: translateY(112%); }
@@ -3526,5 +3546,65 @@ body.is-abrindo {
   .esteira__item--m,
   .esteira__item--g {
     width: 78vw;
+  }
+}
+
+
+/* a foto sobe e clareia junto com a escrita do título */
+@keyframes capsula-entra {
+  from {
+    opacity: 0;
+    transform: translateY(26px) scale(0.97);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+/* ── O CONTADOR DE ANOS na abertura ──────────────────────────────────────────
+   Ideia do dono: a espera passa a ter conteúdo — a trajetória correndo — em vez
+   de um progresso falso. O número vem de `anosDeEstrada()`, derivado do relógio. */
+.abertura__conta {
+  display: flex;
+  align-items: baseline;
+  justify-content: center;
+  gap: clamp(8px, 1vw, 14px);
+  margin: clamp(18px, 3vh, 34px) 0 0;
+  opacity: 0;
+  transition: opacity 0.5s ease;
+}
+.abertura.fase-nome .abertura__conta,
+.abertura.fase-abrindo .abertura__conta {
+  opacity: 1;
+}
+.abertura__conta b {
+  font-family: var(--font-display), sans-serif;
+  font-size: clamp(2.4rem, 6vmin, 4.4rem);
+  font-weight: 700;
+  line-height: 1;
+  letter-spacing: -0.02em;
+  color: var(--br-marca);
+  /* largura fixa por dígito: o número não empurra o texto ao lado enquanto sobe */
+  font-variant-numeric: tabular-nums;
+}
+.abertura__conta span {
+  font-family: var(--font-sans), sans-serif;
+  font-size: clamp(0.62rem, 1.3vmin, 0.8rem);
+  font-weight: 500;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  color: var(--br-fraco);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hero-tr__capsula,
+  .hero-tr.is-pronta .hero-tr__capsula {
+    animation: none;
+    opacity: 1;
+  }
+  .abertura__conta {
+    opacity: 1;
+    transition: none;
   }
 }
