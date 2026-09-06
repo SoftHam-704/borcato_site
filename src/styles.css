@@ -1059,7 +1059,7 @@
   }
   /* espaço para a barra de capítulos no rodapé */
   .cap--nome {
-    padding-bottom: calc(clamp(96px, 16vh, 200px) + 76px);
+    padding-bottom: calc(clamp(96px, 16vh, 200px) + 100svh);
   }
 }
 
@@ -1199,6 +1199,7 @@
      sem isto o bloco inteiro ficava ~105px a direita do centro real em 1440 */
   padding-left: clamp(20px, 6vw, 104px);
   padding-right: clamp(20px, 6vw, 104px);
+  padding-bottom: calc(clamp(96px, 16vh, 200px) + 100svh);
   background:
     radial-gradient(
       ellipse 80% 60% at 50% 34%,
@@ -1291,6 +1292,115 @@
   letter-spacing: 0.2em;
   text-transform: uppercase;
   color: var(--br-fraco);
+}
+
+/* D-17 · O NOME TERMINA EM PESSOA
+   A homenagem acima continua sendo o primeiro ato. Este painel começa com o
+   retrato no piso e deixa o contato entrar depois dele; assim o fecho não vira
+   uma repetição da cápsula do hero nem põe a chamada sobre o bordado. */
+.fecho {
+  --fecho-t: 0;
+  position: relative;
+  display: grid;
+  grid-template-columns: minmax(0, 1.25fr) minmax(280px, 0.75fr);
+  align-items: end;
+  gap: clamp(32px, 7vw, 120px);
+  width: min(1180px, 100%);
+  max-width: none;
+  min-height: 100svh;
+  margin: clamp(56px, 9vh, 104px) auto 0;
+  padding: clamp(36px, 8vh, 100px) 0 clamp(36px, 7vh, 80px);
+  text-align: left;
+}
+.fecho__retrato {
+  position: relative;
+  align-self: end;
+  width: min(100%, 680px);
+  opacity: clamp(0, calc(var(--fecho-t) / 0.35), 1);
+  transform: translateY(calc((1 - clamp(0, calc(var(--fecho-t) / 0.35), 1)) * 90px));
+  clip-path: inset(0 0 calc((1 - clamp(0, calc(var(--fecho-t) / 0.35), 1)) * 12%) 0);
+  will-change: transform, opacity, clip-path;
+}
+.fecho__retrato img {
+  display: block;
+  width: 100%;
+  max-height: 67svh;
+  object-fit: contain;
+  object-position: center bottom;
+  filter: saturate(0.88) contrast(1.04);
+}
+.fecho__retrato span {
+  position: absolute;
+  left: 5%;
+  bottom: 3%;
+  color: color-mix(in srgb, var(--br-luz) 75%, transparent);
+  font-size: 10px;
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+}
+.fecho__conteudo {
+  align-self: center;
+  max-width: 390px;
+  padding-bottom: clamp(20px, 6vh, 72px);
+}
+.fecho__chamada {
+  max-width: 12ch;
+  margin: 0 0 clamp(24px, 3.4vh, 40px);
+  font-size: clamp(25px, 3vw, 46px);
+  line-height: 0.98;
+  clip-path: inset(0 0 calc((1 - clamp(0, calc((var(--fecho-t) - 0.35) / 0.3), 1)) * 100%) 0);
+  transform: translateY(calc((1 - clamp(0, calc((var(--fecho-t) - 0.35) / 0.3), 1)) * 24px));
+}
+.fecho__vias {
+  grid-template-columns: 1fr;
+  justify-items: start;
+  gap: clamp(12px, 2vh, 22px);
+  opacity: clamp(0, calc((var(--fecho-t) - 0.58) / 0.25), 1);
+  transform: translateY(calc((1 - clamp(0, calc((var(--fecho-t) - 0.58) / 0.25), 1)) * 28px));
+}
+.fecho__vias li {
+  justify-items: start;
+}
+.fecho__assinatura {
+  opacity: clamp(0, calc((var(--fecho-t) - 0.82) / 0.18), 1);
+  transform: translateY(calc((1 - clamp(0, calc((var(--fecho-t) - 0.82) / 0.18), 1)) * 18px));
+}
+
+@media (max-width: 900px) {
+  .fecho {
+    grid-template-columns: 1fr;
+    align-items: start;
+    gap: clamp(18px, 5vh, 42px);
+    min-height: 100svh;
+    padding-block: clamp(32px, 6vh, 64px);
+  }
+  .fecho__retrato {
+    width: min(100%, 440px);
+    margin-inline: auto;
+  }
+  .fecho__retrato img {
+    max-height: 52svh;
+  }
+  .fecho__conteudo {
+    width: min(100%, 390px);
+    padding-bottom: 0;
+  }
+  .fecho__chamada {
+    max-width: 15ch;
+    font-size: clamp(24px, 8vw, 36px);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .fecho__retrato,
+  .fecho__chamada,
+  .fecho__vias,
+  .fecho__assinatura {
+    opacity: 1;
+    transform: none;
+    clip-path: none;
+    transition: none;
+  }
 }
 
 /* ── A barra de marcas (base do hero) ───────────────────────────────────────── */

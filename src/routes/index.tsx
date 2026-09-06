@@ -6,6 +6,7 @@ import { Estrada } from "@/components/site/Estrada";
 import { Palavras } from "@/components/site/Palavras";
 import { PalcoPecas } from "@/components/site/PalcoPecas";
 import { EsteiraMarcas } from "@/components/site/EsteiraMarcas";
+import { FechoFabio } from "@/components/site/FechoFabio";
 import { MapaMinas, PONTOS } from "@/components/site/MapaMinas";
 import { empresa, casa, representadas } from "@/lib/dados";
 import fabioCasa from "@/assets/site/fabio-casa.avif";
@@ -305,26 +306,7 @@ function Index() {
           <p className="nome__homenagem">{empresa.homenagem}</p>
         </div>
 
-        <div className="fecho">
-          <p className="fecho__chamada">Fale com quem roda a estrada.</p>
-          <ul className="fecho__vias">
-            <li>
-              <a href={empresa.celular.href}>{empresa.celular.rotulo}</a>
-              <span>Celular · WhatsApp</span>
-            </li>
-            <li>
-              <a href={empresa.telefone.href}>{empresa.telefone.rotulo}</a>
-              <span>Escritório · {empresa.base}</span>
-            </li>
-            <li>
-              <a href={`mailto:${empresa.email}`}>{empresa.email}</a>
-              <span>E-mail</span>
-            </li>
-          </ul>
-          <p className="fecho__assinatura">
-            {empresa.nome} — {empresa.descritor}
-          </p>
-        </div>
+        <FechoFabio />
       </Capitulo>
       </main>
     </div>
