@@ -387,6 +387,51 @@ Visto em captura em **375px e 1440px**. Nenhuma medicao pega: sem overflow, sem
 alvo pequeno, portao em codigo 0. **So a captura mostra** — mais um caso da regra
 do §4: medicao REPROVA, nunca aprova.
 
+## 4-H. ⚠️ O CONGELAMENTO DO MAPA — achado do dono, TENTATIVA REVERTIDA
+
+**O achado (06/09), e ele esta certo:** *"acho que aqui deve congelar ate chegar
+na cidade 8"*. O mapa nao para: a viagem corre enquanto ele atravessa a tela.
+
+**MEDIDO, o tamanho do problema:** a rota inteira (0 -> 1) acontece em **~570px**
+de rolagem, e a **8a parada acende com o mapa a 79% de altura visivel E CAINDO**
+— 190px depois ele sumiu. As tres ultimas paradas disputam espaco com a saida.
+
+### A tentativa (esta no `git stash`, NAO no historico)
+
+`git stash list` -> *"tentativa: pista presa para o mapa"*. Prender o mapa numa
+pista alta com cena `sticky`, igual ao palco das pecas.
+
+**Funcionou o principal:** as paradas 3 a 8 passaram a acender com o mapa a
+**100%** na tela, e sobravam ~600px de mapa cravado depois da 8a. O congelamento
+existia.
+
+**Mas quebrou a entrada, e por isso foi revertida.** Dois defeitos encadeados:
+
+1. **O mapa andava PARA TRAS na chegada** (100% -> 23% -> volta a subir). Causa:
+   a passagem 02->03 ainda deslocava o mapa (`--entrega` 0,92) quando o sticky
+   da pista ja tentava prende-lo. **Dois relogios no mesmo elemento.**
+2. Tentei tirar o `--sai` (o gesto que devolve o mapa 74vh para baixo no fim da
+   passagem) e **ficou pior**: o mapa passou a sair da tela ENQUANTO as paradas
+   acendiam — 8/8 com ele a 9% de altura visivel. O `translate` de -74vh empurra
+   o SVG para fora da propria cena presa.
+
+### O que a proxima tentativa precisa resolver ANTES de codar
+
+A pista presa e a passagem 02->03 **disputam o mesmo elemento**. Nao adianta
+calibrar valor — foi a licao das seis tentativas do D-13. As saidas plausiveis,
+nenhuma testada:
+
+- **a passagem entregar o mapa JA no lugar final** (sem `translate` residual), e
+  a pista assumir a partir dali — uma fronteira limpa entre os dois atos;
+- **a pista comecar depois** que `--entrega` chega a 1, com a folga vindo do
+  fluxo e nao de `padding`/`margin` negativa (que nao desfaz `translate`);
+- **congelar sem sticky**: manter o capitulo rolando e ALONGAR a janela da rota
+  (hoje 128%->58% da tela), aceitando que o mapa se mova pouco durante a viagem.
+  E a de menor risco: nao toca na passagem.
+
+**Orcamento sugerido: 2 tentativas.** Se a entrada do mapa regredir de novo,
+parar e trazer a tira — nao insistir. Foi assim que o D-13 custou seis rodadas.
+
 ## 5. AS FERRAMENTAS (em `ferramentas/`)
 
 ```bash
