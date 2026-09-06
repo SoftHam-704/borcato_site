@@ -1,6 +1,5 @@
 import { useEffect, useRef } from "react";
 import { regioes, casa, empresa } from "@/lib/dados";
-import { BarraMarcas } from "@/components/site/BarraMarcas";
 import { FotoViva } from "@/components/site/FotoViva";
 import { Palavras } from "@/components/site/Palavras";
 // Gerada com o Nano Banana a partir da original (marca/geracao/): luz lateral
@@ -29,23 +28,17 @@ import fabioEscuro from "@/assets/site/frames/0.avif";
 export function HeroTravessia() {
   const capsulaRef = useRef<HTMLDivElement>(null);
 
-  // A barra de marcas e absoluta na base do hero, e a altura dela MUDA com a
-  // largura (medido: 238px em 375, onde as pastilhas quebram em 3 linhas; 117px
-  // em 1440). O hero precisa reservar esse espaco, e nenhum valor fixo serve —
-  // entao ele e MEDIDO e escrito em --alt-marcas. Tres tentativas com grid
-  // falharam antes disto.
-  useEffect(() => {
-    const hero = document.querySelector<HTMLElement>(".hero-tr");
-    const barra = document.querySelector<HTMLElement>(".marcas");
-    if (!hero || !barra) return;
-    const medir = () => {
-      hero.style.setProperty("--alt-marcas", `${Math.round(barra.offsetHeight)}px`);
-    };
-    medir();
-    const obs = new ResizeObserver(medir);
-    obs.observe(barra);
-    return () => obs.disconnect();
-  }, []);
+  // A BARRA DE MARCAS SAIU DO HERO (D-15, 06/09).
+  //
+  // Ela existia para pôr as 11 credenciais na primeira tela — e isso continua
+  // certo como argumento. O que mudou foi a esteira do capítulo 02: MEDIDO,
+  // o logo lá tem 261×42px contra 58×9px aqui. **4,5× maior.** A barra gastava
+  // 99px do hero aprovado para exibir logos de 9px de altura — que era a queixa
+  // original do dono ("o carrossel de indústrias está muito pequeno").
+  //
+  // Com a esteira, as mesmas 11 marcas apareciam TRÊS vezes (barra, esteira,
+  // palco). Saiu a menor. O `--alt-marcas` some junto: sem ele, o hero não
+  // reserva um vão para algo que não existe mais.
 
   // O TEXTO SE ESCREVE quando a abertura termina, nao quando a pagina carrega:
   // a abertura cobre tudo, e animar por baixo dela e desperdicar o gesto. A
@@ -243,12 +236,6 @@ export function HeroTravessia() {
         <span className="capsula__vinheta" aria-hidden />
       </div>
 
-      {/* As 11 representadas na BASE DA PRIMEIRA TELA, como no 26 (Ferrari).
-          Antes eram irmas do hero e comecavam 1px abaixo da dobra em toda
-          largura — a promessa da ficha nunca se cumpria. Para um representante
-          comercial as marcas que ele carrega SAO a credencial: enterra-las a
-          tres telas de distancia e enterrar o argumento mais forte. */}
-      <BarraMarcas />
     </section>
     </div>
   );

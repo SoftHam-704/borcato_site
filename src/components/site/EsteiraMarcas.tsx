@@ -31,6 +31,11 @@ function arquivoDe(id: string): string | undefined {
   return chave ? logos[chave]?.default : undefined;
 }
 
+/** O PASSO da esteira: quanto o dedo anda em relação ao trilho. 1 = o Norris
+ *  (1:1); 0,55 = a pista encurta 45% sem mudar o tamanho dos cartões.
+ *  Ver o comentário em `medir()`. */
+const PASSO = 0.55;
+
 /** três larguras que se alternam: é isto que dá a leitura de profundidade */
 const RITMO = ["m", "g", "p"] as const;
 /** e três alturas, em ciclo deslocado do das larguras para não travarem juntas */
@@ -63,8 +68,19 @@ export function EsteiraMarcas({ cabeca }: { cabeca?: ReactNode }) {
       }
       pista.classList.remove("is-livre");
       sobra = Math.max(0, trilho.scrollWidth - cena.clientWidth);
-      // 1:1 — a pista tem exatamente a altura que o trilho tem de sobra
-      pista.style.height = `calc(100vh + ${sobra}px)`;
+      // O PASSO É 0,55×, NÃO 1:1 (D-14, 06/09).
+      //
+      // O Norris move o trilho um pixel por pixel rolado, e eu copiei. MEDIDO:
+      // com 3542px de trilho isso dava 4,9 TELAS de pista — a esteira sozinha
+      // ficava maior que o hero, o capítulo 01, o 03 e o 04 SOMADOS, e a página
+      // inteira em 12,9 telas.
+      //
+      // Com 0,55 o dedo anda 55% do caminho e o trilho percorre 100%: a pista
+      // cai para 3,2 telas e a página para ~11,2. A leitura de cada cartão não
+      // muda — eles continuam do mesmo tamanho; só o percurso encurta.
+      //
+      // (No celular a esteira é livre e nunca teve esse custo: 0,9 tela.)
+      pista.style.height = `calc(100vh + ${Math.round(sobra * PASSO)}px)`;
       esfregar();
     };
 
@@ -74,7 +90,7 @@ export function EsteiraMarcas({ cabeca }: { cabeca?: ReactNode }) {
         pedido = 0;
         if (livre.matches || !sobra) return;
         const r = pista.getBoundingClientRect();
-        const t = Math.min(1, Math.max(0, -r.top / sobra));
+        const t = Math.min(1, Math.max(0, -r.top / (sobra * PASSO)));
         trilho.style.setProperty("--esteira-x", `${(-t * sobra).toFixed(1)}px`);
       });
     };

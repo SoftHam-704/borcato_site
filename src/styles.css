@@ -694,7 +694,7 @@
   align-items: center;
   gap: clamp(24px, 4vw, 72px);
   padding: clamp(80px, 10vh, 130px) 0
-    calc(var(--alt-marcas, 120px) + clamp(16px, 2.4vh, 28px)) var(--br-goteira);
+    clamp(16px, 2.4vh, 28px) var(--br-goteira);
   background: var(--br-chao);
   color: var(--br-tinta);
   overflow: hidden;
@@ -818,7 +818,7 @@
      900 — o padding SOMA a altura do maior filho, nao reserva por dentro. */
   max-height: min(
     calc(
-      100svh - clamp(80px, 10vh, 130px) - var(--alt-marcas, 120px) -
+      100svh - clamp(80px, 10vh, 130px) -
         clamp(16px, 2.4vh, 28px) - 8px
     ),
     744px

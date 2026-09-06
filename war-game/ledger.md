@@ -145,9 +145,9 @@ o mapa entrar.**
 | ID | Decisão | Opções | Recomendação da IA | Estado |
 |---|---|---|---|---|
 | D-13 | Arquitetura da fronteira 02→03 | A · B · C | (a) A | ✅ **APROVADA NA OPÇÃO B** (06/09) — o dono: "A pode abrir espaço, mas não garante transformação. O objeto e o território precisam dividir a mesma cena durante alguns instantes." Sem fallback automático para C. **IMPLEMENTADA E VALIDADA** — ver §F |
-| D-14 | 12,9 telas de altura: aceitar ou comprimir a esteira | manter · encurtar | — | aguarda humano |
-| D-15 | A barra de logos do hero sai, agora que a esteira existe? | sai · fica | — | aguarda humano |
-| D-16 | Mais pausa na abertura, ou tratá-la como sequência única com a escrita do hero | somar · tratar junto | — | aguarda humano |
+| D-14 | 12,9 telas de altura | manter · encurtar | encurtar a esteira (o problema estava num lugar só) | ✅ **APROVADA 06/09** — passo da esteira 1:1 → 0,55×. Página 12,9 → **11,2 telas** |
+| D-15 | A barra de logos do hero sai? | sai · fica | sai | ✅ **APROVADA 06/09** — os logos da esteira são **4,5× maiores** (261×42 contra 58×9). O hero recuperou 99px |
+| D-16 | A pausa da abertura | somar · tratar junto | **não mexer agora** — a página encurtou 1,7 tela e o ritmo geral mudou; reavaliar com olhos frios | ⏸ adiada por decisão conjunta |
 
 ### Indefinidos novos
 
@@ -254,3 +254,45 @@ contínua (0,069 → 0,942) com o mapa em 100% durante quase toda a viagem.
 > *durante* a passagem e agora acusa 0. É o comportamento correto, não uma falha — a viagem
 > começa depois que o território chega, como o dono reinterpretou: "a rota não precisa estar
 > completa quando a passagem termina; basta que continue sem descontinuidade".
+
+
+---
+
+## H. D-14 e D-15 resolvidas (06/09) — a medição decidiu as duas
+
+**D-14 · a altura.** O problema não estava distribuído: estava num lugar só.
+
+| | antes | agora |
+|---|---|---|
+| Página (desktop) | 12,9 telas | **11,2** |
+| Página (celular) | 9,4 | **9,1** |
+| A esteira sozinha | **4,9 telas** | **3,2** |
+
+A esteira ocupava mais que o hero + capítulos 01, 03 e 04 **somados**. A causa era a mecânica
+1:1 copiada do Norris — cada pixel rolado movia o trilho um pixel, e são 3.542px de trilho.
+Com `PASSO = 0,55` o dedo anda 55% do caminho e o trilho percorre 100%. **Os cartões não
+mudaram de tamanho**; só o percurso encurtou.
+
+No celular a esteira sempre custou 0,9 tela — lá ela é livre, sem pino.
+
+**D-15 · a barra do hero.** Medido antes de decidir:
+
+| | logo |
+|---|---|
+| barra do hero | 58 × 9 px |
+| esteira | 261 × 42 px |
+
+**4,5× maior na esteira.** A barra gastava 99px do hero aprovado para exibir logos de 9px —
+que era literalmente a queixa original do dono ("o carrossel está muito pequeno"). Com a
+esteira, as 11 marcas apareciam três vezes. Saiu a menor.
+
+O `--alt-marcas` saiu junto: sem ele o hero não reserva vão para algo que não existe. Medido:
+o padding da base caiu de 120px reservados para 21,6px reais.
+
+⚠️ **`BarraMarcas.tsx` continua no disco, sem montagem.** Não apaguei: se a decisão for
+revista, o componente está pronto. Se em uma semana ninguém o quiser, apagar.
+
+**D-16 adiada por decisão conjunta:** a página encurtou 1,7 tela e o ritmo geral mudou.
+Reavaliar a abertura depois, com olhos frios.
+
+**Portões:** responsividade código 0 · os cinco critérios da rota mantidos · zero erros.
