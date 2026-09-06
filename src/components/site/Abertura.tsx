@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 
-import { anosDeEstrada } from "@/lib/dados";
+import { anosDeEstrada, INICIO } from "@/lib/dados";
 
 // A ABERTURA — o evento antes do hero.
 //
@@ -52,8 +52,10 @@ import { anosDeEstrada } from "@/lib/dados";
 const TEMPOS = {
   luz: 160, // a luz acende no escuro
   nome: 460, // "H.M. BORÇATO" se monta, letra a letra
-  capsula: 1700, // a cápsula se abre e revela o hero — a PAUSA vive aqui
-  fim: 2900, // a camada sai do caminho
+  // a cápsula espera a contagem terminar: 460 + 120 de respiro + 8 anos a
+  // 190ms = 2100, mais 300ms para o último ano assentar antes de abrir
+  capsula: 2400,
+  fim: 3600, // a camada sai do caminho
 } as const;
 
 export function Abertura() {
@@ -91,16 +93,27 @@ export function Abertura() {
     document.body.classList.add("is-abrindo");
     const t = (ms: number, fn: () => void) => relogios.current.push(window.setTimeout(fn, ms));
 
-    // A CONTAGEM ocupa a pausa: começa quando o nome se monta e termina pouco
-    // antes de a cápsula abrir. 26 passos num intervalo fixo — a duração é a
-    // mesma qualquer que seja o total, então em 2035 ela não fica lenta.
-    const PASSOS = 26;
+    // OS ANOS PASSANDO, um a um — não um total subindo.
+    //
+    // Antes eram 26 passos de 0 até 8: oito números em ~1,2s ficam quase
+    // instantâneos, e o dono viu — "gostaria de ver os anos contando, não um
+    // número sem sentido". Um total que salta não é uma contagem; é um número
+    // que apareceu.
+    //
+    // Agora cada ANO é uma parada: 2018, 2019, 2020 … até hoje. São 9 paradas
+    // em 2026, e o ritmo é o mesmo para cada uma — dá para ler cada ano.
+    //
+    // A janela se ADAPTA ao total: se um dia forem 20 anos, o passo encurta em
+    // vez de a abertura esticar. Piso de 90ms para não virar borrão.
+    // 190ms POR ANO, e a abertura se estica para caber (nao o contrario).
+    // MEDIDO: espremendo 9 paradas na janela que existia dava 100ms cada — no
+    // limite do borrao, e o dono quer VER os anos passando. Com 190ms a
+    // sequencia 2018→2026 leva 1,5s e cada ano da para ler.
+    const PASSO_ANO = 190;
     const inicio = TEMPOS.nome + 120;
-    const janela = TEMPOS.capsula - inicio - 220;
-    for (let k = 1; k <= PASSOS; k++) {
-      t(inicio + (janela * k) / PASSOS, () =>
-        setContados(Math.round((alvo * k) / PASSOS)),
-      );
+    const passo = PASSO_ANO;
+    for (let k = 0; k <= alvo; k++) {
+      t(inicio + passo * k, () => setContados(k));
     }
 
     t(TEMPOS.luz, () => setFase("luz"));
@@ -162,8 +175,12 @@ export function Abertura() {
           O número são os anos DA EMPRESA (desde set/2018, fato publicado no
           site dele), não os "14 anos de estrada" — ver dados.ts. */}
       <p className="abertura__conta" aria-hidden>
-        <b>{contados}</b>
-        <span>anos de H.M. Borçato</span>
+        <b>{INICIO.ano + contados}</b>
+        <span>
+          {contados === 0
+            ? "começa a trajetória"
+            : `${contados} ${contados === 1 ? "ano" : "anos"} de H.M. Borçato`}
+        </span>
       </p>
 
       <p className="abertura__pe" aria-hidden>Representação comercial · Belo Horizonte</p>

@@ -2099,7 +2099,7 @@ body.is-abrindo {
   opacity: 0;
 }
 .hero-tr.is-pronta .hero-tr__capsula {
-  animation: capsula-entra 2.4s cubic-bezier(0.22, 1, 0.28, 1) 120ms both;
+  animation: capsula-entra 2.9s cubic-bezier(0.22, 1, 0.28, 1) 120ms both;
 }
 
 .hero-tr.is-pronta .pal {
