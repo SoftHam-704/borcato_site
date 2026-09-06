@@ -3521,11 +3521,11 @@ body.is-abrindo {
 
 /* ── o trilho ─────────────────────────────────────────────────────────────── */
 .esteira__trilho {
-  display: flex;
-  align-items: stretch;
-  gap: clamp(14px, 1.6vw, 26px);
+  position: relative;
+  display: block;
   width: max-content;
-  height: min(58vh, 560px);
+  width: 6600px;
+  height: min(66vh, 610px);
   margin: 0;
   padding: 0 clamp(24px, 5vw, 96px) 0 var(--br-goteira);
   list-style: none;
@@ -3534,15 +3534,32 @@ body.is-abrindo {
 
 /* ── os cartões: três larguras, três alturas ──────────────────────────────── */
 .esteira__item {
-  flex: 0 0 auto;
-  display: flex;
+  position: absolute;
+  display: block;
+  width: auto;
+  height: auto;
 }
-.esteira__item--p { width: clamp(180px, 16vw, 240px); }
-.esteira__item--m { width: clamp(240px, 23vw, 330px); }
-.esteira__item--g { width: clamp(300px, 31vw, 440px); }
-.esteira__item--alto  { align-self: flex-start; height: 84%; }
-.esteira__item--meio  { align-self: center;     height: 92%; }
-.esteira__item--baixo { align-self: flex-end;   height: 84%; }
+.esteira__item--p { width: 260px; }
+.esteira__item--m { width: 390px; }
+.esteira__item--g { width: 650px; }
+.esteira__item--alto  { top: 0; }
+.esteira__item--meio  { top: 150px; }
+.esteira__item--baixo { top: 330px; }
+
+/* A prancha não é uma fila: cada bloco ocupa uma coordenada editorial própria.
+   As posições alternam duas faixas e deixam vazios deliberados, como a referência.
+   O último bloco é a dobradiça visual para o PalcoPecas. */
+.esteira__item:nth-child(1) { left: 40px; width: 390px; }
+.esteira__item:nth-child(2) { left: 570px; top: 300px; width: 520px; }
+.esteira__item:nth-child(3) { left: 1170px; top: 30px; width: 300px; }
+.esteira__item:nth-child(4) { left: 1550px; top: 260px; width: 650px; }
+.esteira__item:nth-child(5) { left: 2280px; top: 75px; width: 380px; }
+.esteira__item:nth-child(6) { left: 2780px; top: 340px; width: 250px; }
+.esteira__item:nth-child(7) { left: 3100px; top: 0; width: 540px; }
+.esteira__item:nth-child(8) { left: 3740px; top: 250px; width: 320px; }
+.esteira__item:nth-child(9) { left: 4160px; top: 40px; width: 610px; }
+.esteira__item:nth-child(10) { left: 4860px; top: 330px; width: 270px; }
+.esteira__item:nth-child(11) { left: 5260px; top: 30px; width: 470px; }
 
 .esteira__item > a {
   position: relative;
@@ -3583,7 +3600,7 @@ body.is-abrindo {
   min-height: 0;
 }
 .esteira__logo img {
-  width: min(92%, 440px);
+  width: min(100%, 600px);
   max-height: 100%;
   object-fit: contain;
   opacity: 0.86;
@@ -3633,6 +3650,39 @@ body.is-abrindo {
   translate: 2px -2px;
 }
 
+.esteira__final {
+  position: absolute;
+  left: 5880px;
+  top: 180px;
+  width: 520px;
+  display: grid;
+  gap: 12px;
+  padding: 24px 0 24px 28px;
+  border-left: 2px solid var(--br-marca);
+}
+.esteira__final-kicker {
+  color: var(--br-marca);
+  font-size: 0.72rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+}
+.esteira__final strong {
+  max-width: 480px;
+  font-family: var(--font-display), sans-serif;
+  font-size: clamp(2rem, 4vw, 3.6rem);
+  line-height: 0.96;
+  letter-spacing: -0.04em;
+}
+.esteira__final > span:not(.esteira__final-kicker):not(.esteira__final-arrow) {
+  max-width: 280px;
+  color: var(--br-fraco);
+  line-height: 1.4;
+}
+.esteira__final-arrow {
+  color: var(--br-marca);
+  font-size: 2rem;
+}
+
 /* ── LIVRE: celular e movimento reduzido — rolagem nativa de lado, sem pino ── */
 .esteira.is-livre {
   height: auto;
@@ -3651,14 +3701,30 @@ body.is-abrindo {
   padding-block: clamp(28px, 8vw, 64px);
 }
 .esteira.is-livre .esteira__trilho {
+  display: flex;
   width: max-content;
   height: min(52vh, 440px);
   overflow: visible;
   padding-inline: clamp(20px, 6vw, 40px);
+  gap: clamp(14px, 1.6vw, 26px);
 }
 .esteira.is-livre .esteira__item {
+  position: relative;
+  left: auto;
+  top: auto;
+  width: 78vw;
   align-self: stretch;
   height: 100%;
+}
+.esteira.is-livre .esteira__final {
+  position: relative;
+  left: auto;
+  top: auto;
+  flex: 0 0 78vw;
+  width: 78vw;
+  height: 100%;
+  box-sizing: border-box;
+  padding: 20px;
 }
 @media (max-width: 900px) {
   .esteira {
@@ -3677,9 +3743,7 @@ body.is-abrindo {
   }
   .esteira__item--p,
   .esteira__item--m,
-  .esteira__item--g {
-    width: 78vw;
-  }
+  .esteira__item--g { width: 78vw; }
 }
 
 

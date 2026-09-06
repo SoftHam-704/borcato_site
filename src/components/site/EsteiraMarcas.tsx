@@ -152,6 +152,12 @@ export function EsteiraMarcas({ cabeca }: { cabeca?: ReactNode }) {
                 </li>
               );
             })}
+            <li className="esteira__final" aria-label="Transição para o palco de peças">
+              <span className="esteira__final-kicker">02 · AS MARCAS</span>
+              <strong>Agora, o que cada uma coloca na estrada.</strong>
+              <span>Do nome da indústria à peça que chega ao balcão.</span>
+              <span className="esteira__final-arrow" aria-hidden>↗</span>
+            </li>
           </ul>
         </div>
 
