@@ -196,13 +196,20 @@ export function HeroTravessia() {
 
       {/* O TRILHO DA COBERTURA. Antes eram as 12 UFs do RepOne — dado FALSO, e o
           proprio Fabio pegou o erro olhando o hero (03/09). Ver dados.ts.
-          Agora sao as regioes de Minas: a cobertura que ele tem de verdade. O
-          numero que abre a linha e publico (IBGE) e e do ESTADO, nao do cliente —
-          nenhuma contagem de cliente ou pedido, como manda a regra dura. */}
+          Agora sao as regioes de Minas: a cobertura que ele tem de verdade.
+
+          O "853 municipios" SAIU (06/09, decisao do dono). O numero era
+          verdadeiro e publico (IBGE) e falava do ESTADO, nao do cliente — mas
+          nesta moldura sugeria que a Borcato atende os 853, e transformava uma
+          informacao de PRESENCA num indicador quantitativo que nao prova
+          desempenho nenhum. Um numero que promete o que ninguem afirmou e pior
+          do que numero nenhum.
+
+          O que fica diz a mesma coisa sem a promessa: o territorio, inteiro. */}
       <ul className="hero-tr__trilho" aria-label="Cobertura em Minas Gerais">
         <li className="trilho__rotulo" aria-hidden>
-          <b>{casa.municipios}</b>
-          <span>municípios · um estado</span>
+          <b>Minas Gerais</b>
+          <span>um estado inteiro</span>
         </li>
         {regioes.map((r) => (
           <li key={r.nome}>

@@ -232,9 +232,13 @@ function Index() {
           <MapaMinas />
 
           <div className="estrada__dizer">
+            {/* Aqui o "853 municipios" tambem saiu (06/09). Mesmo motivo do
+                hero: numero verdadeiro sobre o estado que, ao lado da marca,
+                sugere atendimento que ninguem afirmou. Como o <b> ja e a UF,
+                esta linha fica com a forma direta — presenca, nao contagem. */}
             <p className="estrada__casa">
               <b>{casa.uf}</b>
-              <span>{casa.municipios} municípios · um estado</span>
+              <span>presença em todo o estado</span>
             </p>
             {/* A LISTA SEGUE A ORDEM DA VIAGEM, e nao uma propria: e o mesmo
                 array que posiciona os pontos no mapa. Com o numero dos dois

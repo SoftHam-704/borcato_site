@@ -57,9 +57,17 @@ export const regioes: readonly Regiao[] = [
 export const casa = {
   uf: "MG",
   nome: "Minas Gerais",
-  /** IBGE 2024 — número público, do estado, não do cliente. */
-  municipios: 853,
 } as const;
+
+// `municipios: 853` (IBGE) FOI REMOVIDO em 06/09, por decisão do dono, e não
+// deve voltar. O número era verdadeiro e era do ESTADO, não do cliente — mas
+// ao lado da marca sugeria que a Borçato atende os 853, e virava indicador
+// quantitativo de uma coisa que é de PRESENÇA. Não prova desempenho nenhum e
+// cria interpretação comercial indevida.
+// O campo sai daqui junto com os dois usos para que ninguém o encontre
+// disponível e o reintroduza sem conhecer a decisão.
+// A regra dura continua: nenhuma contagem de clientes e nenhum valor
+// financeiro. Isto é um caso vizinho — número que PROMETE cobertura.
 
 /**
  * As 11 representadas.
