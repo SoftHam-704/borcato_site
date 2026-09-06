@@ -70,18 +70,30 @@ function Index() {
         <div className="casa">
           {/* A COLUNA QUE FALA */}
           <div className="casa__dizer">
+            {/* A MANCHETE, escolhida pelo dono entre quatro (06/09): "e curta,
+                memoravel e conecta diretamente nome, trajetoria e fotografia".
+                A anterior ("...antes de a placa ter o nome dele") dizia o mesmo
+                em nove palavras a mais e sem o nome na frase. */}
             <h2 className="cap__titulo">
-              <Palavras texto="Catorze anos de estrada antes de a placa ter o nome dele." />
+              <Palavras texto="Antes de ser Borçato, já eram catorze anos de estrada." />
             </h2>
             <div className="cap__corpo">
+              {/* REESCRITO pelo dono (06/09): "essa versao deixa a fotografia
+                  assumir parte da emocao e torna o texto mais direto, seguro e
+                  humano". O retrato ao lado ja carrega a presenca — o texto nao
+                  precisa reforcar, precisa informar.
+                  MANTIVE "quatro pessoas" e "onze industrias": a regra dura
+                  proibe contagem de CLIENTES e valores, nao tamanho de equipe
+                  nem numero de representadas. E "e de proposito" e o que
+                  sustenta o argumento consultivo. */}
               <p>
-                A H.M. Borçato nasceu em setembro de {empresa.fundacao}, em {empresa.base}. Não foi um
-                começo: foi a hora em que o escritório passou a ter o nome de quem já rodava o mercado
-                mineiro de autopeças havia catorze anos.
+                A H.M. Borçato nasceu em setembro de {empresa.fundacao}, em {empresa.base}. A
+                experiência, porém, começou muito antes: foram catorze anos percorrendo o mercado
+                mineiro de autopeças antes de o Fábio colocar o próprio nome no negócio.
               </p>
               <p>
-                São quatro pessoas para um estado inteiro, e é de propósito — quem atende conhece
-                o distribuidor pelo nome, e o industrial sabe com quem está falando.
+                Hoje são quatro pessoas para um estado inteiro, e é de propósito — quem atende
+                conhece o distribuidor pelo nome, e o industrial sabe com quem está falando.
               </p>
             </div>
 
@@ -98,24 +110,27 @@ function Index() {
                   que ninguem afirmou. Regra dura n2. */}
               <li>
                 <b>14 anos</b>
-                <span>rodando o mercado mineiro antes de abrir a empresa</span>
+                <span>de experiência antes da H.M. Borçato</span>
               </li>
               <li>
                 <b>{empresa.fundacao}</b>
-                <span>o escritório passa a ter o nome dele</span>
+                <span>o início da empresa em Belo Horizonte</span>
               </li>
               <li>
-                <b>MG</b>
-                <span>um estado inteiro, praça por praça</span>
+                <b>Minas Gerais</b>
+                <span>presença em todo o estado</span>
               </li>
               <li>
-                <b>11</b>
-                <span>indústrias na mesma pasta</span>
+                <b>11 indústrias</b>
+                <span>representadas no mercado mineiro</span>
               </li>
             </ol>
 
+            {/* O FECHO, do dono. A versao anterior era a bio dele quase
+                literal; esta e mais curta e vira assinatura. "Presenca real" e
+                "do sell in ao giro" continuam sendo as palavras dele. */}
             <p className="casa__bio">
-              Representação consultiva: do <i>sell in</i> ao giro.
+              Presença real. Do <i>sell in</i> ao giro.
             </p>
           </div>
 
