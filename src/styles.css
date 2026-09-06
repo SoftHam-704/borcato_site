@@ -3287,10 +3287,36 @@ body.is-abrindo {
   translate: 0 calc((1 - var(--chega)) * 6vh);
   opacity: calc(0.15 + var(--chega) * 0.85);
 }
-/* o mapa é o último a assentar: o território chega depois do texto */
+/* ═══════════════════════════════════════════════════════════════════════════
+   D-13 · OPÇÃO B — a peça e o mapa dividem a MESMA CENA
+   Decisão do dono (06/09): "a peça deve ceder o protagonismo enquanto o
+   território assume o mesmo espaço, sem vazio entre os dois momentos".
+
+   O mapa NÃO muda de pai e NÃO vira `fixed`: continua filho do capítulo 03 e
+   continua medindo o próprio rect — a sincronização (zero desencontros no
+   F-01) é comportamento fechado, e mexer nela era o risco R-54.
+   O que muda é ONDE ele é desenhado enquanto a passagem corre.
+
+   `--mapa-sobe-px` é lido pelo JS do mapa, que DESCONTA esse deslocamento da
+   janela de medição: o mapa se vê no lugar onde vive, e o visitante o vê
+   dividindo o quadro com a peça. Um valor só, escrito uma vez — dois números
+   que precisam concordar não podem ser escritos duas vezes.
+
+   Começa em 0,18 (a peça ainda tem ~85% de opacidade): é isso que elimina o
+   vazio entre os dois momentos. E NÃO volta ao fim: o mapa assume a cena e é
+   entregue ao capítulo no estado normal, porque em `--entrega` 1 o capítulo
+   03 já rolou para a tela por conta própria.
+   ═══════════════════════════════════════════════════════════════════════════ */
 .cap--estrada .mapa-mg {
-  --chega: clamp(0, calc((var(--entrega, 0) - 0.55) / 0.45), 1);
-  scale: calc(0.94 + var(--chega) * 0.06);
+  --mapa-sobe: clamp(0, calc((var(--entrega, 0) - 0.18) / 0.62), 1);
+  --mapa-sobe-px: calc(var(--mapa-sobe) * -74vh);
+  translate: 0 var(--mapa-sobe-px);
+  /* pinta SOBRE o palco, que ainda está preso enquanto a passagem corre */
+  position: relative;
+  z-index: 2;
+  /* cresce conforme assume: chega inteiro quando a peça já cedeu */
+  scale: calc(0.86 + var(--mapa-sobe) * 0.14);
+  transform-origin: 50% 40%;
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -3299,6 +3325,11 @@ body.is-abrindo {
     translate: none;
     scale: 1;
     opacity: 1;
+  }
+  /* sem movimento não há passagem: o desconto do JS também zera */
+  .cap--estrada .mapa-mg {
+    --mapa-sobe: 0;
+    --mapa-sobe-px: 0px;
   }
 }
 

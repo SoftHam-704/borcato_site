@@ -119,6 +119,25 @@ export function MapaMinas() {
         // ele já entrou de verdade, e a última enquanto ainda está legível.
         const r = svg.getBoundingClientRect();
         const vh = window.innerHeight;
+
+        // A PASSAGEM MOVE O MAPA; A MEDIÇÃO DESCONTA ESSE MOVIMENTO.
+        //
+        // D-13 opção B (06/09): durante a passagem o mapa é trazido para dentro
+        // da cena do palco por um `translate` (ver `--mapa-sobe` no CSS), para
+        // dividir o quadro com a peça que cede.
+        //
+        // Sem este desconto a rota quebraria: `r.top` viria deslocado e o mapa
+        // acharia que já entrou na tela quando ainda está no meio da passagem —
+        // exatamente o risco R-54 do war game, que ameaça o F-01 (hoje com zero
+        // desencontros entre a ponta do traço e o acendimento).
+        //
+        // Com o desconto, o mapa continua se medindo NO LUGAR ONDE ELE VIVE.
+        // A sincronização é comportamento fechado: não muda.
+        const trazido =
+          parseFloat(
+            getComputedStyle(svg).getPropertyValue("--mapa-sobe-px") || "0",
+          ) || 0;
+        const topoReal = r.top - trazido;
         // Começa quando o topo do mapa sobe acima de 82% da tela (ele já
         // apareceu) e termina quando a base dele chega a 62%.
         //
@@ -132,7 +151,7 @@ export function MapaMinas() {
         // com o mapa INTEIRO no quadro, e sobra rolagem para lê-lo completo.
         const inicio = vh * 0.82;
         const fim = vh * 0.86;
-        const percorrido = inicio - r.top;
+        const percorrido = inicio - topoReal;
         const total = Math.max(1, inicio - fim + r.height);
         const t = Math.min(1, Math.max(0, percorrido / total));
         svg.style.setProperty("--rota", t.toFixed(4));

@@ -144,7 +144,7 @@ o mapa entrar.**
 
 | ID | Decisão | Opções | Recomendação da IA | Estado |
 |---|---|---|---|---|
-| D-13 | Arquitetura da fronteira 02→03 | A (o palco cede altura) · B (o mapa vive no palco) · C (trocar o gesto) | (a) A, com aborto para C após 2 tentativas | **aguarda humano** |
+| D-13 | Arquitetura da fronteira 02→03 | A · B · C | (a) A | ✅ **APROVADA NA OPÇÃO B** (06/09) — o dono: "A pode abrir espaço, mas não garante transformação. O objeto e o território precisam dividir a mesma cena durante alguns instantes." Sem fallback automático para C. **IMPLEMENTADA E VALIDADA** — ver §F |
 | D-14 | 12,9 telas de altura: aceitar ou comprimir a esteira | manter · encurtar | — | aguarda humano |
 | D-15 | A barra de logos do hero sai, agora que a esteira existe? | sai · fica | — | aguarda humano |
 | D-16 | Mais pausa na abertura, ou tratá-la como sequência única com a escrita do hero | somar · tratar junto | — | aguarda humano |
@@ -167,3 +167,34 @@ tentar A/B ou ir direto para C.
 | Atalho "Ver as peças" no capítulo 02 | ⏸ Fase 3 da spec — **não depende de D-13** |
 | Não somar pausas na abertura | ⏸ virou D-16 |
 | Validar a passagem nos dois sentidos | ✅ feito — reversibilidade OK, **mas revelou que o mapa chega a só 31%** |
+
+
+---
+
+## F. D-13 (opção B) — implementada e validada em 06/09
+
+**Como foi feito sem quebrar o mapa (o risco R-54):** o mapa **não muda de pai** e não vira
+`fixed`. Continua filho do capítulo 03 e continua medindo o próprio rect. O que muda é onde
+ele é **desenhado** durante a passagem: um `translate` (`--mapa-sobe-px`) o traz para a cena,
+e o JS do mapa **desconta esse deslocamento** da janela de medição. Um valor só, escrito uma
+vez, lido pelos dois lados.
+
+**Os três estados exigidos pelo dono, medidos e capturados:**
+
+| Estado | 1440 | 375 |
+|---|---|---|
+| 1. VP legível | peça 100%, mapa 0% | peça 100%, mapa 0% |
+| 2. **coexistindo** | peça 94% + mapa 48%; depois peça 22% + mapa 100% | peça 87% + **mapa 89%**; depois peça 16% + 100% |
+| 3. mapa assume | peça 0%, mapa 100%, rota completa | idem |
+
+**Sem vazio entre os momentos:** o mapa começa a subir em `--entrega` 0,18, quando a peça
+ainda tem ~85% de opacidade.
+
+**Portões:** responsividade código 0 · F-01 com **zero desencontros** (a sincronização ficou
+intacta) · `reduced-motion` com rota inteira e 8/8 · reversibilidade espelhada nas duas
+larguras · zero erros de console.
+
+**O que continua aberto:** D-14 (altura de 12,9 telas), D-15 (a barra do hero), D-16 (a pausa
+da abertura), I-06 (prazo), I-09 (o vídeo de referência — o dono confirmou que **ainda não
+tem**; quando vier, calibra ritmo e composição **sem reabrir a estrutura aprovada**), I-10
+(sticky em aparelho físico, nunca testado fora do Chromium headless).
