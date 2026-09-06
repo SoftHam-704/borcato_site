@@ -22,3 +22,7 @@ D-19 mede `--cap-entra` 0 → 0,86 → 1. O portão passou nas cinco larguras: o
 As mensagens de `truncados` e `estouram a direita` do portão continuam sendo os falsos
 positivos documentados da navegação, elementos decorativos e conteúdo horizontal
 intencional da prancha. Nenhum PNG foi alterado; SVGs ficam para a próxima decisão.
+
+Na auditoria independente, a primeira costura deixou uma faixa preta e a segunda ainda
+expunha uma linha do fundo da raiz. A correção final mantém sob o painel o mesmo chão da
+estrada (`#0f1f34`); o painel do capítulo 04 continua subindo por cima, sem fresta.

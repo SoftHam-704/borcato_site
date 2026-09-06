@@ -1200,16 +1200,9 @@
   padding-left: clamp(20px, 6vw, 104px);
   padding-right: clamp(20px, 6vw, 104px);
   padding-bottom: 76px;
-  /* O fundo entra pelo rodapé e cobre a estrada; deixar o chão transparente
-     aqui é o que torna a transformação visível, sem mover o mapa nem seu relógio. */
-  /* Ponte curta na borda: o painel ascendente ainda controla a cena, mas a
-     passagem não deixa o chão preto da raiz aparecer entre dois azuis. */
-  background: linear-gradient(
-    to bottom,
-    var(--br-chao) 0,
-    color-mix(in srgb, var(--br-chao) 92%, transparent) 180px,
-    transparent 280px
-  );
+  /* O painel azul entra pelo rodapé no ::after. A base repete o chão da estrada
+     para que nenhuma fresta exponha o preto da raiz durante a cobertura. */
+  background: #0f1f34;
 }
 .cap__titulo--grande {
   max-width: none;
