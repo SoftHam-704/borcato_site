@@ -92,6 +92,9 @@ export function EsteiraMarcas({ cabeca }: { cabeca?: ReactNode }) {
         const r = pista.getBoundingClientRect();
         const t = Math.min(1, Math.max(0, -r.top / (sobra * PASSO)));
         trilho.style.setProperty("--esteira-x", `${(-t * sobra).toFixed(1)}px`);
+        // o indicador: quanto do trilho já passou (a auditoria pediu um
+        // progresso claro — sem ele o visitante não sabe onde está nas 11)
+        pista.style.setProperty("--esteira-t", t.toFixed(4));
       });
     };
 
@@ -111,6 +114,11 @@ export function EsteiraMarcas({ cabeca }: { cabeca?: ReactNode }) {
     <div className="esteira" ref={pistaRef}>
       <div className="esteira__cena" ref={cenaRef}>
         {cabeca ? <div className="esteira__cabeca">{cabeca}</div> : null}
+
+        {/* O INDICADOR: uma régua fina que enche conforme o trilho anda. */}
+        <div className="esteira__regua" aria-hidden>
+          <span />
+        </div>
 
         <ul className="esteira__trilho" ref={trilhoRef} aria-label="As onze indústrias">
           {representadas.map((r, i) => {

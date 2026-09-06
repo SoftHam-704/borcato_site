@@ -55,12 +55,23 @@ export function PalcoPecas({ abre }: { abre?: ReactNode }) {
         //
         // Agora as 11 marcas ocupam os 11 primeiros trechos, cada uma com
         // leitura inteira, e a passagem tem trecho proprio depois delas.
-        // 13 TRECHOS (05/09): a ABERTURA (trecho 0), as 11 pecas, a passagem.
-        // O trecho 0 e o titulo e o paragrafo do capitulo dentro do palco: ao
-        // rolar, `--abre` vai de 0 a 1 e o texto cede para a primeira peca —
-        // sem o corte que havia quando a abertura ficava em fluxo normal.
-        const TRECHOS = COM_PECA.length + 2;
-        const trecho = t * 0.999 * TRECHOS;
+        // A PISTA EM PROPORÇÃO, não em trechos iguais.
+        //
+        // São 12 trechos de 22vh (a abertura + as 11 marcas) MAIS a passagem,
+        // que vale 34vh — ela precisa de mais rolagem que uma troca de peça,
+        // porque nela acontecem três estados (VP inteira → VP e mapa juntos →
+        // mapa assumindo).
+        //
+        // Antes eu dividia a pista em 13 fatias IGUAIS enquanto o CSS
+        // reservava 12: a passagem ficava sem altura própria e durava ~110px.
+        // Aqui as duas contas nascem da mesma proporção.
+        const IGUAIS = COM_PECA.length + 1; // abertura + 11 marcas, 22vh cada
+        // 50/22: a passagem vale 2,27 trechos. O 50 vem de medição — com 34
+        // ela corria em 210px porque a pista útil é `altura − 100vh`. Este
+        // número e o `+ 50vh` do CSS têm de andar juntos.
+        const PESO_PASSAGEM = 50 / 22;
+        const TOTAL = IGUAIS + PESO_PASSAGEM;
+        const trecho = t * 0.999 * TOTAL;
         const abre = Math.min(1, Math.max(0, trecho));
         palco.style.setProperty("--abre", abre.toFixed(4));
         const i = Math.min(COM_PECA.length - 1, Math.max(0, Math.floor(trecho - 1)));
@@ -78,7 +89,11 @@ export function PalcoPecas({ abre }: { abre?: ReactNode }) {
         // parar no meio ve uma peca menor, nao um estado quebrado.
         //
         // A passagem roda no 12o trecho — DEPOIS de a VP ter sido lida.
-        const entrega = Math.min(1, Math.max(0, trecho - (COM_PECA.length + 1)));
+        // a entrega corre ao longo do peso da passagem, não de um trecho igual
+        const entrega = Math.min(
+          1,
+          Math.max(0, (trecho - IGUAIS) / PESO_PASSAGEM),
+        );
         // NA RAIZ, e nao so no palco: o capitulo 03 e IRMAO deste (nao filho),
         // entao uma variavel escrita aqui nunca chegaria la. A passagem precisa
         // que as duas cenas leiam o MESMO relogio — e o que separa uma entrega
@@ -127,7 +142,7 @@ export function PalcoPecas({ abre }: { abre?: ReactNode }) {
   const marca = COM_PECA[ativa]!;
 
   return (
-    <div className="palco-pecas" ref={palcoRef} style={{ "--n": COM_PECA.length } as React.CSSProperties}>
+    <div className="palco-pecas" id="palco-pecas" ref={palcoRef} style={{ "--n": COM_PECA.length } as React.CSSProperties}>
       <div className="palco-pecas__cena">
         {/* A ABERTURA: mesma celula da grade que a coluna de texto — as duas
             se sobrepoem e trocam por opacidade conforme `--abre`. */}
@@ -180,7 +195,10 @@ export function PalcoPecas({ abre }: { abre?: ReactNode }) {
                     palco.getBoundingClientRect().top + window.scrollY;
                   // mira o meio do trecho DA MARCA, na conta de 12 trechos
                   // +1: o trecho 0 e a abertura; a peca i vive no trecho i+1
-                  const alvo = topo + (pista * (i + 1.5)) / (COM_PECA.length + 2);
+                  // o meio do trecho da marca, na pista com a passagem pesada
+                  const alvo =
+                    topo +
+                    (pista * (i + 1.5)) / (COM_PECA.length + 1 + 50 / 22);
                   // MESMA REGRA DA ROLAGEM HORIZONTAL DA TRILHA (linha ~101):
                   // este salto pedia `smooth` incondicional, e o outro ja
                   // respeitava a preferencia. Duas rolagens na mesma tela com

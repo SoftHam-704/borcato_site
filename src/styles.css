@@ -889,6 +889,32 @@
   z-index: 40;
   top: 50%;
   left: 0;
+  /* A ESTEIRA PASSA POR BAIXO DA ESPINHA — e precisa PARECER que passa por baixo.
+     VISTO na captura de 1440: a esteira escapa da goteira de proposito (margem
+     negativa, de borda a borda), e os cartoes cruzavam a nav sem separacao: o
+     rotulo "02 AS MARCAS" e o "PORTAL" de um cartao viravam a mesma papa
+     ilegivel. Nenhuma medicao pegaria isso — nem overflow nem alvo tatil
+     reprovam, porque geometricamente esta tudo no lugar.
+     A veladura devolve a profundidade: a goteira e um plano a frente. */
+  background: linear-gradient(
+    to right,
+    var(--br-chao) 0%,
+    color-mix(in srgb, var(--br-chao) 88%, transparent) 58%,
+    transparent 100%
+  );
+  /* A VELADURA NAO PODE TER BORDA PROPRIA. Primeira tentativa: so o gradiente
+     horizontal — e VISTO na captura, virou um retangulo escuro flutuando no
+     meio da cena, com topo e base retos. Trocar um defeito por outro.
+     A mascara apaga o veu nas pontas: ele existe onde a espinha esta escrita e
+     desaparece antes de encostar em qualquer aresta. */
+  padding-block: clamp(26px, 5vh, 54px);
+  mask-image: linear-gradient(
+    to bottom,
+    transparent 0%,
+    #000 22%,
+    #000 78%,
+    transparent 100%
+  );
   /* a nav ocupa a goteira e nao passa dela: o rotulo aberto (max-width: 14ch)
      e o padding cabem dentro, entao o conteudo nunca e invadido */
   /* a nav termina um respiro ANTES do conteudo, e o overflow-x: hidden garante
@@ -2487,7 +2513,23 @@ body.is-abrindo {
   /* 22vh, nao 34 (05/09): com 34 o palco era 8 dos 24 quadros da tira de
      contatos — um terco do site na mesma composicao, lendo como slideshow.
      A cadencia mais rapida nao tira leitura: cada peca segue tela inteira. */
-  height: calc((var(--n, 11) + 1) * 22vh);
+  /* A PISTA: a ABERTURA + as 11 marcas a 22vh cada, MAIS a passagem, que tem
+     altura PRÓPRIA e maior.
+     BUG ACHADO NA AUDITORIA (06/09): o componente dividia a pista em 13 trechos
+     (abertura + 11 + passagem) e o CSS reservava altura para 12. O 13º — a
+     passagem — não tinha altura nenhuma: espremia-se no resto e durava ~110px
+     de rolagem. O progresso saltava de 0 para 0,987 num gesto normal, e a
+     transformação existia no código sem ser vista.
+     Dois números que precisam concordar não podem ser escritos duas vezes: o
+     `+ 1` daqui e o `+ 2` de lá discordavam em silêncio.
+     A passagem recebe 50vh, não 34 — e a diferença é a viewport.
+     MEDIDO: com 34vh a passagem corria em ~210px, não nos 306 que a altura
+     parecia reservar. A pista ÚTIL é `altura − 100vh` (o trecho preso não
+     rola), então cada peso vira uma fração menor do que aparenta:
+       peso 0,34vh → pista 2682px, útil 1782 → a passagem ocupa 203px
+       peso 0,50vh → pista 2826px, útil 1926 → a passagem ocupa 307px
+     A conta que importa é `útil × (peso / total)`, não `peso × vh`. */
+  height: calc((var(--n, 11) + 1) * 22vh + 50vh);
   position: relative;
 }
 
@@ -3673,4 +3715,77 @@ body.is-abrindo {
   display: block;
   height: 0;
   pointer-events: none;
+}
+
+/* ── a frase-guia e o atalho da esteira (auditoria 06/09) ───────────────────
+   O visitante percorre as 11 indústrias na esteira e de novo nas 11 peças.
+   Dizer o que muda entre as duas passagens faz a segunda ler como
+   aprofundamento, não como repetição — e o atalho serve quem já entendeu. */
+.esteira__guia {
+  display: flex;
+  align-items: baseline;
+  flex-wrap: wrap;
+  gap: clamp(10px, 1.6vw, 22px);
+  margin: clamp(10px, 1.4vh, 18px) 0 0;
+  font-size: clamp(0.82rem, 1.3vmin, 0.98rem);
+  color: var(--br-fraco);
+}
+.esteira__atalho {
+  color: var(--br-marca);
+  text-decoration: none;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  border-bottom: 1px solid transparent;
+  transition: border-color 0.3s ease;
+  /* O ALVO TEM 44px; O TEXTO CONTINUA DISCRETO.
+     MEDIDO: sem isto o link saía 93x21 e reprovava o portao nas cinco larguras.
+     A altura vem do padding (area tatil), nao do corpo da letra — e a margem
+     negativa devolve o espaco ao fluxo para a linha nao se abrir. */
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4em;
+  min-height: 44px;
+  padding-inline: 2px;
+  margin-block: -11px;
+}
+.esteira__atalho:hover,
+.esteira__atalho:focus-visible {
+  border-bottom-color: currentColor;
+}
+.esteira__atalho i {
+  font-style: normal;
+  display: inline-block;
+  transition: translate 0.3s ease;
+}
+.esteira__atalho:hover i {
+  translate: 0 2px;
+}
+
+/* a régua de progresso: enche conforme o trilho anda */
+.esteira__regua {
+  position: absolute;
+  left: var(--br-goteira);
+  right: clamp(24px, 5vw, 96px);
+  bottom: clamp(18px, 3vh, 34px);
+  height: 2px;
+  background: color-mix(in srgb, var(--br-tinta) 10%, transparent);
+  border-radius: 2px;
+  overflow: hidden;
+}
+.esteira__regua span {
+  display: block;
+  height: 100%;
+  width: calc(var(--esteira-t, 0) * 100%);
+  background: var(--br-marca);
+  border-radius: inherit;
+}
+@media (max-width: 900px) {
+  .esteira__regua {
+    left: clamp(20px, 6vw, 40px);
+    right: clamp(20px, 6vw, 40px);
+  }
+  /* na esteira livre o próprio scroll horizontal já indica; a régua some */
+  .esteira.is-livre .esteira__regua {
+    display: none;
+  }
 }

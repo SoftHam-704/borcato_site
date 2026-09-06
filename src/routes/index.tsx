@@ -91,9 +91,12 @@ function Index() {
                 experiência, porém, começou muito antes: foram catorze anos percorrendo o mercado
                 mineiro de autopeças antes de o Fábio colocar o próprio nome no negócio.
               </p>
+              {/* SEM A CONSTRUCAO DEFENSIVA (06/09). "E e de proposito" explicava
+                  o tamanho da equipe — e explicar e admitir que parece pouco.
+                  A versao do dono afirma em vez de justificar. */}
               <p>
-                Hoje são quatro pessoas para um estado inteiro, e é de propósito — quem atende
-                conhece o distribuidor pelo nome, e o industrial sabe com quem está falando.
+                Hoje, quatro pessoas representam onze indústrias em Minas Gerais. Uma estrutura
+                próxima do distribuidor, com atuação consultiva.
               </p>
             </div>
 
@@ -179,6 +182,16 @@ function Index() {
               <h2 className="cap__titulo esteira__titulo">
                 <Palavras texto="De rolamento a filtro de cabine. Onze indústrias na mesma pasta." />
               </h2>
+              {/* A FRASE QUE TRANSFORMA REPETICAO EM APROFUNDAMENTO: o visitante
+                  percorre as 11 na esteira e de novo nas 11 pecas. Dizer o que
+                  muda entre as duas passagens e o que faz a segunda parecer
+                  intencional. E o atalho para quem ja entendeu. */}
+              <p className="esteira__guia">
+                Primeiro as indústrias. Depois, o que cada uma coloca na estrada.
+                <a href="#palco-pecas" className="esteira__atalho">
+                  Ver as peças <i aria-hidden>↓</i>
+                </a>
+              </p>
             </>
           }
         />
