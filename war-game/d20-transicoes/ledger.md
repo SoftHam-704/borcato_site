@@ -11,3 +11,5 @@
 | L-04 | corrigido no piloto | A espera interna de 28% repetia o ato de apresentação e deixava um quadro vazio; a prancha agora usa `ato=t`. |
 | L-05 | corrigido no piloto | O primeiro corte desligava entradas locais junto com o pin em mobile; os contratos foram separados e só movimento reduzido remove os efeitos. |
 | L-06 | corrigido no piloto | Atrasar o evento único fazia a janela revelar a marca d'água antes do retrato; o hero agora começa junto da borda móvel, mantendo a manchete oculta pelo próprio painel. |
+| L-07 | corrigido por captura do dono | O trilho tinha `translate` próprio além do movimento da prancha; removido para texto e cards viajarem como uma composição única. |
+| L-08 | corrigido por captura do dono | Introdução e texto da peça cruzavam ambos em 50% na mesma célula; agora a primeira sai até 0,42 e a segunda nasce após 0,58. |

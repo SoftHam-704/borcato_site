@@ -24,3 +24,9 @@ o carrossel continua nativo e o documento mede zero overflow.
 
 Gate ainda fechado: propagar esta arquitetura para os demais capítulos.
 
+## Correção após revisão humana
+
+As capturas do dono reprovaram dois estados que o portão geométrico não detecta:
+cards atrasados 100vw em relação à manchete e textos sobrepostos na entrada do
+palco. Os dois relógios redundantes foram removidos/separados, sem mudar a direção
+visual aprovada.

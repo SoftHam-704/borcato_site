@@ -3450,7 +3450,9 @@ body.is-abrindo {
 /* o texto solta antes do objeto: a leitura termina, depois a imagem sai */
 .palco-pecas__dizer {
   --sai: clamp(0, calc(var(--entrega, 0) / 0.5), 1);
-  opacity: calc(var(--abre, 1) * (1 - var(--sai)));
+  /* A introdução termina antes deste texto nascer. No cruzamento linear antigo,
+     os dois ocupavam a mesma célula a 50% e viravam uma mancha tipográfica. */
+  opacity: calc(clamp(0, calc((var(--abre, 1) - 0.58) / 0.42), 1) * (1 - var(--sai)));
   translate: calc(var(--sai) * -18px) 0;
   grid-area: dizer;
 }
@@ -3592,7 +3594,7 @@ body.is-abrindo {
 .palco-pecas__abre {
   grid-area: dizer;
   max-width: 44ch;
-  opacity: calc(1 - var(--abre, 0));
+  opacity: clamp(0, calc((0.42 - var(--abre, 0)) / 0.42), 1);
   translate: calc(var(--abre, 0) * -18px) 0;
   pointer-events: none;
 }
@@ -3701,7 +3703,10 @@ body.is-abrindo {
   list-style: none;
   /* A prancha, e não este trilho isolado, é o relógio da composição. */
   opacity: clamp(0, calc(var(--esteira-ato, 0) * 3.2), 1);
-  translate: calc((1 - var(--esteira-ato, 0)) * 100vw) 0;
+  /* A prancha pai já carrega texto e cartões. O segundo translate de 100vw
+     atrasava apenas os logos: a manchete saía à esquerda e abria um deserto
+     antes do primeiro card. Um quadro, um deslocamento. */
+  translate: none;
   transition: opacity 0.2s linear;
 }
 
