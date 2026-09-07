@@ -81,6 +81,7 @@ export function Abertura() {
   const [fora, setFora] = useState(false);
   const [fase, setFase] = useState<"escuro" | "luz" | "nome" | "abrindo">("escuro");
   const relogios = useRef<number[]>([]);
+  const encerrando = useRef(false);
 
   // DOIS CAMINHOS, não um.
   //
@@ -96,6 +97,8 @@ export function Abertura() {
   // o que se quer ver. Quem pula corta; quem fica vê os anos terminarem já com
   // o hero aparecendo por trás.
   const encerrar = (cortando = false) => {
+    if (encerrando.current) return;
+    encerrando.current = true;
     if (cortando) {
       setContados(alvo); // quem pula não vê o número pela metade
       relogios.current.forEach(clearTimeout);
@@ -103,12 +106,14 @@ export function Abertura() {
     }
     setSaindo(true);
     document.body.classList.remove("is-abrindo");
-    // o hero escuta isto para comecar a escrever o titulo — no instante em que a
-    // capsula abre, nao antes (estaria escondido) nem depois (estaria atrasado)
+    // A borda móvel começa pelo lado do retrato. O hero recebe a entrada depois
+    // que essa janela já existe; disparar no primeiro frame faria a manchete se
+    // animar escondida atrás da cortina.
     window.dispatchEvent(new CustomEvent("hmb:abriu"));
-    // 1200ms, nao 700: a camada leva mais tempo para sair de cena, e a
-    // travessia entre a abertura e o hero deixa de ser um corte.
-    window.setTimeout(() => setFora(true), 1200);
+    // Um único descarte, derivado dos 900ms do clip-path. Antes havia também o
+    // timer `ultimoAno + 420`: em 2026 ele removia a camada aos 800ms e cortava
+    // os últimos 100ms da própria transição.
+    relogios.current.push(window.setTimeout(() => setFora(true), 950));
   };
 
   useEffect(() => {
@@ -157,8 +162,6 @@ export function Abertura() {
     t(TEMPOS.nome, () => setFase("nome"));
     t(abre, () => setFase("abrindo"));
     t(sai, () => encerrar());
-    // a camada só é removida do DOM depois que o último ano assentou
-    t(ultimoAno + 420, () => setFora(true));
 
     // Esc pula, como em qualquer coisa que segura o visitante
     const aoTeclar = (e: KeyboardEvent) => {

@@ -99,6 +99,14 @@ export function Capitulo({ id, children, className }: CapituloProps) {
         pedido = 0;
         const r = el.getBoundingClientRect();
         const vh = window.innerHeight;
+        // Entradas editoriais usam a caixa de cada bloco. O relógio do capítulo
+        // continua governando a passagem entre cenas; ele não pode antecipar o
+        // texto que ainda está abaixo da dobra, sobretudo no celular.
+        el.querySelectorAll<HTMLElement>("[data-revela]").forEach((bloco) => {
+          const caixa = bloco.getBoundingClientRect();
+          const local = (vh - caixa.top) / (vh * 0.32);
+          bloco.style.setProperty("--revela", String(Math.min(1, Math.max(0, local))));
+        });
         // 0 quando o topo encosta no rodapé da tela; 1 quando sobe 62% da viewport.
         // A faixa de 62% é a mesma do Movimento 2 da SoftHam — larga o bastante para
         // duas seções dividirem a tela por um instante, que é o que evita corte seco.

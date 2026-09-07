@@ -2004,7 +2004,9 @@ body.is-abrindo {
 
 /* 3 · a cápsula se abre e o hero está atrás */
 .abertura.is-saindo {
-  clip-path: inset(0 0 0 100% round clamp(120px, 18vw, 280px) 0 0 clamp(120px, 18vw, 280px));
+  /* O retrato mora à direita: a cortina recua a partir dele. A borda arredondada
+     atravessa a tela como continuação da cápsula, e entrega a pessoa antes da copy. */
+  clip-path: inset(0 100% 0 0 round 0 clamp(120px, 18vw, 280px) clamp(120px, 18vw, 280px) 0);
 }
 .abertura.is-saindo .abertura__nome,
 .abertura.is-saindo .abertura__pe,
@@ -2555,6 +2557,56 @@ body.is-abrindo {
     ),
     var(--br-chao);
   z-index: 0;
+}
+
+/* D-20 · PILOTO 01 → 02
+   O capítulo anterior permanece como último quadro; o próximo sobe inteiro por
+   cima dele. O movimento lateral da prancha só começa depois que `--rev` chega
+   ao fim, portanto os dois gestos não disputam o mesmo relógio. */
+.passagem-casa-marcas {
+  position: relative;
+  isolation: isolate;
+}
+@media (min-width: 901px) {
+  .passagem-casa-marcas > .cap--casa {
+    position: sticky;
+    top: 0;
+    z-index: 0;
+  }
+  .passagem-casa-marcas > .cap--marcas {
+    z-index: 1;
+    clip-path: none;
+    translate: 0 calc((1 - var(--rev)) * 100vh);
+    will-change: translate, transform;
+  }
+}
+
+/* O texto recebe o próprio progresso. `--cap-entra` permanece como relógio da
+   cena; apenas a manchete herda o relógio local para conservar sua cascata. */
+[data-revela] {
+  --revela: 0;
+  opacity: var(--revela) !important;
+  translate: 0 calc((1 - var(--revela)) * 28px);
+  will-change: opacity, translate;
+}
+.cap__titulo[data-revela] {
+  --cap-entra: var(--revela);
+}
+
+@media (max-width: 900px) {
+  .passagem-casa-marcas > .cap--casa {
+    position: relative;
+  }
+  .passagem-casa-marcas > .cap--marcas {
+    translate: none;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  [data-revela] {
+    --revela: 1 !important;
+    opacity: 1 !important;
+    translate: none;
+  }
 }
 /* o conteúdo do capítulo passa POR CIMA da costura — e é ELE que esmaece na
    entrada, não o chão (ver o comentário em `.cap`) */

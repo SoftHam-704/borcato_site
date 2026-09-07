@@ -65,9 +65,10 @@ function Index() {
       <HeroTravessia />
 
       <main>
+      <div className="passagem-casa-marcas">
       {/* 01 — A CASA. Quem e, e de onde fala. */}
       <Capitulo id="cap-casa" className="cap--casa">
-        <p className="cap__num">01 / A casa</p>
+        <p className="cap__num" data-revela>01 / A casa</p>
         <div className="casa">
           {/* A COLUNA QUE FALA */}
           <div className="casa__dizer">
@@ -75,10 +76,10 @@ function Index() {
                 memoravel e conecta diretamente nome, trajetoria e fotografia".
                 A anterior ("...antes de a placa ter o nome dele") dizia o mesmo
                 em nove palavras a mais e sem o nome na frase. */}
-            <h2 className="cap__titulo">
+            <h2 className="cap__titulo" data-revela>
               <Palavras texto="Antes de ser Borçato, já eram catorze anos de estrada." />
             </h2>
-            <div className="cap__corpo">
+            <div className="cap__corpo" data-revela>
               {/* REESCRITO pelo dono (06/09): "essa versao deixa a fotografia
                   assumir parte da emocao e torna o texto mais direto, seguro e
                   humano". O retrato ao lado ja carrega a presenca — o texto nao
@@ -104,7 +105,7 @@ function Index() {
             {/* OS MARCOS: a história em quatro paradas, não em parágrafo.
                 Nada aqui é invenção — fundação e trajetória vêm do material do
                 cliente, e a última linha é a bio dele, palavra por palavra. */}
-            <ol className="casa__marcos">
+            <ol className="casa__marcos" data-revela>
               {/* "14 ANOS", NAO "2004". A 3a auditoria pegou: 2004 nao aparece
                   em lugar nenhum no material do cliente — era deducao minha
                   (2018 menos 14), apresentada como fato. O que ele escreveu e
@@ -133,7 +134,7 @@ function Index() {
             {/* O FECHO, do dono. A versao anterior era a bio dele quase
                 literal; esta e mais curta e vira assinatura. "Presenca real" e
                 "do sell in ao giro" continuam sendo as palavras dele. */}
-            <p className="casa__bio">
+            <p className="casa__bio" data-revela>
               Presença real. Do <i>sell in</i> ao giro.
             </p>
           </div>
@@ -179,15 +180,15 @@ function Index() {
         <EsteiraMarcas
           cabeca={
             <>
-              <p className="cap__num">02 / As marcas</p>
-              <h2 className="cap__titulo esteira__titulo">
+              <p className="cap__num" data-revela>02 / As marcas</p>
+              <h2 className="cap__titulo esteira__titulo" data-revela>
                 <Palavras texto="De rolamento a filtro de cabine. Onze indústrias na mesma pasta." />
               </h2>
               {/* A FRASE QUE TRANSFORMA REPETICAO EM APROFUNDAMENTO: o visitante
                   percorre as 11 na esteira e de novo nas 11 pecas. Dizer o que
                   muda entre as duas passagens e o que faz a segunda parecer
                   intencional. E o atalho para quem ja entendeu. */}
-              <p className="esteira__guia">
+              <p className="esteira__guia" data-revela>
                 Primeiro as indústrias. Depois, o que cada uma coloca na estrada.
                 <a href="#palco-pecas" className="esteira__atalho">
                   Ver as peças <i aria-hidden>↓</i>
@@ -213,6 +214,7 @@ function Index() {
           }
         />
       </Capitulo>
+      </div>
 
       {/* 03 — A ESTRADA. A cobertura, que e o dado publicavel mais forte que existe.
           CORRIGIDO em 03/09: era a lista das 12 UFs do RepOne, e era FALSO — ele

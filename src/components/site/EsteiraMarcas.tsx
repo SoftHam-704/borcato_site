@@ -96,10 +96,11 @@ export function EsteiraMarcas({ cabeca }: { cabeca?: ReactNode }) {
         // A prancha inteira anda: manchete, vazios, logos e legendas preservam
         // suas relações. O trilho sozinho criava um carrossel dentro de uma
         // seção parada, que era justamente o defeito visto na referência.
-        const ato = Math.min(1, Math.max(0, (t - 0.28) / 0.72));
+        const ato = t;
         prancha.style.setProperty("--esteira-ato", ato.toFixed(4));
-        // Os primeiros 28% pertencem à manchete. Só depois a prancha começa
-        // sua viagem; isso evita que headline e logos disputem o primeiro quadro.
+        // O painel vertical já reservou a apresentação da manchete. Repetir aqui
+        // uma espera de 28% criava uma tela quase vazia depois da transição. A
+        // prancha inteira começa a viajar assim que sua cena sticky assume.
         prancha.style.setProperty("--esteira-x", `${(-ato * sobra).toFixed(1)}px`);
         // o indicador: quanto do trilho já passou (a auditoria pediu um
         // progresso claro — sem ele o visitante não sabe onde está nas 11)
