@@ -4,7 +4,15 @@
 
 | ID | Estado | Decisão |
 |---|---|---|
-| D-21 | aguardando | Escolher a estratégia de recuperação antes de alterar o site. |
+| D-21 | aprovada em 08/09/2026 | Opção A: edição estrutural dirigida. Executar P-21A e P-21B e parar para revisão. |
+
+## Execução autorizada
+
+| Piloto | Estado | Evidência |
+|---|---|---|
+| P-21A | concluído | Âncora `marcas-inicio` fora do elemento transformado; clique medido com `--esteira-ato: 0` em 1440 e 375. |
+| P-21B | concluído | 11 indústrias uma vez; prancha desktop em 2,47 viewports; palco reduzido a cinco categorias; snap, “Arraste” e contador no mobile. |
+| P-21C | não iniciado | Fora da autorização desta rodada. A continuidade do mapa foi apenas observada, sem alteração. |
 
 ### D-21 — estratégia de recuperação
 
@@ -36,4 +44,3 @@ o tom editorial e a paleta.
 
 As perguntas devem ser levadas numa única conversa curta de aprovação. A regra local
 proíbe insistência em perguntas pessoais; estas tratam do produto e da publicação.
-

@@ -1498,7 +1498,7 @@
     border-bottom: 1px solid rgba(216, 216, 240, 0.08);
   }
   .hero-tr {
-    padding-bottom: clamp(28px, 4vh, 44px);
+    padding-bottom: calc(clamp(28px, 4vh, 44px) + 76px);
   }
 }
 
@@ -2693,13 +2693,12 @@ body.is-abrindo {
      visitante rola 6 telas só de peça.
      Com 34vh a troca ainda é confortável (cada peça ganha ~1/3 de tela de
      rolagem) e o capítulo volta a ter peso proporcional ao argumento. */
-  /* 12 TRECHOS: as 11 marcas + a passagem para "A estrada".
-     A passagem tinha de ganhar trecho proprio (ver PalcoPecas.tsx) — antes ela
-     roubava o tempo da ultima marca, e a VP saia de cena antes de ser lida. */
+  /* Abertura, cinco categorias e a passagem para "A estrada".
+     A passagem mantém trecho próprio (ver PalcoPecas.tsx). */
   /* 22vh, nao 34 (05/09): com 34 o palco era 8 dos 24 quadros da tira de
      contatos — um terco do site na mesma composicao, lendo como slideshow.
      A cadencia mais rapida nao tira leitura: cada peca segue tela inteira. */
-  /* A PISTA: a ABERTURA + as 11 marcas a 22vh cada, MAIS a passagem, que tem
+  /* A PISTA: a ABERTURA + cinco categorias a 22vh cada, MAIS a passagem, que tem
      altura PRÓPRIA e maior.
      BUG ACHADO NA AUDITORIA (06/09): o componente dividia a pista em 13 trechos
      (abertura + 11 + passagem) e o CSS reservava altura para 12. O 13º — a
@@ -2715,7 +2714,7 @@ body.is-abrindo {
        peso 0,34vh → pista 2682px, útil 1782 → a passagem ocupa 203px
        peso 0,50vh → pista 2826px, útil 1926 → a passagem ocupa 307px
      A conta que importa é `útil × (peso / total)`, não `peso × vh`. */
-  height: calc((var(--n, 11) + 1) * 22vh + 50vh);
+  height: calc((var(--n, 5) + 1) * 22vh + 50vh);
   position: relative;
 }
 
@@ -3660,19 +3659,24 @@ body.is-abrindo {
   top: 0;
   height: 100vh;
   overflow: hidden;
-  display: grid;
-  grid-template-rows: auto 1fr;
-  align-content: center;
-  gap: clamp(20px, 3vh, 40px);
+  display: block;
   padding-block: clamp(70px, 10vh, 110px) clamp(40px, 6vh, 70px);
+}
+.marcas-inicio {
+  position: relative;
+  z-index: 2;
+  display: block;
+  height: 0;
+  /* O capítulo 02 tem uma goteira vertical antes da esteira. A âncora compensa
+     essa distância para chegar ao primeiro quadro já assentado, com t=0. */
+  scroll-margin-top: calc(-1 * clamp(96px, 16vh, 200px));
+  pointer-events: none;
 }
 .esteira__prancha {
   --esteira-x: 0px;
   --esteira-ato: 0;
-  display: grid;
-  grid-template-rows: auto 1fr;
-  align-content: center;
-  gap: clamp(24px, 5vh, 64px);
+  position: relative;
+  display: block;
   width: max-content;
   min-width: 100vw;
   height: 100%;
@@ -3680,11 +3684,16 @@ body.is-abrindo {
   will-change: translate;
 }
 .esteira__cabeca {
+  position: relative;
+  z-index: 2;
   width: min(760px, 70vw);
   min-width: 0;
   padding-left: var(--br-goteira);
   padding-right: clamp(20px, 6vw, 104px);
   max-width: min(760px, 70vw);
+}
+.esteira__rolagem {
+  display: contents;
 }
 .esteira__titulo {
   font-size: clamp(1.7rem, 4.8vmin, 3.4rem);
@@ -3693,16 +3702,16 @@ body.is-abrindo {
 
 /* ── o trilho ─────────────────────────────────────────────────────────────── */
 .esteira__trilho {
-  position: relative;
+  position: absolute;
+  inset: 0 auto auto 0;
   display: block;
-  width: max-content;
-  width: 6600px;
-  height: min(66vh, 610px);
+  width: 3850px;
+  height: 100%;
   margin: 0;
   padding: 0 clamp(24px, 5vw, 96px) 0 var(--br-goteira);
   list-style: none;
   /* A prancha, e não este trilho isolado, é o relógio da composição. */
-  opacity: clamp(0, calc(var(--esteira-ato, 0) * 3.2), 1);
+  opacity: 1;
   /* A prancha pai já carrega texto e cartões. O segundo translate de 100vw
      atrasava apenas os logos: a manchete saía à esquerda e abria um deserto
      antes do primeiro card. Um quadro, um deslocamento. */
@@ -3727,17 +3736,17 @@ body.is-abrindo {
 /* A prancha não é uma fila: cada bloco ocupa uma coordenada editorial própria.
    As posições alternam duas faixas e deixam vazios deliberados, como a referência.
    O último bloco é a dobradiça visual para o PalcoPecas. */
-.esteira__item:nth-child(1) { left: 40px; width: 390px; }
-.esteira__item:nth-child(2) { left: 570px; top: 300px; width: 520px; }
-.esteira__item:nth-child(3) { left: 1170px; top: 30px; width: 300px; }
-.esteira__item:nth-child(4) { left: 1550px; top: 260px; width: 650px; }
-.esteira__item:nth-child(5) { left: 2280px; top: 75px; width: 380px; }
-.esteira__item:nth-child(6) { left: 2780px; top: 340px; width: 250px; }
-.esteira__item:nth-child(7) { left: 3100px; top: 0; width: 540px; }
-.esteira__item:nth-child(8) { left: 3740px; top: 250px; width: 320px; }
-.esteira__item:nth-child(9) { left: 4160px; top: 40px; width: 610px; }
-.esteira__item:nth-child(10) { left: 4860px; top: 330px; width: 270px; }
-.esteira__item:nth-child(11) { left: 5260px; top: 30px; width: 470px; }
+.esteira__item:nth-child(1) { left: 800px; top: 24px; width: 300px; }
+.esteira__item:nth-child(2) { left: 1090px; top: 330px; width: 360px; }
+.esteira__item:nth-child(3) { left: 1400px; top: 62px; width: 280px; }
+.esteira__item:nth-child(4) { left: 1660px; top: 300px; width: 390px; }
+.esteira__item:nth-child(5) { left: 2010px; top: 18px; width: 300px; }
+.esteira__item:nth-child(6) { left: 2300px; top: 334px; width: 250px; }
+.esteira__item:nth-child(7) { left: 2540px; top: 52px; width: 380px; }
+.esteira__item:nth-child(8) { left: 2870px; top: 310px; width: 280px; }
+.esteira__item:nth-child(9) { left: 3130px; top: 24px; width: 360px; }
+.esteira__item:nth-child(10) { left: 3370px; top: 330px; width: 250px; }
+.esteira__item:nth-child(11) { left: 3560px; top: 54px; width: 260px; }
 
 .esteira__item > a {
   position: relative;
@@ -3745,6 +3754,7 @@ body.is-abrindo {
   grid-template-rows: auto 1fr auto;
   gap: clamp(10px, 1.4vh, 18px);
   width: 100%;
+  height: clamp(220px, 34vh, 310px);
   padding: clamp(10px, 1.2vw, 18px) 0;
   border-radius: 0;
   background: transparent;
@@ -3778,8 +3788,9 @@ body.is-abrindo {
   min-height: 0;
 }
 .esteira__logo img {
-  width: min(100%, 600px);
-  max-height: 100%;
+  width: auto;
+  max-width: min(100%, 320px);
+  max-height: min(18vh, 150px);
   object-fit: contain;
   opacity: 0.86;
   transition: opacity 0.35s ease, scale 0.5s cubic-bezier(0.16, 1, 0.3, 1);
@@ -3828,37 +3839,8 @@ body.is-abrindo {
   translate: 2px -2px;
 }
 
-.esteira__final {
-  position: absolute;
-  left: 5880px;
-  top: 180px;
-  width: 520px;
-  display: grid;
-  gap: 12px;
-  padding: 24px 0 24px 28px;
-  border-left: 2px solid var(--br-marca);
-}
-.esteira__final-kicker {
-  color: var(--br-marca);
-  font-size: 0.72rem;
-  letter-spacing: 0.18em;
-  text-transform: uppercase;
-}
-.esteira__final strong {
-  max-width: 480px;
-  font-family: var(--font-display), sans-serif;
-  font-size: clamp(2rem, 4vw, 3.6rem);
-  line-height: 0.96;
-  letter-spacing: -0.04em;
-}
-.esteira__final > span:not(.esteira__final-kicker):not(.esteira__final-arrow) {
-  max-width: 280px;
-  color: var(--br-fraco);
-  line-height: 1.4;
-}
-.esteira__final-arrow {
-  color: var(--br-marca);
-  font-size: 2rem;
+.esteira__gesto {
+  display: none;
 }
 
 /* ── LIVRE: celular e movimento reduzido — rolagem nativa de lado, sem pino ── */
@@ -3868,18 +3850,31 @@ body.is-abrindo {
 .esteira.is-livre .esteira__cena {
   position: static;
   height: auto;
-  overflow-x: auto;
-  overflow-y: visible;
-  overscroll-behavior-inline: contain;
+  overflow: visible;
 }
 .esteira.is-livre .esteira__prancha {
   --esteira-ato: 1;
   translate: none;
-  min-width: max-content;
+  width: 100%;
+  min-width: 0;
   height: auto;
   padding-block: clamp(28px, 8vw, 64px);
 }
+.esteira.is-livre .esteira__rolagem {
+  display: block;
+  width: 100%;
+  overflow-x: auto;
+  overflow-y: hidden;
+  overscroll-behavior-inline: contain;
+  scroll-snap-type: x mandatory;
+  scrollbar-width: none;
+}
+.esteira.is-livre .esteira__rolagem::-webkit-scrollbar {
+  display: none;
+}
 .esteira.is-livre .esteira__trilho {
+  position: relative;
+  inset: auto;
   display: flex;
   width: max-content;
   height: min(52vh, 440px);
@@ -3897,16 +3892,8 @@ body.is-abrindo {
   width: 78vw;
   align-self: stretch;
   height: 100%;
-}
-.esteira.is-livre .esteira__final {
-  position: relative;
-  left: auto;
-  top: auto;
   flex: 0 0 78vw;
-  width: 78vw;
-  height: 100%;
-  box-sizing: border-box;
-  padding: 20px;
+  scroll-snap-align: center;
 }
 @media (max-width: 900px) {
   .esteira {
@@ -3920,12 +3907,29 @@ body.is-abrindo {
   .esteira__prancha {
     gap: 28px;
   }
+  .esteira__rolagem {
+    margin-top: 12px;
+  }
   .esteira__titulo {
     font-size: clamp(1.4rem, 6vw, 2rem);
   }
   .esteira__item--p,
   .esteira__item--m,
   .esteira__item--g { width: 78vw; }
+  .esteira__gesto {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin: 18px clamp(20px, 6vw, 40px) 0;
+    color: var(--br-fraco);
+    font-size: 0.68rem;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+  }
+  .esteira__gesto b {
+    color: var(--br-luz);
+    font-variant-numeric: tabular-nums;
+  }
 }
 
 

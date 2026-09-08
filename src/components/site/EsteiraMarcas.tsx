@@ -1,4 +1,4 @@
-import { useEffect, useRef, type ReactNode } from "react";
+import { useEffect, useRef, useState, type ReactNode, type UIEvent } from "react";
 
 import { representadas } from "@/lib/dados";
 
@@ -46,6 +46,26 @@ export function EsteiraMarcas({ cabeca }: { cabeca?: ReactNode }) {
   const cenaRef = useRef<HTMLDivElement>(null);
   const pranchaRef = useRef<HTMLDivElement>(null);
   const trilhoRef = useRef<HTMLUListElement>(null);
+  const [movelAtiva, setMovelAtiva] = useState(0);
+
+  const aoArrastar = (evento: UIEvent<HTMLDivElement>) => {
+    const rolagem = evento.currentTarget;
+    const itens = Array.from(
+      rolagem.querySelectorAll<HTMLElement>(".esteira__item"),
+    );
+    if (!itens.length) return;
+    const centro = rolagem.scrollLeft + rolagem.clientWidth / 2;
+    let maisPerto = 0;
+    let distancia = Number.POSITIVE_INFINITY;
+    itens.forEach((item, i) => {
+      const atual = Math.abs(item.offsetLeft + item.offsetWidth / 2 - centro);
+      if (atual < distancia) {
+        distancia = atual;
+        maisPerto = i;
+      }
+    });
+    setMovelAtiva((antes) => (antes === maisPerto ? antes : maisPerto));
+  };
 
   useEffect(() => {
     const pista = pistaRef.current;
@@ -126,44 +146,45 @@ export function EsteiraMarcas({ cabeca }: { cabeca?: ReactNode }) {
         <div className="esteira__prancha" ref={pranchaRef}>
           {cabeca ? <div className="esteira__cabeca">{cabeca}</div> : null}
 
-          <ul className="esteira__trilho" ref={trilhoRef} aria-label="As onze indústrias">
-            {representadas.map((r, i) => {
-              const src = arquivoDe(r.id);
-              return (
-                <li
-                  key={r.id}
-                  className={`esteira__item esteira__item--${RITMO[i % 3]} esteira__item--${ALTURA[(i * 2) % 3]}`}
-                >
-                  <a
-                    href={r.site}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    aria-label={`${r.nome} — ${r.fornece}. Abrir o portal em nova aba.`}
+          <p className="esteira__gesto" aria-live="polite">
+            <span>Arraste</span>
+            <b>{String(movelAtiva + 1).padStart(2, "0")} / {String(representadas.length).padStart(2, "0")}</b>
+          </p>
+
+          <div className="esteira__rolagem" onScroll={aoArrastar}>
+            <ul className="esteira__trilho" ref={trilhoRef} aria-label="As onze indústrias">
+              {representadas.map((r, i) => {
+                const src = arquivoDe(r.id);
+                return (
+                  <li
+                    key={r.id}
+                    className={`esteira__item esteira__item--${RITMO[i % 3]} esteira__item--${ALTURA[(i * 2) % 3]}`}
                   >
-                    <span className="esteira__num" aria-hidden>
-                      {String(i + 1).padStart(2, "0")}
-                    </span>
-                    <span className="esteira__logo">
-                      {src ? <img src={src} alt="" aria-hidden loading="lazy" /> : <b>{r.nome}</b>}
-                    </span>
-                    <span className="esteira__dizer">
-                      <b>{r.nome}</b>
-                      <span>{r.fornece}</span>
-                    </span>
-                    <span className="esteira__portal" aria-hidden>
-                      Portal <i>↗</i>
-                    </span>
-                  </a>
-                </li>
-              );
-            })}
-            <li className="esteira__final" aria-label="Transição para o palco de peças">
-              <span className="esteira__final-kicker">02 · AS MARCAS</span>
-              <strong>Agora, o que cada uma coloca na estrada.</strong>
-              <span>Do nome da indústria à peça que chega ao balcão.</span>
-              <span className="esteira__final-arrow" aria-hidden>↗</span>
-            </li>
-          </ul>
+                    <a
+                      href={r.site}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      aria-label={`${r.nome} — ${r.fornece}. Abrir o portal em nova aba.`}
+                    >
+                      <span className="esteira__num" aria-hidden>
+                        {String(i + 1).padStart(2, "0")}
+                      </span>
+                      <span className="esteira__logo">
+                        {src ? <img src={src} alt="" aria-hidden loading="lazy" /> : <b>{r.nome}</b>}
+                      </span>
+                      <span className="esteira__dizer">
+                        <b>{r.nome}</b>
+                        <span>{r.fornece}</span>
+                      </span>
+                      <span className="esteira__portal" aria-hidden>
+                        Portal <i>↗</i>
+                      </span>
+                    </a>
+                  </li>
+                );
+              })}
+            </ul>
+          </div>
         </div>
 
         {/* O INDICADOR: uma régua fina que enche conforme a prancha anda. */}

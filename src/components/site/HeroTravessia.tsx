@@ -201,7 +201,7 @@ export function HeroTravessia() {
               </svg>
             </i>
           </a>
-          <a className="link-marcas" href="#cap-marcas">Ver as onze marcas ↓</a>
+          <a className="link-marcas" href="#marcas-inicio">Ver as onze marcas ↓</a>
         </div>
 
       {/* O TRILHO DA COBERTURA. Antes eram as 12 UFs do RepOne — dado FALSO, e o

@@ -14,10 +14,10 @@ import { useEffect, useRef, useState } from "react";
 // diferente do leque da SoftHam (onde o elemento vive dentro de palco preso e o
 // observer disparava cedo demais), estas seções estão em fluxo normal de documento.
 export const CAPITULOS = [
-  { id: "cap-casa", num: "01", rotulo: "A casa" },
-  { id: "cap-marcas", num: "02", rotulo: "As marcas" },
-  { id: "cap-estrada", num: "03", rotulo: "A estrada" },
-  { id: "cap-nome", num: "04", rotulo: "O nome" },
+  { id: "cap-casa", destino: "cap-casa", num: "01", rotulo: "A casa" },
+  { id: "cap-marcas", destino: "marcas-inicio", num: "02", rotulo: "As marcas" },
+  { id: "cap-estrada", destino: "cap-estrada", num: "03", rotulo: "A estrada" },
+  { id: "cap-nome", destino: "cap-nome", num: "04", rotulo: "O nome" },
 ] as const;
 
 export function NavCapitulos() {
@@ -52,7 +52,7 @@ export function NavCapitulos() {
         {CAPITULOS.map((c) => (
           <li key={c.id}>
             <a
-              href={`#${c.id}`}
+              href={`#${c.destino}`}
               className={ativo === c.id ? "is-aqui" : undefined}
               aria-current={ativo === c.id ? "true" : undefined}
             >

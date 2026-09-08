@@ -164,6 +164,7 @@ function Index() {
           comprada (Ferrari 296 GTB), que ele apontou como "a que salva".
           As 11 pecas ja existiam e apareciam so no hover: o ativo mais forte
           do site estava escondido. */}
+      <span id="marcas-inicio" className="marcas-inicio" aria-hidden />
       <Capitulo id="cap-marcas" className="cap--marcas">
         {/* A ABERTURA ENTRA NO PALCO (05/09). O flip-book mostrou a entrada
             mais fraca do site: titulo do capitulo em cima, em fluxo normal, e
@@ -189,7 +190,7 @@ function Index() {
                   muda entre as duas passagens e o que faz a segunda parecer
                   intencional. E o atalho para quem ja entendeu. */}
               <p className="esteira__guia" data-revela>
-                Primeiro as indústrias. Depois, o que cada uma coloca na estrada.
+                Primeiro as indústrias. Depois, cinco categorias que chegam à estrada.
                 <a href="#palco-pecas" className="esteira__atalho">
                   Ver as peças <i aria-hidden>↓</i>
                 </a>

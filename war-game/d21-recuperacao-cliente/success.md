@@ -30,6 +30,18 @@ O teste humano antecede qualquer meta de prêmio.
 | S-11 | Logos usados em grande escala têm vetor ou raster suficiente | 1× e 2× |
 | S-12 | Build, lint, console, teclado e reduced motion passam | comandos e gravação |
 
+## Medição do piloto P-21A/B — 08/09/2026
+
+| Código | Estado | Resultado |
+|---|---|---|
+| S-01 | passa | 1440 e 375 chegam à manchete e ao primeiro cartão com progresso `0`. |
+| S-02 | passa no piloto | CTA “Ver as peças” termina em y=407; nav móvel começa em y=721. |
+| S-03 | pendente | Página caiu de 13,7 para 10,72 viewports; o alvo final é no máximo 10. |
+| S-04 | parcial | Capítulo caiu de 6.852 para 4.152 px, redução de 39,4%; ainda ocupa 43,1% da página mais curta. |
+| S-05 | passa | Onze indústrias aparecem na prancha; o palco seguinte mostra cinco categorias. |
+| S-08 | passa | Mobile tem snap horizontal, instrução visível e contador `01 / 11`. |
+| S-12 | parcial | `npm run build` e `git diff --check` passam; o lint global mantém o débito anterior de Prettier/CRLF e não é gateado por este piloto. |
+
 ## NÃOs
 
 - Não adicionar outro efeito antes de cortar repetição e corrigir navegação.
@@ -38,4 +50,3 @@ O teste humano antecede qualquer meta de prêmio.
 - Não criar fatos, depoimentos, números ou clientes.
 - Não ampliar logos raster acima da resolução útil.
 - Não aprovar por uma captura estática; transições exigem tira temporal.
-
