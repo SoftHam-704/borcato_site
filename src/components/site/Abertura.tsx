@@ -70,7 +70,7 @@ import { anosDeEstrada, INICIO } from "@/lib/dados";
 // de uma parada por ano, mas a porta ainda abre antes da última contagem para
 // não criar duas esperas em sequência.
 const PASSO_ANO = 180;
-const ANOS_JUNTOS = 2; // quantos anos ainda correm com a porta já abrindo
+const PAUSA_APOS_2026 = 2_000;
 
 const TEMPOS = {
   luz: 160,
@@ -160,11 +160,11 @@ export function Abertura() {
     // o instante do último ano — daqui saem os outros dois tempos
     const ultimoAno = inicio + passo * alvo;
 
-    // A PORTA ABRE COM A CONTAGEM AINDA CORRENDO — é isto que faz das duas
-    // uma passagem só. `abre` prepara, `sai` é quem de fato revela (o
-    // `clip-path`), e ele acontece com `ANOS_JUNTOS` anos ainda por contar.
-    const abre = Math.max(TEMPOS.nome + 200, ultimoAno - passo * (ANOS_JUNTOS + 1));
-    const sai = Math.max(abre + 120, ultimoAno - passo * ANOS_JUNTOS);
+    // D-28: 2026 precisa assentar como conclusão da trajetória. A pausa é
+    // deliberada: só depois de dois segundos a cápsula começa a ceder ao hero.
+    // `abre` prepara o estado um quadro antes; `sai` é o gesto visual real.
+    const sai = ultimoAno + PAUSA_APOS_2026;
+    const abre = sai - 160;
 
     t(TEMPOS.luz, () => setFase("luz"));
     t(TEMPOS.nome, () => setFase("nome"));

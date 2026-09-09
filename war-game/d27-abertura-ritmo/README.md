@@ -9,15 +9,14 @@ sequência ter peso. O gesto completo parecia apressado.
 
 - 180 ms por ano, em vez de 110 ms;
 - luz aos 160 ms e nome aos 300 ms;
-- a porta continua começando com os dois últimos anos em curso;
+- 2026 fica em tela por dois segundos antes de a porta começar;
 - a máscara da cápsula passa de 900 ms para 1.150 ms.
 
-Em 2026, 2018→2026 passa a ocupar cerca de 1,44 s. A entrega inicia com 2025 e
-2026 ainda visíveis e termina por volta de 2,73 s: leitura, sobreposição e
-chegada em um único gesto.
+Em 2026, 2018→2026 passa a ocupar cerca de 1,44 s. Após o último ano, a cena
+segura por dois segundos e só então começa a entrega ao hero.
 
 ## Critérios
 
 - Cada ano deve ser legível.
-- Não pode haver pausa com contador parado e hero fechado.
+- 2026 deve permanecer legível por dois segundos antes do hero.
 - O botão Pular e `prefers-reduced-motion` continuam instantâneos.
