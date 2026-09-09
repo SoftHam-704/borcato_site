@@ -1,0 +1,286 @@
+[
+  {
+    "marca": "NTN-SNR",
+    "candidatos": [
+      {
+        "url": "https://ntn.com.br/images/default_ntn.jpg",
+        "status": 200,
+        "tipo": "image/jpeg",
+        "dimensoes_px": [
+          400,
+          400
+        ],
+        "qualidade": "raster limitado; pedir vetor"
+      }
+    ],
+    "nota": "Qualidade técnica não confirma que o arquivo é o logo oficial aprovado."
+  },
+  {
+    "marca": "Filtros Brasil",
+    "candidatos": [
+      {
+        "url": "https://www.filtrosbrasil.com.br/themes/biomax/images/about.svg",
+        "status": 200,
+        "tipo": "image/svg+xml",
+        "qualidade": "vetor candidato"
+      },
+      {
+        "url": "https://www.filtrosbrasil.com.br/themes/biomax/images/default.jpg",
+        "status": "erro",
+        "qualidade": "não lido: UnidentifiedImageError"
+      },
+      {
+        "url": "https://www.filtrosbrasil.com.br/themes/biomax/images/logo-filtrosbrasil.png",
+        "status": 200,
+        "tipo": "image/png",
+        "dimensoes_px": [
+          380,
+          164
+        ],
+        "qualidade": "raster insuficiente; usar só como referência"
+      },
+      {
+        "url": "https://www.filtrosbrasil.com.br/themes/biomax/images/logo.svg",
+        "status": 200,
+        "tipo": "image/svg+xml",
+        "qualidade": "vetor candidato"
+      }
+    ],
+    "nota": "Qualidade técnica não confirma que o arquivo é o logo oficial aprovado."
+  },
+  {
+    "marca": "Nidec",
+    "candidatos": [
+      {
+        "url": "http://www.nidec-gpm.com.br/assets/img/logo.png",
+        "status": 200,
+        "tipo": "image/png",
+        "dimensoes_px": [
+          900,
+          213
+        ],
+        "qualidade": "raster limitado; pedir vetor"
+      }
+    ],
+    "nota": "Qualidade técnica não confirma que o arquivo é o logo oficial aprovado."
+  },
+  {
+    "marca": "Cofran",
+    "candidatos": [
+      {
+        "url": "https://cofranlanternas.com.br/wp-content/uploads/2025/05/logo-cofran-56.png",
+        "status": 200,
+        "tipo": "image/png",
+        "dimensoes_px": [
+          509,
+          111
+        ],
+        "qualidade": "raster limitado; pedir vetor"
+      },
+      {
+        "url": "https://cofranlanternas.com.br/wp-content/uploads/2025/05/logo-cofran-branco-56.png",
+        "status": 200,
+        "tipo": "image/png",
+        "dimensoes_px": [
+          509,
+          111
+        ],
+        "qualidade": "raster limitado; pedir vetor"
+      }
+    ],
+    "nota": "Qualidade técnica não confirma que o arquivo é o logo oficial aprovado."
+  },
+  {
+    "marca": "Pysko",
+    "candidatos": [
+      {
+        "url": "https://www.pysko.com.br/img/gallery/catalogo2.png",
+        "status": 200,
+        "tipo": "image/png",
+        "dimensoes_px": [
+          500,
+          500
+        ],
+        "qualidade": "raster limitado; pedir vetor"
+      },
+      {
+        "url": "https://www.pysko.com.br/img/logo-bloomin.webp",
+        "status": 200,
+        "tipo": "image/webp",
+        "dimensoes_px": [
+          125,
+          52
+        ],
+        "qualidade": "raster insuficiente; usar só como referência"
+      },
+      {
+        "url": "https://www.pysko.com.br/img/logo.png",
+        "status": 200,
+        "tipo": "image/png",
+        "dimensoes_px": [
+          161,
+          94
+        ],
+        "qualidade": "raster insuficiente; usar só como referência"
+      },
+      {
+        "url": "https://www.pysko.com.br/img/logo/logo-footer (1).png",
+        "status": 200,
+        "tipo": "image/png",
+        "dimensoes_px": [
+          401,
+          226
+        ],
+        "qualidade": "raster limitado; pedir vetor"
+      }
+    ],
+    "nota": "Qualidade técnica não confirma que o arquivo é o logo oficial aprovado."
+  },
+  {
+    "marca": "Hexlub",
+    "candidatos": [
+      {
+        "url": "http://hexxlub.com.br/wp-content/uploads/2025/08/banner-protecao-e-potencia.webp",
+        "status": 200,
+        "tipo": "image/webp",
+        "dimensoes_px": [
+          1600,
+          800
+        ],
+        "qualidade": "raster com margem para prancha"
+      }
+    ],
+    "nota": "Qualidade técnica não confirma que o arquivo é o logo oficial aprovado."
+  },
+  {
+    "marca": "Meca Brazil",
+    "candidatos": [
+      {
+        "url": "https://mecabrazil.com/web/assets/images/LOGO_MECA.png",
+        "status": 200,
+        "tipo": "image/png",
+        "dimensoes_px": [
+          300,
+          150
+        ],
+        "qualidade": "raster insuficiente; usar só como referência"
+      }
+    ],
+    "nota": "Qualidade técnica não confirma que o arquivo é o logo oficial aprovado."
+  },
+  {
+    "marca": "Auto América",
+    "candidatos": [
+      {
+        "url": "https://www.autoamerica.com.br/wp-content/uploads/2021/01/autoamerica-icone-vermelho.svg",
+        "status": 200,
+        "tipo": "image/svg+xml",
+        "qualidade": "vetor candidato"
+      }
+    ],
+    "nota": "Qualidade técnica não confirma que o arquivo é o logo oficial aprovado."
+  },
+  {
+    "marca": "Mundial Prime",
+    "candidatos": [
+      {
+        "url": "https://mundialprime.com.br/wp-content/plugins/instagram-feed/img/placeholder.png",
+        "status": 200,
+        "tipo": "image/png",
+        "dimensoes_px": [
+          1000,
+          560
+        ],
+        "qualidade": "raster com margem para prancha"
+      },
+      {
+        "url": "https://mundialprime.com.br/wp-content/uploads/2024/01/logo-evonline.png",
+        "status": 200,
+        "tipo": "image/png",
+        "dimensoes_px": [
+          77,
+          17
+        ],
+        "qualidade": "raster insuficiente; usar só como referência"
+      },
+      {
+        "url": "https://mundialprime.com.br/wp-content/uploads/2024/01/logo-mundialprime-cor.png",
+        "status": 200,
+        "tipo": "image/png",
+        "dimensoes_px": [
+          122,
+          71
+        ],
+        "qualidade": "raster insuficiente; usar só como referência"
+      },
+      {
+        "url": "https://mundialprime.com.br/wp-content/uploads/2024/01/logo-mundialprime-corftr.png",
+        "status": 200,
+        "tipo": "image/png",
+        "dimensoes_px": [
+          144,
+          84
+        ],
+        "qualidade": "raster insuficiente; usar só como referência"
+      }
+    ],
+    "nota": "Qualidade técnica não confirma que o arquivo é o logo oficial aprovado."
+  },
+  {
+    "marca": "Sintech",
+    "candidatos": [
+      {
+        "url": "https://www.sintechdobrasil.com.br/assets/img/logo.png",
+        "status": 200,
+        "tipo": "image/png",
+        "dimensoes_px": [
+          200,
+          59
+        ],
+        "qualidade": "raster insuficiente; usar só como referência"
+      }
+    ],
+    "nota": "Qualidade técnica não confirma que o arquivo é o logo oficial aprovado."
+  },
+  {
+    "marca": "VP",
+    "candidatos": [
+      {
+        "url": "https://www.vp.ind.br/imagens/logos/logo-virtualplasticos-192x192.png",
+        "status": 200,
+        "tipo": "image/png",
+        "dimensoes_px": [
+          192,
+          192
+        ],
+        "qualidade": "raster insuficiente; usar só como referência"
+      },
+      {
+        "url": "https://www.vp.ind.br/imagens/logos/logo-virtualplasticos-280x280.png",
+        "status": 200,
+        "tipo": "image/png",
+        "dimensoes_px": [
+          280,
+          280
+        ],
+        "qualidade": "raster insuficiente; usar só como referência"
+      },
+      {
+        "url": "https://www.vp.ind.br/imagens/logos/logo-virtualplasticos-64x64.png",
+        "status": 200,
+        "tipo": "image/png",
+        "dimensoes_px": [
+          64,
+          64
+        ],
+        "qualidade": "raster insuficiente; usar só como referência"
+      },
+      {
+        "url": "https://www.vp.ind.br/imagens/logos/logo_600x350.png",
+        "status": "erro",
+        "qualidade": "não lido: UnidentifiedImageError"
+      }
+    ],
+    "nota": "Qualidade técnica não confirma que o arquivo é o logo oficial aprovado."
+  }
+]

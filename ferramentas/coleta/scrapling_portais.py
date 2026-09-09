@@ -41,15 +41,26 @@ MARCAS = (
 DESTINO = Path(__file__).parents[2] / "pesquisa" / "portais-oficiais.json"
 CHAVES_DE_MARCA = ("logo", "brand", "marca", "wordmark", "logotipo")
 
+# Páginas que montam a marca somente depois do primeiro HTML. Estes endereços
+# foram conferidos no navegador renderizado, mas continuam sendo referência —
+# não substituem o vetor oficial que deve ser solicitado à indústria.
+CANDIDATOS_RENDERIZADOS = {
+    "Meca Brazil": ("https://mecabrazil.com/web/assets/images/LOGO_MECA.png",),
+}
+
 
 def texto(valor: str | None) -> str:
     return " ".join((valor or "").split())
 
 
 def candidato(url: str, base: str, contexto: str = "") -> str | None:
+    if not url or url.startswith("data:"):
+        return None
     absoluto = urljoin(base, url.strip())
     sinal = f"{absoluto} {contexto}".lower()
-    if any(chave in sinal for chave in CHAVES_DE_MARCA) or absoluto.lower().endswith(".svg"):
+    caminho = absoluto.lower().split("?", 1)[0]
+    visual = caminho.endswith((".svg", ".png", ".jpg", ".jpeg", ".webp", ".avif"))
+    if visual and (any(chave in sinal for chave in CHAVES_DE_MARCA) or caminho.endswith(".svg")):
         return absoluto
     return None
 
@@ -63,6 +74,7 @@ def coletar(nome: str, url: str) -> dict[str, object]:
         og_image = texto(pagina.css('meta[property="og:image"]::attr(content)').get())
         if og_image:
             logos.add(urljoin(base, og_image))
+        logos.update(CANDIDATOS_RENDERIZADOS.get(nome, ()))
 
         for seletor in ("img", "link"):
             for elemento in pagina.css(seletor):

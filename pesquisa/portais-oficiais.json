@@ -80,8 +80,6 @@
     "descricao": "",
     "imagem_social": "http://hexxlub.com.br/wp-content/uploads/2025/08/banner-protecao-e-potencia.webp",
     "candidatos_logo": [
-      "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI1MDAiIGhlaWdodD0iNTAwIiB2aWV3Qm94PSIwIDAgNTAwIDUwMCI+PHJlY3Qgd2lkdGg9IjEwMCUiIGhlaWdodD0iMTAwJSIgZmlsbD0iI2NmZDRkYiIvPjwvc3ZnPg==",
-      "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxMzUyIiBoZWlnaHQ9IjE2NzMiIHZpZXdCb3g9IjAgMCAxMzUyIDE2NzMiPjxyZWN0IHdpZHRoPSIxMDAlIiBoZWlnaHQ9IjEwMCUiIGZpbGw9IiNjZmQ0ZGIiLz48L3N2Zz4=",
       "http://hexxlub.com.br/wp-content/uploads/2025/08/banner-protecao-e-potencia.webp"
     ],
     "observacao": "Candidatos exigem validação humana e não são ativos aprovados para publicação."
@@ -94,7 +92,9 @@
     "titulo": "",
     "descricao": "",
     "imagem_social": null,
-    "candidatos_logo": [],
+    "candidatos_logo": [
+      "https://mecabrazil.com/web/assets/images/LOGO_MECA.png"
+    ],
     "observacao": "Candidatos exigem validação humana e não são ativos aprovados para publicação."
   },
   {
@@ -106,7 +106,6 @@
     "descricao": "",
     "imagem_social": null,
     "candidatos_logo": [
-      "https://www.autoamerica.com.br/wp-content/plugins/elementor/assets/lib/font-awesome/css/brands.min.css?ver=5.15.3",
       "https://www.autoamerica.com.br/wp-content/uploads/2021/01/autoamerica-icone-vermelho.svg"
     ],
     "observacao": "Candidatos exigem validação humana e não são ativos aprovados para publicação."
@@ -121,7 +120,6 @@
     "imagem_social": null,
     "candidatos_logo": [
       "https://mundialprime.com.br/wp-content/plugins/instagram-feed/img/placeholder.png",
-      "https://mundialprime.com.br/wp-content/plugins/woocommerce/assets/css/brands.css?ver=10.3.7",
       "https://mundialprime.com.br/wp-content/uploads/2024/01/logo-evonline.png",
       "https://mundialprime.com.br/wp-content/uploads/2024/01/logo-mundialprime-cor.png",
       "https://mundialprime.com.br/wp-content/uploads/2024/01/logo-mundialprime-corftr.png"
