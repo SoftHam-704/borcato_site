@@ -233,29 +233,31 @@ function Index() {
             em vez de abertura. O mapa vem primeiro no DOM tambem porque a
             passagem vinda do palco o revela por um wipe da esquerda. */}
         <div className="estrada">
-          <MapaMinas />
+          <div className="estrada__cena">
+            <MapaMinas />
 
-          <div className="estrada__dizer">
-            {/* Aqui o "853 municipios" tambem saiu (06/09). Mesmo motivo do
+            <div className="estrada__dizer">
+              {/* Aqui o "853 municipios" tambem saiu (06/09). Mesmo motivo do
                 hero: numero verdadeiro sobre o estado que, ao lado da marca,
                 sugere atendimento que ninguem afirmou. Como o <b> ja e a UF,
                 esta linha fica com a forma direta — presenca, nao contagem. */}
-            <p className="estrada__casa">
-              <b>{casa.uf}</b>
-              <span>presença em todo o estado</span>
-            </p>
-            {/* A LISTA SEGUE A ORDEM DA VIAGEM, e nao uma propria: e o mesmo
+              <p className="estrada__casa">
+                <b>{casa.uf}</b>
+                <span>presença em todo o estado</span>
+              </p>
+              {/* A LISTA SEGUE A ORDEM DA VIAGEM, e nao uma propria: e o mesmo
                 array que posiciona os pontos no mapa. Com o numero dos dois
                 lados, da para ligar "05" no mapa ao Vale do Aco na lista sem
                 deduzir pela geografia (R3-03). */}
-            <ol className="estrada__ufs">
-              {PONTOS.map((p, i) => (
-                <li key={p.nome}>
-                  <em aria-hidden>{String(i + 1).padStart(2, "0")}</em>
-                  <b>{p.nome}</b>
-                </li>
-              ))}
-            </ol>
+              <ol className="estrada__ufs">
+                {PONTOS.map((p, i) => (
+                  <li key={p.nome}>
+                    <em aria-hidden>{String(i + 1).padStart(2, "0")}</em>
+                    <b>{p.nome}</b>
+                  </li>
+                ))}
+              </ol>
+            </div>
           </div>
         </div>
 

@@ -3139,7 +3139,7 @@ body.is-abrindo .cursor-ring {
    acendendo conforme a rolagem. No celular, não pode simplesmente desaparecer."
    ═══════════════════════════════════════════════════════════════════════════ */
 .estrada {
-  display: grid;
+  display: block;
   /* O MAPA A ESQUERDA, e PRIMEIRO no DOM (05/09). Tres motivos, um gesto:
      1. o capitulo deixa de abrir com o mesmo esqueleto dos outros (titulo de
         3 linhas em caixa alta) — abre com uma IMAGEM
@@ -3149,9 +3149,23 @@ body.is-abrindo .cursor-ring {
         (clip-path inset 0 0 0 X): o mapa e a primeira coisa a entrar.
      E alterna com os vizinhos: retrato a direita (01), peca a direita (02),
      mapa a ESQUERDA (03). Ritmo. */
+}
+.estrada__cena {
+  display: grid;
   grid-template-columns: minmax(0, 1.05fr) minmax(0, 1fr);
   align-items: center;
   gap: clamp(24px, 4vw, 72px);
+}
+@media (min-width: 901px) {
+  .cap--estrada .estrada {
+    height: 200vh;
+  }
+  .cap--estrada .estrada__cena {
+    position: sticky;
+    top: 0;
+    height: 100vh;
+    padding-block: clamp(54px, 9vh, 104px);
+  }
 }
 /* o titulo e o corpo vem DEPOIS do mapa: viram conclusao, nao abertura */
 .cap--estrada .cap__titulo {
@@ -3216,7 +3230,7 @@ body.is-abrindo .cursor-ring {
 
 /* ── celular: o mapa FICA, e a lista vira uma coluna abaixo dele ─────────── */
 @media (max-width: 900px) {
-  .estrada {
+  .estrada__cena {
     grid-template-columns: 1fr;
     gap: clamp(20px, 4vh, 34px);
   }

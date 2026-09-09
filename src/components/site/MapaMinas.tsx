@@ -80,20 +80,13 @@ const COMPRIMENTO = ATE[ATE.length - 1]!;
 
 export function MapaMinas() {
   const svgRef = useRef<SVGSVGElement>(null);
-  // A REFERÊNCIA DE MEDIÇÃO — um wrapper que NUNCA recebe transform.
-  // Ver o comentário em `esfregar()`.
-  const refRef = useRef<HTMLDivElement>(null);
-  // A ÂNCORA DA ROTA — um marcador próprio, no layout estável do capítulo.
-  // Não é um relógio concorrente: `--entrega` governa a transição peça →
-  // território e termina; daqui em diante é esta âncora que governa a viagem.
-  // Dois atos consecutivos, fontes diferentes, sem sobreposição.
+  // No celular, esta âncora fornece uma janela de leitura sem palco sticky.
   const rotaRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const svg = svgRef.current;
-    const ancora = refRef.current;
     const marco = rotaRef.current;
-    if (!svg || !ancora || !marco) return;
+    if (!svg || !marco) return;
 
 
     // COM MOVIMENTO REDUZIDO O JS NAO CALCULA NADA.
@@ -117,68 +110,37 @@ export function MapaMinas() {
       if (pedido) return;
       pedido = window.requestAnimationFrame(() => {
         pedido = 0;
-        // A ROTA SE MEDE PELO MAPA, NÃO PELO CAPÍTULO.
-        //
-        // MEDIDO (05/09, 3ª auditoria): medindo o capítulo inteiro, título e
-        // parágrafos entravam na conta e a rota chegava a 40% COM O MAPA AINDA
-        // FORA DA TELA (topo em 953px numa viewport de 900). Quando ele
-        // aparecia, mais de 60% da viagem já tinha passado — o visitante
-        // perdia justamente o gesto que o capítulo promete.
-        //
-        // Agora a janela é a do próprio SVG: a primeira parada acende quando
-        // ele já entrou de verdade, e a última enquanto ainda está legível.
-        const r = svg.getBoundingClientRect();
         const vh = window.innerHeight;
 
-        // A ROTA SE MEDE PELO WRAPPER IMÓVEL, NUNCA PELO SVG QUE SE MOVE.
-        //
-        // D-13 opção B, conclusão (06/09). A primeira versão descontava o
-        // deslocamento lendo `--mapa-sobe-px` com `parseFloat` — e MEDIDO: dava
-        // sempre 0. `getPropertyValue` devolve a expressão `calc(...)` em
-        // TEXTO, não o número resolvido; `parseFloat("calc(...)")` é NaN, que o
-        // `|| 0` transformava em zero. O desconto nunca existiu, e a rota
-        // funcionava por acidente — qualquer mudança na curva do deslocamento a
-        // quebrava (chegou a andar PARA TRÁS: 0,69 → 0,29 → 0,02).
-        //
-        // A separação, que remove a dependência acidental:
-        //   `.mapa-mg-ref` (div)  — NUNCA recebe transform. É o que se mede.
-        //   `.mapa-mg`     (svg)  — a camada visual, que a passagem transforma.
-        //
-        // Regra que fica: **nunca extrair número de expressão CSS.** Se o JS
-        // precisa de um valor, ele nasce no JS ou vem de um elemento estável.
-        // A JANELA DA ROTA NASCE DA ÂNCORA, não da posição do SVG.
-        //
-        // MEDIDO (06/09) antes de escolher onde ancorar: o mapa fica ≥60%
-        // visível ao longo de 900px de rolagem (exatamente uma tela) — é a
-        // janela real, e ela cabe sem alongar o capítulo. A primeira medição
-        // olhou só o espaço ABAIXO do mapa (542px) e teria me feito parar por
-        // engano; a janela começa enquanto ele ainda sobe.
-        //
-        // Por que não `--cap-entra`: MEDIDO, ele satura em 1 antes de o mapa
-        // aparecer (salta de 0 a 1 num passo e fica cravado durante todo o
-        // trecho legível). A `margin-top: -60vh` da passagem, que é o que faz
-        // as cenas dividirem o quadro, consome a janela do capítulo.
-        //
-        // Por que não a posição do SVG: ele é transformado pela passagem, e
-        // medir um elemento em movimento foi o que quebrou a rota antes.
-        //
-        // A âncora é um marcador de layout: entra na tela junto com o mapa,
-        // não recebe transform, e sua travessia pela viewport É a viagem.
-        const rMarco = marco.getBoundingClientRect();
-        // MEDIDO e corrigido (06/09): com 78%→12% a rota só começava quando o
-        // mapa já estava em y=79, prestes a sair pelo topo — e fechava com ele
-        // a 0% visível (y=-571). A janela estava atrasada em quase uma tela.
-        //
-        // O marcador fica logo ABAIXO do mapa, então quando ele cruza 128% da
-        // altura da tela o mapa acabou de chegar inteiro; quando cruza 58%, o
-        // mapa ainda está no quadro com folga. É nessa faixa que a viagem cabe
-        // inteira com o território legível.
-        const inicioR = vh * 1.28;
-        const fimR = vh * 0.58;
-        const t = Math.min(
-          1,
-          Math.max(0, (inicioR - rMarco.top) / Math.max(1, inicioR - fimR)),
-        );
+        // D-25: no desktop, a Estrada é uma pista estável. O SVG não mede a
+        // própria posição nem tenta resolver `calc()` do CSS: a rota usa só o
+        // progresso do contêiner que a mantém no quadro.
+        const entrega = parseFloat(
+          getComputedStyle(document.documentElement).getPropertyValue("--entrega"),
+        ) || 0;
+        const pista = svg.closest<HTMLElement>(".estrada");
+        const desktop = window.matchMedia("(min-width: 901px)").matches;
+        let t = 0;
+
+        if (desktop && pista && entrega >= 0.98) {
+          // D-25: o mapa recebe uma pista própria. Ao entrar, a composição
+          // fica inteira e parada; a rota ocupa 75% do trecho sticky e os 25%
+          // finais seguram o resultado antes de a Estrada ceder a O Nome.
+          const rPista = pista.getBoundingClientRect();
+          const curso = Math.max(1, pista.offsetHeight - vh);
+          const cena = Math.min(1, Math.max(0, -rPista.top / curso));
+          t = Math.min(1, cena / 0.75);
+        } else if (!desktop) {
+          // No celular não há palco sticky: a âncora de layout preserva a rota
+          // inteira dentro da janela visível, sem transformar o SVG.
+          const rMarco = marco.getBoundingClientRect();
+          const inicioR = vh * 1.28;
+          const fimR = vh * 0.58;
+          t = Math.min(
+            1,
+            Math.max(0, (inicioR - rMarco.top) / Math.max(1, inicioR - fimR)),
+          );
+        }
         svg.style.setProperty("--rota", t.toFixed(4));
 
         // UMA SO MEDIDA GOVERNA TRACO, PONTO E LISTA.
@@ -226,11 +188,9 @@ export function MapaMinas() {
   const rota = PONTOS.map((p, i) => `${i ? "L" : "M"} ${p.cx.toFixed(1)},${p.cy.toFixed(1)}`).join(" ");
 
   return (
-    // O WRAPPER É A ÂNCORA DE MEDIÇÃO: ele fica no fluxo, no lugar onde o mapa
-    // vive, e NUNCA recebe transform. O SVG dentro dele é que se move durante a
-    // passagem. Separar as duas coisas é o que mantém a rota estável.
-    <div className="mapa-mg-ref" ref={refRef}>
-    <svg
+  // Wrapper visual do mapa. A âncora interna é usada apenas no fluxo mobile.
+  <div className="mapa-mg-ref">
+      <svg
       ref={svgRef}
       className="mapa-mg"
       viewBox="0 0 100 92"
