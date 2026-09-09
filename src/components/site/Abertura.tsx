@@ -66,15 +66,16 @@ import { anosDeEstrada, INICIO } from "@/lib/dados";
 // Os tempos derivam da contagem em vez de serem digitados soltos ao lado dela —
 // se um dia forem 20 anos, o encaixe se mantém sozinho. Dois números que
 // precisam concordar não podem ser escritos duas vezes.
-// D-22: os anos continuam sendo assinatura, mas apoiam a entrada em vez de criar
-// uma espera antes dela. Em 2018→2026, a cena inteira se resolve abaixo de 2,25s.
-const PASSO_ANO = 110;
+// D-27: 110ms por ano transformava 2018→2026 em um borrão. A leitura precisa
+// de uma parada por ano, mas a porta ainda abre antes da última contagem para
+// não criar duas esperas em sequência.
+const PASSO_ANO = 180;
 const ANOS_JUNTOS = 2; // quantos anos ainda correm com a porta já abrindo
 
 const TEMPOS = {
-  luz: 90,
+  luz: 160,
   // A marca precisa dar o primeiro sinal antes de a abertura parecer um loader.
-  nome: 120,
+  nome: 300,
 } as const;
 
 export function Abertura() {
@@ -119,7 +120,7 @@ export function Abertura() {
       window.setTimeout(() => {
         setFora(true);
         document.body.classList.remove("is-abrindo");
-      }, 900),
+      }, 1150),
     );
   };
 
@@ -151,7 +152,7 @@ export function Abertura() {
     // MEDIDO: espremendo 9 paradas na janela que existia dava 100ms cada — no
     // limite do borrao, e o dono quer VER os anos passando. Com 190ms a
     // sequencia 2018→2026 leva 1,5s e cada ano da para ler.
-    const inicio = TEMPOS.nome + 120;
+    const inicio = TEMPOS.nome + 200;
     const passo = PASSO_ANO;
     for (let k = 0; k <= alvo; k++) {
       t(inicio + passo * k, () => setContados(k));
