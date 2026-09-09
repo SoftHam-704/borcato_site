@@ -2602,6 +2602,59 @@ body.is-abrindo .cursor-ring {
   position: relative;
   isolation: isolate;
 }
+
+/* D-26 · CASA → MARCAS
+   D-23 resolveu a saída antecipada dos palcos removendo o recorte do capítulo
+   02. O efeito desapareceu junto. Esta cortina é irmã dos dois capítulos e
+   fixa só na viewport: cresce do rodapé, cobre o quadro por um instante e sobe
+   de novo revelando a prancha. Nenhum ancestral de cena recebe transform ou
+   overflow, portanto a esteira termina sempre antes de ceder às peças. */
+.cortina-marcas {
+  --passagem: 1;
+  --sobe: clamp(0, calc(var(--passagem) / 0.45), 1);
+  --cede: clamp(0, calc((var(--passagem) - 0.45) / 0.55), 1);
+  position: fixed;
+  z-index: 22;
+  inset: 0;
+  pointer-events: none;
+  overflow: hidden;
+  background:
+    linear-gradient(90deg, transparent 0 11%, color-mix(in srgb, var(--br-marca) 38%, transparent) 11.05% 11.15%, transparent 11.2% 100%),
+    linear-gradient(180deg, color-mix(in srgb, #152b46 88%, #0c1421), #0c1421);
+  clip-path: inset(calc((1 - var(--sobe)) * 100%) 0 calc(var(--cede) * 100%) 0);
+  will-change: clip-path;
+}
+.cortina-marcas::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  opacity: 0.42;
+  background-image:
+    linear-gradient(90deg, color-mix(in srgb, var(--br-luz) 9%, transparent) 1px, transparent 1px),
+    linear-gradient(color-mix(in srgb, var(--br-luz) 7%, transparent) 1px, transparent 1px);
+  background-size: 88px 88px;
+  mask-image: linear-gradient(90deg, transparent, #000 24%, #000 76%, transparent);
+}
+.cortina-marcas span {
+  position: absolute;
+  top: clamp(28px, 6vh, 72px);
+  left: var(--br-goteira);
+  color: var(--br-luz);
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+}
+.cortina-marcas i {
+  position: absolute;
+  right: clamp(28px, 8vw, 120px);
+  bottom: clamp(40px, 9vh, 108px);
+  width: min(23vw, 360px);
+  height: 1px;
+  background: var(--br-marca);
+  transform-origin: right;
+  scale: calc(0.2 + var(--sobe) * 0.8);
+}
 @media (min-width: 901px) {
   .passagem-casa-marcas > .cap--casa {
     position: sticky;
@@ -2647,6 +2700,9 @@ body.is-abrindo .cursor-ring {
 }
 
 @media (max-width: 900px) {
+  .cortina-marcas {
+    display: none;
+  }
   .passagem-casa-marcas > .cap--casa {
     position: relative;
   }
@@ -2655,6 +2711,9 @@ body.is-abrindo .cursor-ring {
   }
 }
 @media (prefers-reduced-motion: reduce) {
+  .cortina-marcas {
+    display: none;
+  }
   [data-revela] {
     --revela: 1 !important;
     opacity: 1 !important;

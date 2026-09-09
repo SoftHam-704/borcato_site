@@ -1,5 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { Abertura } from "@/components/site/Abertura";
+import { CortinaMarcas } from "@/components/site/CortinaMarcas";
 import { HeroTravessia } from "@/components/site/HeroTravessia";
 import { Capitulo, NavCapitulos } from "@/components/site/Capitulos";
 import { Estrada } from "@/components/site/Estrada";
@@ -66,6 +67,7 @@ function Index() {
 
       <main>
       <div className="passagem-casa-marcas">
+      <CortinaMarcas />
       {/* 01 — A CASA. Quem e, e de onde fala. */}
       <Capitulo id="cap-casa" className="cap--casa">
         <p className="cap__num" data-revela>01 / A casa</p>
