@@ -12,7 +12,8 @@ import { anosDeEstrada, INICIO } from "@/lib/dados";
 // igloo.inc) abrem com evento.
 //
 // A diferença para um preloader: isto não mede carregamento nenhum, e não mente
-// sobre progresso. É uma ABERTURA — quatro tempos, 3,4s, com botão de pular.
+// sobre progresso. É uma abertura curta: monta a marca, percorre os anos e
+// entrega o hero no mesmo gesto, com botão de pular.
 //
 // RODA SEMPRE, não uma vez por sessão. A convenção padrão é não segurar quem já
 // viu, mas este site é PEÇA DE VENDA: o Fábio vai abrir na frente de distribuidor
@@ -65,12 +66,15 @@ import { anosDeEstrada, INICIO } from "@/lib/dados";
 // Os tempos derivam da contagem em vez de serem digitados soltos ao lado dela —
 // se um dia forem 20 anos, o encaixe se mantém sozinho. Dois números que
 // precisam concordar não podem ser escritos duas vezes.
-const PASSO_ANO = 190; // 190ms por ano: dá para LER cada um (medido)
+// D-22: os anos continuam sendo assinatura, mas apoiam a entrada em vez de criar
+// uma espera antes dela. Em 2018→2026, a cena inteira se resolve abaixo de 2,25s.
+const PASSO_ANO = 110;
 const ANOS_JUNTOS = 2; // quantos anos ainda correm com a porta já abrindo
 
 const TEMPOS = {
-  luz: 160, // a luz acende no escuro
-  nome: 460, // "H.M. BORÇATO" se monta, letra a letra
+  luz: 90,
+  // A marca precisa dar o primeiro sinal antes de a abertura parecer um loader.
+  nome: 120,
 } as const;
 
 export function Abertura() {
@@ -105,15 +109,18 @@ export function Abertura() {
       relogios.current = [];
     }
     setSaindo(true);
-    document.body.classList.remove("is-abrindo");
     // A borda móvel começa pelo lado do retrato. O hero recebe a entrada depois
     // que essa janela já existe; disparar no primeiro frame faria a manchete se
     // animar escondida atrás da cortina.
     window.dispatchEvent(new CustomEvent("hmb:abriu"));
-    // Um único descarte, derivado dos 900ms do clip-path. Antes havia também o
-    // timer `ultimoAno + 420`: em 2026 ele removia a camada aos 800ms e cortava
-    // os últimos 100ms da própria transição.
-    relogios.current.push(window.setTimeout(() => setFora(true), 950));
+    // O hero já começou a assentar atrás da cortina; o descarte acontece ao fim
+    // do mesmo gesto, sem uma segunda espera.
+    relogios.current.push(
+      window.setTimeout(() => {
+        setFora(true);
+        document.body.classList.remove("is-abrindo");
+      }, 900),
+    );
   };
 
   useEffect(() => {

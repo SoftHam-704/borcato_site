@@ -1908,7 +1908,7 @@
 
 
 /* ── A ABERTURA ──────────────────────────────────────────────────────────────
-   Quatro tempos, 3,4s: escuro -> luz -> o nome se monta -> a cápsula se abre.
+   Quatro tempos, ~1,8s até a cortina sair: escuro -> luz -> marca -> cápsula.
    Não é preloader: não mede carregamento nem mente sobre progresso.
    O gesto é o do próprio site — a cápsula que o cliente escolheu é a PORTA. */
 body.is-abrindo {
@@ -1925,7 +1925,14 @@ body.is-abrindo {
   /* a saída é a cápsula se abrindo: a máscara cresce da esquerda,
      com o mesmo raio da cápsula do hero */
   clip-path: inset(0 0 0 0 round 0);
-  transition: clip-path 0.9s cubic-bezier(0.65, 0, 0.35, 1);
+  transition: clip-path 0.9s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+/* O cursor nasce no centro. Durante a abertura ele parecia um spinner de
+   carregamento e roubava a primeira impressão; volta quando a cena termina. */
+body.is-abrindo .cursor-dot,
+body.is-abrindo .cursor-ring {
+  opacity: 0;
 }
 
 /* 1 · a luz acende no escuro */
@@ -1970,15 +1977,11 @@ body.is-abrindo {
   display: inline-block;
   opacity: 0;
   transform: translateY(0.32em);
-  /* cada letra sai um pouco depois da anterior — o nome se ESCREVE */
-  /* COMPRIMIDA JUNTO COM A ABERTURA (3,4s -> 1,9s).
-     Eram 42ms por letra: com 11 letras davam 462ms de escalonamento + 700ms de
-     transform = 1162ms, e a capsula agora abre em 1150ms. As ultimas letras
-     nao chegariam a entrar antes da camada sair.
-     Com 24ms: 264ms de escalonamento + 480ms = 744ms, dentro da janela. */
+  /* O nome se escreve cedo: a primeira informação precisa chegar antes de a
+     cena ser lida como tela de carregamento. */
   transition:
-    opacity 0.34s ease calc(var(--i) * 24ms),
-    transform 0.48s cubic-bezier(0.16, 1, 0.3, 1) calc(var(--i) * 24ms);
+    opacity 0.16s ease calc(var(--i) * 16ms),
+    transform 0.28s cubic-bezier(0.16, 1, 0.3, 1) calc(var(--i) * 16ms);
 }
 .abertura.fase-nome .abertura__nome span,
 .abertura.fase-abrindo .abertura__nome span {
@@ -2007,6 +2010,24 @@ body.is-abrindo {
   /* O retrato mora à direita: a cortina recua a partir dele. A borda arredondada
      atravessa a tela como continuação da cápsula, e entrega a pessoa antes da copy. */
   clip-path: inset(0 100% 0 0 round 0 clamp(120px, 18vw, 280px) clamp(120px, 18vw, 280px) 0);
+}
+.abertura__nome::after {
+  content: "";
+  position: absolute;
+  left: calc(100% + clamp(12px, 2vw, 28px));
+  top: 52%;
+  width: clamp(92px, 13vw, 210px);
+  height: 1px;
+  background: linear-gradient(90deg, var(--br-marca), transparent);
+  transform: scaleX(0);
+  transform-origin: left;
+  opacity: 0;
+  transition: transform 0.48s cubic-bezier(0.16, 1, 0.3, 1) 0.16s, opacity 0.18s ease 0.16s;
+}
+.abertura.fase-nome .abertura__nome::after,
+.abertura.fase-abrindo .abertura__nome::after {
+  opacity: 0.72;
+  transform: scaleX(1);
 }
 .abertura.is-saindo .abertura__nome,
 .abertura.is-saindo .abertura__pe,
@@ -2250,7 +2271,7 @@ body.is-abrindo {
   opacity: 0;
 }
 .hero-tr.is-pronta .hero-tr__capsula {
-  animation: capsula-entra 2.9s cubic-bezier(0.22, 1, 0.28, 1) 120ms both;
+  animation: capsula-entra 0.82s cubic-bezier(0.22, 1, 0.28, 1) 80ms both;
 }
 
 .hero-tr.is-pronta .pal {
@@ -2266,8 +2287,8 @@ body.is-abrindo {
      300ms entre elas — o titulo de 7 palavras leva ~4,2s para se escrever
      inteiro, contra 2,6s. A curva tambem mudou: (0.22, 1, 0.28, 1) desacelera
      mais no fim, e e o fim que se le como a barra passando. */
-  animation: pal-sobe 2.1s cubic-bezier(0.22, 1, 0.28, 1) both;
-  animation-delay: calc(var(--i) * 300ms + 320ms);
+  animation: pal-sobe 0.64s cubic-bezier(0.22, 1, 0.28, 1) both;
+  animation-delay: calc(var(--i) * 70ms + 120ms);
 }
 @keyframes pal-sobe {
   from { opacity: 0; transform: translateY(112%); }
@@ -2559,11 +2580,13 @@ body.is-abrindo {
   z-index: 0;
 }
 
-/* D-20 · PILOTO 01 → 02
-   O capítulo anterior permanece como último quadro; o próximo sobe inteiro por
-   cima dele. O movimento lateral da prancha só começa depois que `--rev` chega
-   ao fim, portanto os dois gestos não disputam o mesmo relógio. */
+/* D-22 · CASA → MARCAS
+   A Casa fica como último quadro. A composição inteira de Marcas sobe como um
+   painel de baixo para cima e toma o quadro antes de a prancha começar o gesto
+   lateral. `--painel-marcas` vem da âncora estática `.marcas-inicio`, nunca da
+   caixa que se move: não há realimentação entre medida e transformação. */
 .passagem-casa-marcas {
+  --painel-marcas: 0;
   position: relative;
   isolation: isolate;
 }
@@ -2576,7 +2599,7 @@ body.is-abrindo {
   .passagem-casa-marcas > .cap--marcas {
     z-index: 1;
     clip-path: none;
-    translate: 0 calc((1 - var(--rev)) * 100vh);
+    translate: 0 calc(var(--painel-marcas) * -58vh);
     will-change: translate, transform;
   }
 }
@@ -2602,6 +2625,9 @@ body.is-abrindo {
   }
 }
 @media (prefers-reduced-motion: reduce) {
+  .passagem-casa-marcas > .cap--marcas {
+    translate: none;
+  }
   [data-revela] {
     --revela: 1 !important;
     opacity: 1 !important;

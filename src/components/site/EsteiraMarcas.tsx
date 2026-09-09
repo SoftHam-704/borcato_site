@@ -74,11 +74,31 @@ export function EsteiraMarcas({ cabeca }: { cabeca?: ReactNode }) {
     const trilho = trilhoRef.current;
     if (!pista || !cena || !prancha || !trilho) return;
 
+    // D-22 · A passagem Casa → Marcas mede uma âncora que não se move. O
+    // capítulo passa por uma translação visual; medi-lo pela própria caixa
+    // transformada criava uma realimentação e parecia um corte. A âncora fica
+    // no fluxo entre os dois capítulos e fornece um único relógio ao painel.
+    const passagem = pista.closest<HTMLElement>(".passagem-casa-marcas");
+    const marco = passagem?.querySelector<HTMLElement>(".marcas-inicio");
+
     const livre = window.matchMedia(
       "(max-width: 900px), (prefers-reduced-motion: reduce)",
     );
     let pedido = 0;
     let sobra = 0;
+
+    const atualizarPainel = () => {
+      if (!passagem || !marco) return;
+      if (livre.matches) {
+        passagem.style.setProperty("--painel-marcas", "1");
+        return;
+      }
+      const topo = marco.getBoundingClientRect().top;
+      // 42vh de rolagem: o painel cobre a Casa com presença, sem reter a
+      // esteira. Em p=1 a sua translação (-58vh) a deixa exatamente no topo.
+      const p = Math.min(1, Math.max(0, (window.innerHeight - topo) / (window.innerHeight * 0.42)));
+      passagem.style.setProperty("--painel-marcas", p.toFixed(4));
+    };
 
     /** quanto o trilho excede a tela: é a distância que a rolagem percorre */
     const medir = () => {
@@ -110,6 +130,7 @@ export function EsteiraMarcas({ cabeca }: { cabeca?: ReactNode }) {
       if (pedido) return;
       pedido = window.requestAnimationFrame(() => {
         pedido = 0;
+        atualizarPainel();
         if (livre.matches || !sobra) return;
         const r = pista.getBoundingClientRect();
         const t = Math.min(1, Math.max(0, -r.top / (sobra * PASSO)));
@@ -118,9 +139,9 @@ export function EsteiraMarcas({ cabeca }: { cabeca?: ReactNode }) {
         // seção parada, que era justamente o defeito visto na referência.
         const ato = t;
         prancha.style.setProperty("--esteira-ato", ato.toFixed(4));
-        // O painel vertical já reservou a apresentação da manchete. Repetir aqui
-        // uma espera de 28% criava uma tela quase vazia depois da transição. A
-        // prancha inteira começa a viajar assim que sua cena sticky assume.
+        // A esteira só chega ao seu sticky depois do painel vertical ter
+        // assentado. Assim, há um gesto por vez: sobe a seção inteira; então a
+        // composição dela viaja de lado.
         prancha.style.setProperty("--esteira-x", `${(-ato * sobra).toFixed(1)}px`);
         // o indicador: quanto do trilho já passou (a auditoria pediu um
         // progresso claro — sem ele o visitante não sabe onde está nas 11)

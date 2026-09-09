@@ -43,13 +43,13 @@ export function HeroTravessia() {
   // O TEXTO SE ESCREVE quando a abertura termina, nao quando a pagina carrega:
   // a abertura cobre tudo, e animar por baixo dela e desperdicar o gesto. A
   // Abertura avisa por evento; se ela nao existir (reduced-motion, ou um dia
-  // sem abertura), o fallback de 4,5s garante que o texto nunca fique preso.
+  // sem abertura), o fallback de 2,5s garante que o texto nunca fique preso.
   useEffect(() => {
     const secao = capsulaRef.current?.closest<HTMLElement>(".hero-tr");
     if (!secao) return;
     const pronta = () => secao.classList.add("is-pronta");
     window.addEventListener("hmb:abriu", pronta, { once: true });
-    const fallback = window.setTimeout(pronta, 4500);
+    const fallback = window.setTimeout(pronta, 2500);
     return () => {
       window.removeEventListener("hmb:abriu", pronta);
       window.clearTimeout(fallback);
