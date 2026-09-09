@@ -74,31 +74,11 @@ export function EsteiraMarcas({ cabeca }: { cabeca?: ReactNode }) {
     const trilho = trilhoRef.current;
     if (!pista || !cena || !prancha || !trilho) return;
 
-    // D-22 · A passagem Casa → Marcas mede uma âncora que não se move. O
-    // capítulo passa por uma translação visual; medi-lo pela própria caixa
-    // transformada criava uma realimentação e parecia um corte. A âncora fica
-    // no fluxo entre os dois capítulos e fornece um único relógio ao painel.
-    const passagem = pista.closest<HTMLElement>(".passagem-casa-marcas");
-    const marco = passagem?.querySelector<HTMLElement>(".marcas-inicio");
-
     const livre = window.matchMedia(
       "(max-width: 900px), (prefers-reduced-motion: reduce)",
     );
     let pedido = 0;
     let sobra = 0;
-
-    const atualizarPainel = () => {
-      if (!passagem || !marco) return;
-      if (livre.matches) {
-        passagem.style.setProperty("--painel-marcas", "1");
-        return;
-      }
-      const topo = marco.getBoundingClientRect().top;
-      // 42vh de rolagem: o painel cobre a Casa com presença, sem reter a
-      // esteira. Em p=1 a sua translação (-58vh) a deixa exatamente no topo.
-      const p = Math.min(1, Math.max(0, (window.innerHeight - topo) / (window.innerHeight * 0.42)));
-      passagem.style.setProperty("--painel-marcas", p.toFixed(4));
-    };
 
     /** quanto o trilho excede a tela: é a distância que a rolagem percorre */
     const medir = () => {
@@ -130,7 +110,6 @@ export function EsteiraMarcas({ cabeca }: { cabeca?: ReactNode }) {
       if (pedido) return;
       pedido = window.requestAnimationFrame(() => {
         pedido = 0;
-        atualizarPainel();
         if (livre.matches || !sobra) return;
         const r = pista.getBoundingClientRect();
         const t = Math.min(1, Math.max(0, -r.top / (sobra * PASSO)));

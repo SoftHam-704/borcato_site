@@ -2306,6 +2306,17 @@ body.is-abrindo .cursor-ring {
   transform: translateY(calc((1 - var(--p)) * 112%));
 }
 
+/* D-24 · A mesma máscara de palavra não pode produzir a mesma sensação em
+   quatro capítulos. A Casa avança, Marcas se ergue e a Estrada chega de fora.
+   São variações de uma gramática própria, sem trocar fonte ou copiar a
+   caligrafia da referência. */
+.cap--casa .cap__titulo .pal {
+  transform: translateX(calc((1 - var(--p)) * -0.48em));
+}
+.cap--estrada .cap__titulo .pal {
+  transform: translateX(calc((1 - var(--p)) * 0.48em));
+}
+
 /* ═══════════════════════════════════════════════════════════════════════════
    O CARROSSEL DAS MARCAS
    Quatro cópias num trilho que anda 25% do próprio comprimento: sem emenda.
@@ -2341,7 +2352,9 @@ body.is-abrindo .cursor-ring {
 @media (prefers-reduced-motion: reduce) {
   .hero-tr .pal,
   .hero-tr.is-pronta .pal { opacity: 1; transform: none; animation: none; }
-  .cap__titulo .pal { opacity: 1; transform: none; }
+  .cap__titulo .pal,
+  .cap--casa .cap__titulo .pal,
+  .cap--estrada .cap__titulo .pal { opacity: 1; transform: none; }
   .marcas__trilho { animation: none; }
   .marcas { mask-image: none; -webkit-mask-image: none; }
 }
@@ -2580,13 +2593,12 @@ body.is-abrindo .cursor-ring {
   z-index: 0;
 }
 
-/* D-22 · CASA → MARCAS
-   A Casa fica como último quadro. A composição inteira de Marcas sobe como um
-   painel de baixo para cima e toma o quadro antes de a prancha começar o gesto
-   lateral. `--painel-marcas` vem da âncora estática `.marcas-inicio`, nunca da
-   caixa que se move: não há realimentação entre medida e transformação. */
+/* D-23 · CASA → MARCAS
+   A Casa fica como último quadro e Marcas sobrepõe 58vh no FLUXO. A superfície
+   nova sobe pela rolagem normal, sem transformar o ancestral dos dois palcos
+   sticky. Transformar o capítulo fazia os palcos abandonarem a tela antes do
+   último card ou peça, exatamente o defeito apontado pelo dono. */
 .passagem-casa-marcas {
-  --painel-marcas: 0;
   position: relative;
   isolation: isolate;
 }
@@ -2599,8 +2611,17 @@ body.is-abrindo .cursor-ring {
   .passagem-casa-marcas > .cap--marcas {
     z-index: 1;
     clip-path: none;
-    translate: 0 calc(var(--painel-marcas) * -58vh);
-    will-change: translate, transform;
+    margin-top: -58vh;
+  }
+  .passagem-casa-marcas > .cap--marcas::before {
+    top: 0;
+    right: 0;
+    bottom: auto;
+    left: 0;
+    width: auto;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--br-marca), transparent);
+    opacity: 0.8;
   }
 }
 
@@ -2611,6 +2632,15 @@ body.is-abrindo .cursor-ring {
   opacity: var(--revela) !important;
   translate: 0 calc((1 - var(--revela)) * 28px);
   will-change: opacity, translate;
+}
+.cap--casa [data-revela] {
+  translate: calc((1 - var(--revela)) * -24px) 0;
+}
+.cap--marcas [data-revela] {
+  translate: 0 calc((1 - var(--revela)) * 30px);
+}
+.cap--estrada [data-revela] {
+  translate: calc((1 - var(--revela)) * 24px) 0;
 }
 .cap__titulo[data-revela] {
   --cap-entra: var(--revela);
@@ -2625,9 +2655,6 @@ body.is-abrindo .cursor-ring {
   }
 }
 @media (prefers-reduced-motion: reduce) {
-  .passagem-casa-marcas > .cap--marcas {
-    translate: none;
-  }
   [data-revela] {
     --revela: 1 !important;
     opacity: 1 !important;
@@ -3687,6 +3714,26 @@ body.is-abrindo .cursor-ring {
   overflow: hidden;
   display: block;
   padding-block: clamp(70px, 10vh, 110px) clamp(40px, 6vh, 70px);
+}
+/* Uma prancha de indústrias precisa parecer uma superfície de trabalho, não um
+   vazio entre logos. A malha é desenho técnico de catálogo, exclusiva desta
+   cena; as linhas apagam nas bordas para não competir com informação ou nav. */
+.esteira__cena::before {
+  content: "";
+  position: absolute;
+  z-index: 0;
+  inset: 0;
+  pointer-events: none;
+  background:
+    linear-gradient(90deg, color-mix(in srgb, var(--br-marca) 14%, transparent) 1px, transparent 1px),
+    linear-gradient(0deg, color-mix(in srgb, var(--br-marca) 10%, transparent) 1px, transparent 1px);
+  background-size: clamp(96px, 11vw, 180px) clamp(96px, 11vw, 180px);
+  mask-image: radial-gradient(ellipse 78% 90% at 56% 46%, black, transparent 78%);
+  -webkit-mask-image: radial-gradient(ellipse 78% 90% at 56% 46%, black, transparent 78%);
+}
+.esteira__prancha,
+.esteira__regua {
+  z-index: 1;
 }
 .marcas-inicio {
   position: relative;

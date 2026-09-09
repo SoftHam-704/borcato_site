@@ -53,8 +53,8 @@ export function PalcoPecas({ abre }: { abre?: ReactNode }) {
       pedido = window.requestAnimationFrame(() => {
         pedido = 0;
         // quanto da PISTA já foi percorrido (a pista é a altura extra do palco)
-        const r = palco.getBoundingClientRect();
         const pista = Math.max(1, palco.offsetHeight - window.innerHeight);
+        const r = palco.getBoundingClientRect();
         const t = Math.min(1, Math.max(0, -r.top / pista));
         // t=0 é a primeira peça, t=1 a última. O piso de 0,999 evita que o
         // último quadro pisque de volta para a primeira ao encostar no fim.
