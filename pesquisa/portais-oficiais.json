@@ -1,0 +1,160 @@
+[
+  {
+    "marca": "NTN-SNR",
+    "portal_informado": "https://ntn.com.br/",
+    "status": 200,
+    "url_final": "https://ntn.com.br/",
+    "titulo": "NTN Brasil | Rolamentos, polias, juntas homocinéticas e serviços",
+    "descricao": "A NTN é uma fabricante de equipamentos de alta precisão que projeta, desenvolve e fabrica rolamentos, guias lineares, mancais e peças de reposição.",
+    "imagem_social": "https://ntn.com.br/images/default_ntn.jpg",
+    "candidatos_logo": [
+      "https://ntn.com.br/images/default_ntn.jpg"
+    ],
+    "observacao": "Candidatos exigem validação humana e não são ativos aprovados para publicação."
+  },
+  {
+    "marca": "Filtros Brasil",
+    "portal_informado": "https://www.filtrosbrasil.com.br/",
+    "status": 200,
+    "url_final": "https://www.filtrosbrasil.com.br/",
+    "titulo": "Filtros Brasil - Solução hoje, amanhã mais.",
+    "descricao": "Fabricante de filtros de cabine.",
+    "imagem_social": "https://www.filtrosbrasil.com.br/themes/biomax/images/default.jpg",
+    "candidatos_logo": [
+      "https://www.filtrosbrasil.com.br/themes/biomax/images/about.svg",
+      "https://www.filtrosbrasil.com.br/themes/biomax/images/default.jpg",
+      "https://www.filtrosbrasil.com.br/themes/biomax/images/logo-filtrosbrasil.png",
+      "https://www.filtrosbrasil.com.br/themes/biomax/images/logo.svg"
+    ],
+    "observacao": "Candidatos exigem validação humana e não são ativos aprovados para publicação."
+  },
+  {
+    "marca": "Nidec",
+    "portal_informado": "http://www.nidec-gpm.com.br/",
+    "status": 200,
+    "url_final": "http://www.nidec-gpm.com.br/",
+    "titulo": "Nidec GPM do Brasil — Bombas d'Água e Óleo para Aplicações Automotivas",
+    "descricao": "Nidec GPM do Brasil projeta e fabrica bombas d'água e bombas de óleo para mais de 1.122 aplicações automotivas — peças originais e de reposição, com tecnologia japonesa e alemã fabricada em Indaiatuba, SP.",
+    "imagem_social": null,
+    "candidatos_logo": [
+      "http://www.nidec-gpm.com.br/assets/img/logo.png"
+    ],
+    "observacao": "Candidatos exigem validação humana e não são ativos aprovados para publicação."
+  },
+  {
+    "marca": "Cofran",
+    "portal_informado": "https://cofranlanternas.com.br/",
+    "status": 200,
+    "url_final": "https://cofranlanternas.com.br/",
+    "titulo": "Cofran Lanternas - Qualidade e Confiabilidade",
+    "descricao": "Qualidade e Confiabilidade",
+    "imagem_social": null,
+    "candidatos_logo": [
+      "https://cofranlanternas.com.br/wp-content/uploads/2025/05/logo-cofran-56.png",
+      "https://cofranlanternas.com.br/wp-content/uploads/2025/05/logo-cofran-branco-56.png"
+    ],
+    "observacao": "Candidatos exigem validação humana e não são ativos aprovados para publicação."
+  },
+  {
+    "marca": "Pysko",
+    "portal_informado": "https://www.pysko.com.br/",
+    "status": 200,
+    "url_final": "https://www.pysko.com.br/",
+    "titulo": "Pysko: referência em Kits Automotivos | Pysko",
+    "descricao": "A Pysko é referência em peças automotivas e tem como um dos seus principais objetivos atender todas as necessidades do setor. Visite nosso site!",
+    "imagem_social": null,
+    "candidatos_logo": [
+      "https://www.pysko.com.br/img/gallery/catalogo2.png",
+      "https://www.pysko.com.br/img/logo-bloomin.webp",
+      "https://www.pysko.com.br/img/logo.png",
+      "https://www.pysko.com.br/img/logo/logo-footer (1).png"
+    ],
+    "observacao": "Candidatos exigem validação humana e não são ativos aprovados para publicação."
+  },
+  {
+    "marca": "Hexlub",
+    "portal_informado": "https://hexxlub.com.br/",
+    "status": 200,
+    "url_final": "https://hexxlub.com.br/",
+    "titulo": "Home - HEXXLUB Lubrificantes",
+    "descricao": "",
+    "imagem_social": "http://hexxlub.com.br/wp-content/uploads/2025/08/banner-protecao-e-potencia.webp",
+    "candidatos_logo": [
+      "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI1MDAiIGhlaWdodD0iNTAwIiB2aWV3Qm94PSIwIDAgNTAwIDUwMCI+PHJlY3Qgd2lkdGg9IjEwMCUiIGhlaWdodD0iMTAwJSIgZmlsbD0iI2NmZDRkYiIvPjwvc3ZnPg==",
+      "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxMzUyIiBoZWlnaHQ9IjE2NzMiIHZpZXdCb3g9IjAgMCAxMzUyIDE2NzMiPjxyZWN0IHdpZHRoPSIxMDAlIiBoZWlnaHQ9IjEwMCUiIGZpbGw9IiNjZmQ0ZGIiLz48L3N2Zz4=",
+      "http://hexxlub.com.br/wp-content/uploads/2025/08/banner-protecao-e-potencia.webp"
+    ],
+    "observacao": "Candidatos exigem validação humana e não são ativos aprovados para publicação."
+  },
+  {
+    "marca": "Meca Brazil",
+    "portal_informado": "https://mecabrazil.com/",
+    "status": 200,
+    "url_final": "https://mecabrazil.com/",
+    "titulo": "",
+    "descricao": "",
+    "imagem_social": null,
+    "candidatos_logo": [],
+    "observacao": "Candidatos exigem validação humana e não são ativos aprovados para publicação."
+  },
+  {
+    "marca": "Auto América",
+    "portal_informado": "https://www.autoamerica.com.br/",
+    "status": 200,
+    "url_final": "https://www.autoamerica.com.br/",
+    "titulo": "Autoamerica – Pneus e produtos de estética e manutençao automotiva",
+    "descricao": "",
+    "imagem_social": null,
+    "candidatos_logo": [
+      "https://www.autoamerica.com.br/wp-content/plugins/elementor/assets/lib/font-awesome/css/brands.min.css?ver=5.15.3",
+      "https://www.autoamerica.com.br/wp-content/uploads/2021/01/autoamerica-icone-vermelho.svg"
+    ],
+    "observacao": "Candidatos exigem validação humana e não são ativos aprovados para publicação."
+  },
+  {
+    "marca": "Mundial Prime",
+    "portal_informado": "https://mundialprime.com.br/",
+    "status": 200,
+    "url_final": "https://mundialprime.com.br/",
+    "titulo": "Mundial Prime",
+    "descricao": "",
+    "imagem_social": null,
+    "candidatos_logo": [
+      "https://mundialprime.com.br/wp-content/plugins/instagram-feed/img/placeholder.png",
+      "https://mundialprime.com.br/wp-content/plugins/woocommerce/assets/css/brands.css?ver=10.3.7",
+      "https://mundialprime.com.br/wp-content/uploads/2024/01/logo-evonline.png",
+      "https://mundialprime.com.br/wp-content/uploads/2024/01/logo-mundialprime-cor.png",
+      "https://mundialprime.com.br/wp-content/uploads/2024/01/logo-mundialprime-corftr.png"
+    ],
+    "observacao": "Candidatos exigem validação humana e não são ativos aprovados para publicação."
+  },
+  {
+    "marca": "Sintech",
+    "portal_informado": "https://www.sintechdobrasil.com.br/",
+    "status": 200,
+    "url_final": "https://www.sintechdobrasil.com.br/",
+    "titulo": "Atuamos principalmente no segmento de comercialização de produtos para motores automotivos, Somos uma das principais fornecedoras de peças para motor no mercado brasileiro.",
+    "descricao": "",
+    "imagem_social": null,
+    "candidatos_logo": [
+      "https://www.sintechdobrasil.com.br/assets/img/logo.png"
+    ],
+    "observacao": "Candidatos exigem validação humana e não são ativos aprovados para publicação."
+  },
+  {
+    "marca": "VP",
+    "portal_informado": "https://vp.ind.br/",
+    "status": 200,
+    "url_final": "https://www.vp.ind.br/",
+    "titulo": "VP - Virtual Plásticos - Home",
+    "descricao": "Home",
+    "imagem_social": "https://www.vp.ind.br/imagens/logos/logo_600x350.png",
+    "candidatos_logo": [
+      "https://www.vp.ind.br/imagens/logos/logo-virtualplasticos-192x192.png",
+      "https://www.vp.ind.br/imagens/logos/logo-virtualplasticos-280x280.png",
+      "https://www.vp.ind.br/imagens/logos/logo-virtualplasticos-64x64.png",
+      "https://www.vp.ind.br/imagens/logos/logo_600x350.png"
+    ],
+    "observacao": "Portal legado lido como Windows-1252; candidatos exigem validação humana."
+  }
+]
