@@ -2598,11 +2598,11 @@ body.is-abrindo .cursor-ring {
   z-index: 0;
 }
 
-/* D-23 · CASA → MARCAS
-   A Casa fica como último quadro e Marcas sobrepõe 58vh no FLUXO. A superfície
-   nova sobe pela rolagem normal, sem transformar o ancestral dos dois palcos
-   sticky. Transformar o capítulo fazia os palcos abandonarem a tela antes do
-   último card ou peça, exatamente o defeito apontado pelo dono. */
+/* D-34 · CASA → MARCAS
+   A passagem precisa respeitar o último quadro da Casa. A sobreposição de
+   58vh fazia Marcas nascer enquanto o título e o retrato ainda estavam na
+   tela; a cortina independente abaixo já fornece a novidade visual sem
+   antecipar o fluxo. */
 .passagem-casa-marcas {
   position: relative;
   isolation: isolate;
@@ -2662,14 +2662,16 @@ body.is-abrindo .cursor-ring {
 }
 @media (min-width: 901px) {
   .passagem-casa-marcas > .cap--casa {
-    position: sticky;
-    top: 0;
+    /* A Casa não pode ficar presa enquanto Marcas entra: o sticky mantinha
+       seu retrato na viewport e criava uma sobreposição mesmo sem margem
+       negativa. A cortina faz a troca sem prolongar o capítulo anterior. */
+    position: relative;
     z-index: 0;
   }
   .passagem-casa-marcas > .cap--marcas {
     z-index: 1;
     clip-path: none;
-    margin-top: -58vh;
+    margin-top: 0;
   }
   .passagem-casa-marcas > .cap--marcas::before {
     top: 0;
