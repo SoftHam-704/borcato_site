@@ -120,7 +120,7 @@ export function Abertura() {
       window.setTimeout(() => {
         setFora(true);
         document.body.classList.remove("is-abrindo");
-      }, 1150),
+      }, 1450),
     );
   };
 
