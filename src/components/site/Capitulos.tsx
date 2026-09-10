@@ -99,23 +99,12 @@ export function Capitulo({ id, children, className }: CapituloProps) {
         pedido = 0;
         const r = el.getBoundingClientRect();
         const vh = window.innerHeight;
-        const painelCasa =
-          el.id === "cap-casa" && window.matchMedia("(min-width: 901px)").matches;
-        // D-32: A Casa começa fisicamente antes do fim do palco para cobrir o
-        // hero. Medir o próprio topo a faria aparecer pronta antes da hora.
-        // Ela usa o último terço do progresso que JÁ governa o fim do hero.
-        const progressoHero = parseFloat(
-          getComputedStyle(document.documentElement).getPropertyValue("--hero-progresso"),
-        ) || 0;
-        let t = painelCasa
-          ? Math.min(1, Math.max(0, (progressoHero - 0.68) / 0.32))
-          : (vh - r.top) / (vh * 0.62);
         // Entradas editoriais usam a caixa de cada bloco. O relógio do capítulo
         // continua governando a passagem entre cenas; ele não pode antecipar o
         // texto que ainda está abaixo da dobra, sobretudo no celular.
         el.querySelectorAll<HTMLElement>("[data-revela]").forEach((bloco) => {
           const caixa = bloco.getBoundingClientRect();
-          const local = painelCasa ? t : (vh - caixa.top) / (vh * 0.32);
+          const local = (vh - caixa.top) / (vh * 0.32);
           bloco.style.setProperty("--revela", String(Math.min(1, Math.max(0, local))));
         });
         // 0 quando o topo encosta no rodapé da tela; 1 quando sobe 62% da viewport.
@@ -125,6 +114,8 @@ export function Capitulo({ id, children, className }: CapituloProps) {
         // de 900, e esta fórmula dá 1.225 — ela chega a 1 sozinha, inclusive no
         // último capítulo. Tentei "consertar" isso com uma janela de fim de página
         // e foi o conserto que quebrou o gesto (--cap-entra caiu de 0.97 p/ 0.13).
+        let t = (vh - r.top) / (vh * 0.62);
+
         // A PASSAGEM DO PALCO GOVERNA O CAPITULO 03 (05/09).
         //
         // O cap 03 comeca 60vh antes de a pista do palco acabar (margin-top

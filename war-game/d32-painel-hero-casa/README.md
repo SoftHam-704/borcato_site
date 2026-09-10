@@ -1,5 +1,8 @@
 # D-32 — Painel Hero → A Casa
 
+> REPROVADO na revisão do dono. Implementação retirada na recuperação D-33.
+> Medir somente o clip-path não comprovou a composição nem a sequência.
+
 ## Estado
 
 Piloto autorizado pelo dono. Este pacote cobre apenas a passagem do hero para

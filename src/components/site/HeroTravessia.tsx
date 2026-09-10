@@ -105,10 +105,6 @@ export function HeroTravessia() {
           // o progresso do pino, cru, para o CSS compor a SAIDA da capsula
           // (a passagem hero -> 01: ela recua e esmaece no ultimo quarto)
           secao.style.setProperty("--hero-t", t.toFixed(4));
-          // D-32: a passagem seguinte lê esta MESMA pista. A Casa não mede a
-          // própria posição enquanto se sobrepõe ao hero; recebe o trecho final
-          // que já encerra este palco. A raiz é necessária porque são irmãos.
-          document.documentElement.style.setProperty("--hero-progresso", t.toFixed(4));
         }
       });
     };
@@ -117,7 +113,6 @@ export function HeroTravessia() {
     return () => {
       window.removeEventListener("scroll", aoRolar);
       if (pedido) cancelAnimationFrame(pedido);
-      document.documentElement.style.removeProperty("--hero-progresso");
     };
   }, []);
 
