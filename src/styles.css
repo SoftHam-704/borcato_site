@@ -2084,7 +2084,7 @@ body.is-abrindo .cursor-ring {
    landing page com uma linha descendo e mais nada".
 
    Cada capítulo revela numa DIREÇÃO diferente, e a direção diz algo:
-     01 A casa    — de baixo para cima: a casa se ergue
+     01 A casa    — da direita: responde ao olhar do Fábio
      02 As marcas — da esquerda: a pasta se abre
      03 A estrada — da direita: vem de fora, é quilômetro rodado
      04 O nome    — do centro para as bordas: a revelação se abre
@@ -2107,9 +2107,12 @@ body.is-abrindo .cursor-ring {
   --rev: clamp(0, calc(var(--cap-entra, 1) / 0.55), 1);
 }
 
-/* 01 · A CASA — de baixo para cima */
+/* 01 · A CASA — entra pela direita e atravessa o hero.
+   Quando chegar o vídeo, o último quadro do Fábio olhando para a esquerda dele
+   encontra esta cena vindo do lado oposto para o visitante. A máscara já é
+   governada pelo fim da pista do hero: nenhum relógio ou espera é acrescentado. */
 .cap--casa {
-  clip-path: inset(calc((1 - var(--rev)) * 100%) 0 0 0);
+  clip-path: inset(0 0 0 calc((1 - var(--rev)) * 100%));
 }
 
 /* 02 · AS MARCAS — da esquerda, como uma pasta abrindo */
@@ -2177,11 +2180,11 @@ body.is-abrindo .cursor-ring {
   opacity: calc(4 * var(--rev) * (1 - var(--rev)) * 0.55);
 }
 .cap--casa::before {
-  --costura-dir: 90deg;
-  left: 0;
-  right: 0;
-  height: 1px;
-  top: calc((1 - var(--rev)) * 100%);
+  --costura-dir: 180deg;
+  top: 0;
+  bottom: 0;
+  width: 1px;
+  left: calc((1 - var(--rev)) * 100%);
 }
 .cap--marcas::before {
   --costura-dir: 180deg;
