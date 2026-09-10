@@ -44,7 +44,11 @@ export function CortinaMarcas() {
 
   return (
     <div ref={ref} className="cortina-marcas" aria-hidden>
-      <span>02 / As marcas</span>
+      <div className="cortina-marcas__conteudo">
+        <span>02 / As marcas</span>
+        <strong>De rolamento a filtro de cabine.</strong>
+        <em>Onze indústrias na mesma pasta.</em>
+      </div>
       <i />
     </div>
   );

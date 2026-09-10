@@ -2640,14 +2640,37 @@ body.is-abrindo .cursor-ring {
   background-size: 88px 88px;
   mask-image: linear-gradient(90deg, transparent, #000 24%, #000 76%, transparent);
 }
-.cortina-marcas span {
+.cortina-marcas__conteudo {
   position: absolute;
-  top: clamp(28px, 6vh, 72px);
+  top: clamp(28px, 22vh, 220px);
   left: var(--br-goteira);
+  width: min(62vw, 820px);
+  display: grid;
+  gap: clamp(14px, 2.2vh, 26px);
+  opacity: clamp(0, calc(var(--sobe) * 1.6), 1);
+  translate: 0 calc((1 - var(--sobe)) * 32px);
+  transition: opacity 120ms linear, translate 120ms ease-out;
+}
+.cortina-marcas__conteudo span {
   color: var(--br-luz);
   font-size: 0.68rem;
   font-weight: 700;
   letter-spacing: 0.22em;
+  text-transform: uppercase;
+}
+.cortina-marcas__conteudo strong {
+  max-width: 12ch;
+  color: var(--br-luz);
+  font-size: clamp(2.4rem, 6.5vw, 7rem);
+  line-height: 0.92;
+  letter-spacing: -0.045em;
+  text-transform: uppercase;
+}
+.cortina-marcas__conteudo em {
+  color: color-mix(in srgb, var(--br-luz) 62%, transparent);
+  font-size: clamp(0.9rem, 1.4vw, 1.2rem);
+  font-style: normal;
+  letter-spacing: 0.08em;
   text-transform: uppercase;
 }
 .cortina-marcas i {
