@@ -2108,11 +2108,16 @@ body.is-abrindo .cursor-ring {
 }
 
 /* 01 · A CASA — entra pela direita e atravessa o hero.
-   Quando chegar o vídeo, o último quadro do Fábio olhando para a esquerda dele
-   encontra esta cena vindo do lado oposto para o visitante. A máscara já é
-   governada pelo fim da pista do hero: nenhum relógio ou espera é acrescentado. */
+   D-32 põe a própria seção sobre o último terço do palco. Quando chegar o
+   vídeo, o último quadro do Fábio olhando para a esquerda dele encontra esta
+   cena vindo do lado oposto para o visitante. A máscara usa o MESMO progresso
+   que encerra o hero; não há temporizador ou medição da própria seção. */
 .cap--casa {
+  /* Nos demais capítulos a máscara termina cedo para o texto respirar. Aqui
+     ela É a transição entre telas: acompanha todo o último trecho do hero. */
+  --rev: var(--cap-entra, 1);
   clip-path: inset(0 0 0 calc((1 - var(--rev)) * 100%));
+  background: var(--br-chao);
 }
 
 /* 02 · AS MARCAS — da esquerda, como uma pasta abrindo */
@@ -2661,6 +2666,22 @@ body.is-abrindo .cursor-ring {
   scale: calc(0.2 + var(--sobe) * 0.8);
 }
 @media (min-width: 901px) {
+  /* D-32 · HERO → CASA. A Casa começa 129vh antes no fluxo, mas permanece
+     completamente recortada até `--hero-progresso` chegar a 0,68. Quando abre,
+     o bloco real já está preso no topo e atravessa o hero como painel inteiro.
+     A margem é limitada a quem aceita movimento; sem animação a ordem normal
+     de leitura precisa permanecer intacta. */
+  @media (prefers-reduced-motion: no-preference) {
+    .passagem-casa-marcas {
+      margin-top: -129svh;
+    }
+    .passagem-casa-marcas > .cap--casa {
+      z-index: 2;
+      /* o painel precisa ocupar a viewport desde o primeiro pixel do wipe;
+         o deslocamento editorial de 34px deixaria uma fresta do hero no topo */
+      transform: none;
+    }
+  }
   .passagem-casa-marcas > .cap--casa {
     position: sticky;
     top: 0;
