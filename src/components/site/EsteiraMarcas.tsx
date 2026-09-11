@@ -79,6 +79,7 @@ export function EsteiraMarcas({ cabeca }: { cabeca?: ReactNode }) {
     );
     let pedido = 0;
     let sobra = 0;
+    let respiro = 0;
 
     /** quanto o trilho excede a tela: é a distância que a rolagem percorre */
     const medir = () => {
@@ -90,6 +91,9 @@ export function EsteiraMarcas({ cabeca }: { cabeca?: ReactNode }) {
       }
       pista.classList.remove("is-livre");
       sobra = Math.max(0, prancha.scrollWidth - cena.clientWidth);
+      // A seção real primeiro termina de subir sobre A Casa. Só depois de
+      // 18vh de quadro assentado a composição começa a viajar lateralmente.
+      respiro = window.innerHeight * 0.18;
       // O PASSO É 0,55×, NÃO 1:1 (D-14, 06/09).
       //
       // O Norris move o trilho um pixel por pixel rolado, e eu copiei. MEDIDO:
@@ -102,7 +106,10 @@ export function EsteiraMarcas({ cabeca }: { cabeca?: ReactNode }) {
       // muda — eles continuam do mesmo tamanho; só o percurso encurta.
       //
       // (No celular a esteira é livre e nunca teve esse custo: 0,9 tela.)
-      pista.style.height = `calc(100vh + ${Math.round(sobra * PASSO)}px)`;
+      pista.style.height = `calc(100vh + ${Math.round(respiro + sobra * PASSO)}px)`;
+      prancha.style.setProperty("--esteira-ato", "0");
+      prancha.style.setProperty("--esteira-x", "0px");
+      pista.style.setProperty("--esteira-t", "0");
       esfregar();
     };
 
@@ -112,7 +119,10 @@ export function EsteiraMarcas({ cabeca }: { cabeca?: ReactNode }) {
         pedido = 0;
         if (livre.matches || !sobra) return;
         const r = pista.getBoundingClientRect();
-        const t = Math.min(1, Math.max(0, -r.top / (sobra * PASSO)));
+        const t = Math.min(
+          1,
+          Math.max(0, (-r.top - respiro) / (sobra * PASSO)),
+        );
         // A prancha inteira anda: manchete, vazios, logos e legendas preservam
         // suas relações. O trilho sozinho criava um carrossel dentro de uma
         // seção parada, que era justamente o defeito visto na referência.

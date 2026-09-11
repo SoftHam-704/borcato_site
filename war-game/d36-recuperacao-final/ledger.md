@@ -8,8 +8,9 @@
 | D-28 | fechada | manter 2 s após 2026 | `Abertura.tsx`, `PAUSA_APOS_2026 = 2_000` | não pode ser encurtada sem nova decisão |
 | D-34 | executada | Casa e Marcas retornam ao fluxo normal | `d34-casa-marcas/README.md` | eliminou colisão, mas deixou uma cortina separada |
 | D-35 | executada | adicionar texto à cortina vazia | `d35-painel-com-conteudo/README.md` | resolveu o vazio, criou repetição editorial |
-| D-36 | opção A aprovada | estabilização dirigida | aprovação do dono em 10/09/2026 | P36-A executado; G36-A fechado |
-| G36-A | pendente | aceitar ou reprovar P36-A | `outputs/pilotos/p36-a-resultado.md` | bloqueia Casa → Marcas |
+| D-36 | opção A aprovada | estabilização dirigida | aprovação do dono em 10/09/2026 | P36-A e P36-B executados |
+| G36-A | aprovado | aceitar P36-A e iniciar P36-B | “vamos prosseguir parceiro” em 11/09/2026 | liberou Casa → Marcas |
+| G36-B | pendente | aceitar ou reprovar P36-B | `outputs/pilotos/p36-b-resultado.md` | bloqueia qualquer nova intervenção |
 
 ## Fatos observados em 10/09/2026
 

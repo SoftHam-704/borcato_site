@@ -2607,7 +2607,6 @@ body.is-abrindo .cursor-ring {
    Cada capítulo ganha uma faixa no topo que faz a passagem do chão anterior
    para o seu, ao longo de ~180px. É a mesma solução da barra de marcas: quando
    duas superfícies se encontram, quem resolve é o degradê, não a transição. */
-.cap--marcas::after,
 .cap--estrada::after {
   content: "";
   position: absolute;
@@ -2618,110 +2617,37 @@ body.is-abrindo .cursor-ring {
   height: clamp(120px, 18vh, 200px);
   pointer-events: none;
 }
-.cap--marcas::after {
-  background: linear-gradient(to bottom, #0a0a0c, transparent);
-}
 .cap--estrada::after {
   background: linear-gradient(to bottom, #0c1421, transparent);
 }
-/* D-34 · CASA → MARCAS
-   A passagem precisa respeitar o último quadro da Casa. A sobreposição de
-   58vh fazia Marcas nascer enquanto o título e o retrato ainda estavam na
-   tela; a cortina independente abaixo já fornece a novidade visual sem
-   antecipar o fluxo. */
+/* P36-B · CASA → MARCAS
+   A seção verdadeira é o painel. A Casa reserva um final sem conteúdo e
+   Marcas ocupa exatamente essa reserva; por isso nenhum texto, retrato ou
+   marco é cortado. A antiga cortina fixa repetia a manchete e entregava um
+   painel cenográfico antes da prancha real. */
 .passagem-casa-marcas {
+  --marcas-sobrepoe: 24vh;
   position: relative;
   isolation: isolate;
 }
-
-/* D-26 · CASA → MARCAS
-   D-23 resolveu a saída antecipada dos palcos removendo o recorte do capítulo
-   02. O efeito desapareceu junto. Esta cortina é irmã dos dois capítulos e
-   fixa só na viewport: cresce do rodapé, cobre o quadro por um instante e sobe
-   de novo revelando a prancha. Nenhum ancestral de cena recebe transform ou
-   overflow, portanto a esteira termina sempre antes de ceder às peças. */
-.cortina-marcas {
-  --passagem: 1;
-  --sobe: clamp(0, calc(var(--passagem) / 0.45), 1);
-  --cede: clamp(0, calc((var(--passagem) - 0.45) / 0.55), 1);
-  position: fixed;
-  z-index: 22;
-  inset: 0;
-  pointer-events: none;
-  overflow: hidden;
-  background:
-    linear-gradient(90deg, transparent 0 11%, color-mix(in srgb, var(--br-marca) 38%, transparent) 11.05% 11.15%, transparent 11.2% 100%),
-    linear-gradient(180deg, color-mix(in srgb, #152b46 88%, #0c1421), #0c1421);
-  clip-path: inset(calc((1 - var(--sobe)) * 100%) 0 calc(var(--cede) * 100%) 0);
-  will-change: clip-path;
+.passagem-casa-marcas > .cap--casa {
+  position: relative;
+  z-index: 0;
+  padding-bottom: calc(clamp(96px, 16vh, 200px) + var(--marcas-sobrepoe));
 }
-.cortina-marcas::before {
-  content: "";
-  position: absolute;
-  inset: 0;
-  opacity: 0.42;
-  background-image:
-    linear-gradient(90deg, color-mix(in srgb, var(--br-luz) 9%, transparent) 1px, transparent 1px),
-    linear-gradient(color-mix(in srgb, var(--br-luz) 7%, transparent) 1px, transparent 1px);
-  background-size: 88px 88px;
-  mask-image: linear-gradient(90deg, transparent, #000 24%, #000 76%, transparent);
-}
-.cortina-marcas__conteudo {
-  position: absolute;
-  top: clamp(28px, 22vh, 220px);
-  left: var(--br-goteira);
-  width: min(62vw, 820px);
-  display: grid;
-  gap: clamp(14px, 2.2vh, 26px);
-  opacity: clamp(0, calc(var(--sobe) * 1.6), 1);
-  translate: 0 calc((1 - var(--sobe)) * 32px);
-  transition: opacity 120ms linear, translate 120ms ease-out;
-}
-.cortina-marcas__conteudo span {
-  color: var(--br-luz);
-  font-size: 0.68rem;
-  font-weight: 700;
-  letter-spacing: 0.22em;
-  text-transform: uppercase;
-}
-.cortina-marcas__conteudo strong {
-  max-width: 12ch;
-  color: var(--br-luz);
-  font-size: clamp(2.4rem, 6.5vw, 7rem);
-  line-height: 0.92;
-  letter-spacing: -0.045em;
-  text-transform: uppercase;
-}
-.cortina-marcas__conteudo em {
-  color: color-mix(in srgb, var(--br-luz) 62%, transparent);
-  font-size: clamp(0.9rem, 1.4vw, 1.2rem);
-  font-style: normal;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-}
-.cortina-marcas i {
-  position: absolute;
-  right: clamp(28px, 8vw, 120px);
-  bottom: clamp(40px, 9vh, 108px);
-  width: min(23vw, 360px);
-  height: 1px;
-  background: var(--br-marca);
-  transform-origin: right;
-  scale: calc(0.2 + var(--sobe) * 0.8);
+.passagem-casa-marcas > .cap--marcas {
+  position: relative;
+  z-index: 2;
+  margin-top: calc(-1 * var(--marcas-sobrepoe));
+  padding-top: 0;
+  overflow: visible;
+  clip-path: none;
+  border-radius: clamp(20px, 3vw, 46px) clamp(20px, 3vw, 46px) 0 0;
+  box-shadow: 0 -1px 0 color-mix(in srgb, var(--br-luz) 18%, transparent);
+  transform: none;
 }
 @media (min-width: 901px) {
-  .passagem-casa-marcas > .cap--casa {
-    /* A Casa não pode ficar presa enquanto Marcas entra: o sticky mantinha
-       seu retrato na viewport e criava uma sobreposição mesmo sem margem
-       negativa. A cortina faz a troca sem prolongar o capítulo anterior. */
-    position: relative;
-    z-index: 0;
-  }
-  .passagem-casa-marcas > .cap--marcas {
-    z-index: 1;
-    clip-path: none;
-    margin-top: 0;
-  }
+  .passagem-casa-marcas { --marcas-sobrepoe: 32vh; }
   .passagem-casa-marcas > .cap--marcas::before {
     top: 0;
     right: 0;
@@ -2756,20 +2682,11 @@ body.is-abrindo .cursor-ring {
 }
 
 @media (max-width: 900px) {
-  .cortina-marcas {
-    display: none;
-  }
-  .passagem-casa-marcas > .cap--casa {
-    position: relative;
-  }
   .passagem-casa-marcas > .cap--marcas {
     translate: none;
   }
 }
 @media (prefers-reduced-motion: reduce) {
-  .cortina-marcas {
-    display: none;
-  }
   [data-revela] {
     --revela: 1 !important;
     opacity: 1 !important;

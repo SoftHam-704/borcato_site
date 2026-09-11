@@ -48,3 +48,14 @@ quadros vazios, costuras, manchetes duplicadas ou capítulos simultâneos.
 | S36-11 | passa | volta medida de `--cap-entra=0.859795` para `0.214634`, com rota em 1 |
 | S36-12 | passa por contrato | abertura some e Hero recebe estado final explícito; nenhum recorte permanece em O Nome |
 | S36-13 | parcial | 375/1440 sem overflow; `tsc`, build e `diff --check` passam |
+
+## Estado após P36-B
+
+| Critério | Estado | Evidência |
+|---|---|---|
+| S36-04 | passa | Marcas começa 96–110 px depois do fim do conteúdo da Casa e sobrepõe somente a reserva equivalente |
+| S36-05 | passa | a cortina duplicada foi removida do DOM e do código; a entrada carrega a própria `.esteira__cabeca` |
+| S36-06 | passa | em 1440, `--esteira-x=0` nos primeiros 18vh; o primeiro card já está visível antes do movimento |
+| S36-11 | passa no piloto | na volta de 200 px para 100 px após o pino, `--esteira-t` retorna de 0,0283 para 0 sem salto |
+| S36-12 | passa por contrato | em movimento reduzido a esteira continua livre e a passagem usa somente fluxo e sobreposição equivalente |
+| S36-13 | passa no piloto | 375/1440 sem overflow positivo ou erro de console; `tsc`, build e `diff --check` passam |
