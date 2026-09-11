@@ -2,7 +2,7 @@
 
 ## Estado
 
-**AGUARDANDO GATE HUMANO. Nenhuma implementação foi autorizada nesta rodada.**
+**P36-A EXECUTADO. AGUARDANDO G36-A PARA INICIAR P36-B.**
 
 Este pacote transforma a auditoria visual de 10/09/2026 em uma recuperação curta,
 mensurável e reversível. O objetivo imediato é deixar o site seguro para uma
@@ -44,6 +44,6 @@ reabrir mapa, copy, conteúdo comercial ou a composição final do Hero.
 
 ## Dono da decisão
 
-O dono do projeto aprova D-36 e o cliente valida a apresentação final. O executor
+O dono do projeto aprovou D-36/A em 10/09/2026. O primeiro piloto foi executado;
+o dono precisa avaliar sua composição antes de liberar Casa → Marcas. O executor
 não pode ampliar o escopo durante os pilotos.
-

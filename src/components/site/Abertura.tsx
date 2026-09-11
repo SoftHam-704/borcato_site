@@ -110,10 +110,20 @@ export function Abertura() {
       relogios.current = [];
     }
     setSaindo(true);
-    // A borda móvel começa pelo lado do retrato. O hero recebe a entrada depois
-    // que essa janela já existe; disparar no primeiro frame faria a manchete se
-    // animar escondida atrás da cortina.
-    window.dispatchEvent(new CustomEvent("hmb:abriu"));
+    // A borda móvel abre primeiro e o Hero só começa a se montar quando já há
+    // quadro suficiente para lê-lo. No mobile isto evita preloader, retrato e
+    // manchete concorrendo dentro de uma fresta estreita. Pular continua sendo
+    // imediato: quem pediu o corte não deve esperar outra coreografia.
+    if (cortando) {
+      window.dispatchEvent(new CustomEvent("hmb:abriu"));
+    } else {
+      relogios.current.push(
+        window.setTimeout(
+          () => window.dispatchEvent(new CustomEvent("hmb:abriu")),
+          620,
+        ),
+      );
+    }
     // O hero já começou a assentar atrás da cortina; o descarte acontece ao fim
     // do mesmo gesto, sem uma segunda espera.
     relogios.current.push(

@@ -35,3 +35,16 @@ quadros vazios, costuras, manchetes duplicadas ou capítulos simultâneos.
 - Não considerar uma captura isolada como aprovação de movimento.
 - Não gastar mais de duas tentativas por piloto.
 
+## Estado após P36-A
+
+| Critério | Estado | Evidência |
+|---|---|---|
+| S36-01 | passa | abertura móvel usa lâmina horizontal de largura total; cinco quadros sem fresta vertical |
+| S36-02 | passa | `PAUSA_APOS_2026` permanece em 2.000 ms e a marca aparece no primeiro quadro |
+| S36-03 | passa no escopo | a máscara não corta Hero ao ser removida; composição interna permanece para a fase de navegação |
+| S36-07 | passa | `--rota=1.0000` antes de O Nome entrar |
+| S36-08 | passa | nenhuma faixa preta estrutural em 375 ou 1440 nas tiras observadas |
+| S36-09 | passa | rótulo e H.M. viajam na própria superfície azul |
+| S36-11 | passa | volta medida de `--cap-entra=0.859795` para `0.214634`, com rota em 1 |
+| S36-12 | passa por contrato | abertura some e Hero recebe estado final explícito; nenhum recorte permanece em O Nome |
+| S36-13 | parcial | 375/1440 sem overflow; `tsc`, build e `diff --check` passam |

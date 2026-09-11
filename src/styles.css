@@ -1930,6 +1930,28 @@ body.is-abrindo {
   transition: clip-path 1.65s cubic-bezier(0.22, 1, 0.36, 1);
 }
 
+/* Mesmo no primeiro instante existe autoria. Antes, durante 160–300 ms, a tela
+   era apenas preta com o botão Pular e podia ser confundida com carregamento. */
+.abertura::before {
+  content: "H.M. BORÇATO";
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  color: var(--br-luz);
+  font-family: var(--font-display), sans-serif;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.26em;
+  opacity: 0.24;
+  translate: -50% -50%;
+  transition: opacity 180ms ease;
+}
+.abertura.fase-nome::before,
+.abertura.fase-abrindo::before,
+.abertura.is-saindo::before {
+  opacity: 0;
+}
+
 /* O cursor nasce no centro. Durante a abertura ele parecia um spinner de
    carregamento e roubava a primeira impressão; volta quando a cena termina. */
 body.is-abrindo .cursor-dot,
@@ -2012,6 +2034,18 @@ body.is-abrindo .cursor-ring {
   /* O retrato mora à direita: a cortina recua a partir dele. A borda arredondada
      atravessa a tela como continuação da cápsula, e entrega a pessoa antes da copy. */
   clip-path: inset(0 100% 0 0 round 0 clamp(120px, 18vw, 280px) clamp(120px, 18vw, 280px) 0);
+}
+
+/* D-36 · em telas estreitas a cápsula lateral virava uma fresta vertical e
+   misturava as duas cenas. Aqui a porta mantém a largura inteira e sobe como
+   um painel: há uma única borda, um único quadro e nenhum conteúdo espremido. */
+@media (max-width: 900px) {
+  .abertura {
+    clip-path: inset(0 0 0 0);
+  }
+  .abertura.is-saindo {
+    clip-path: inset(0 0 100% 0);
+  }
 }
 .abertura__nome::after {
   content: "";
@@ -2148,17 +2182,15 @@ body.is-abrindo .cursor-ring {
      o espaco se abre devagar para o H.M. — peso para a homenagem antes do
      contato. */
   --rev-lento: clamp(0, calc(var(--cap-entra, 1) / 0.92), 1);
-  /* O CHAO NAO SE RECORTA — so o conteudo. Com a secao inteira no clip-path,
-     a abertura lenta expunha por dois quadros o fundo da raiz (#0a0a0c) atras
-     do capitulo: uma FAIXA PRETA entre o azul do 03 e o do 04. Agora o chao
-     do 04 continua o do 03 (a costura ::after faz a passagem de cor) e o que
-     se abre do centro e o conteudo, nomeado peca a peca. */
+  /* A própria seção é o painel que sobe sobre a área final da Estrada. Não há
+     pseudochão móvel: ele criava um intervalo entre superfície, conteúdo e
+     fluxo e foi a origem da faixa preta observada no navegador. */
   clip-path: none;
 }
 .cap--nome > .cap__num,
 .cap--nome > .nome,
 .cap--nome > .fecho {
-  clip-path: inset(0 calc((1 - var(--rev-lento)) * 50%) 0 calc((1 - var(--rev-lento)) * 50%));
+  clip-path: none;
 }
 
 /* A costura entre capítulos: uma linha fina de luz na borda que está sendo
@@ -2543,6 +2575,9 @@ body.is-abrindo .cursor-ring {
   --br-chao: #0f1f34;
   --br-superficie: #182c46;
   background: var(--br-chao);
+  /* A área final segura a conclusão antes de o próximo painel começar a
+     cobri-la. A margem equivalente em O Nome conserva o comprimento total. */
+  padding-bottom: calc(clamp(96px, 16vh, 200px) + 32vh);
 }
 
 /* 04 · O NOME — a revelação, o ponto mais claro da travessia */
@@ -2550,6 +2585,13 @@ body.is-abrindo .cursor-ring {
   /* o mais claro: #8a8fa3 sobre #122a44 da 4,59:1, acima do minimo (medido) */
   --br-chao: #122a44;
   --br-superficie: #1d3a5c;
+  position: relative;
+  z-index: 2;
+  margin-top: -32vh;
+  background: var(--br-chao);
+  border-radius: clamp(22px, 3vw, 48px) clamp(22px, 3vw, 48px) 0 0;
+  box-shadow: 0 -1px 0 color-mix(in srgb, var(--br-luz) 18%, transparent);
+  transform: none;
 }
 
 /* a barra de marcas acompanha o capítulo que ela introduz */
@@ -2566,8 +2608,7 @@ body.is-abrindo .cursor-ring {
    para o seu, ao longo de ~180px. É a mesma solução da barra de marcas: quando
    duas superfícies se encontram, quem resolve é o degradê, não a transição. */
 .cap--marcas::after,
-.cap--estrada::after,
-.cap--nome::after {
+.cap--estrada::after {
   content: "";
   position: absolute;
   z-index: 0;
@@ -2583,21 +2624,6 @@ body.is-abrindo .cursor-ring {
 .cap--estrada::after {
   background: linear-gradient(to bottom, #0c1421, transparent);
 }
-.cap--nome::after {
-  /* sobe 72px além da borda móvel para cobrir a costura física entre os
-     capítulos; o painel continua obedecendo ao mesmo progresso. */
-  top: calc((1 - var(--rev-lento, 0)) * 100vh - 72px);
-  height: calc(110vh + 72px);
-  background:
-    radial-gradient(
-      ellipse 80% 60% at 50% 34%,
-      color-mix(in srgb, var(--br-marca) 18%, transparent),
-      transparent 70%
-    ),
-    var(--br-chao);
-  z-index: 0;
-}
-
 /* D-34 · CASA → MARCAS
    A passagem precisa respeitar o último quadro da Casa. A sobreposição de
    58vh fazia Marcas nascer enquanto o título e o retrato ainda estavam na

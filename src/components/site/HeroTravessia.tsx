@@ -48,8 +48,21 @@ export function HeroTravessia() {
     const secao = capsulaRef.current?.closest<HTMLElement>(".hero-tr");
     if (!secao) return;
     const pronta = () => secao.classList.add("is-pronta");
+    // Sem movimento não há cortina para entregar o evento. O estado final
+    // precisa existir no primeiro quadro, inclusive se a ordem dos effects
+    // fizer a Abertura desmontar antes de este listener ser registrado.
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+      pronta();
+      return;
+    }
     window.addEventListener("hmb:abriu", pronta, { once: true });
-    const fallback = window.setTimeout(pronta, 2500);
+    // O fallback não pode disparar por baixo da abertura. Depois que a pausa de
+    // 2 s após 2026 entrou, 2,5 s passou a ser anterior à entrega real e o Hero
+    // chegava pronto antes de ser revelado. Se a abertura ainda existe, o evento
+    // dela continua sendo a única fonte de verdade.
+    const fallback = window.setTimeout(() => {
+      if (!document.body.classList.contains("is-abrindo")) pronta();
+    }, 2500);
     return () => {
       window.removeEventListener("hmb:abriu", pronta);
       window.clearTimeout(fallback);
