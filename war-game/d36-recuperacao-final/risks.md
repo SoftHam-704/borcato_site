@@ -24,3 +24,10 @@
 - **Unknown unknown:** um ajuste de altura pode mudar o curso de todos os cálculos por
   `getBoundingClientRect`; por isso cada piloto deve congelar e comparar a geometria.
 
+## Situação no encerramento
+
+- R36-01 a R36-06 e R36-09 a R36-10: mitigados pelos pilotos e pela auditoria final.
+- R36-07: reduzido; P36-B removeu 125 linhas líquidas e a cortina concorrente.
+- R36-08: mitigado; nenhum item criativo, logo, copy ou biblioteca entrou no ciclo.
+- Permanência conhecida: a convenção CRLF do repositório conflita com a regra
+  Prettier do ESLint. Resolver isso exige uma rodada de formatação isolada.

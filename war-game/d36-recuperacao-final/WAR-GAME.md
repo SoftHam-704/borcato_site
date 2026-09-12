@@ -103,12 +103,10 @@ Mudanças de altura afetam cálculos por posição. Cada piloto precisa de commi
 sem misturar formatação. Se um piloto falhar duas vezes, reverter o commit inteiro e
 aplicar a opção C somente naquela fronteira. O restante do site continua demonstrável.
 
-## Próxima decisão humana
+## Encerramento
 
-**Aprovar D-36 na opção A** autoriza apenas Fase 1 e P36-A. G36-A continua fechado.
+D-36/A, G36-A e G36-B foram aprovados. P36-A, P36-B e a Fase 4 foram executados
+e auditados. O resultado está registrado em `outputs/fases/f4-auditoria-final.md`.
 
-Comando para o executor após aprovação:
-
-> Leia todo `war-game/d36-recuperacao-final`. Execute somente Fase 1 e P36-A.
-> Registre tiras em 375 e 1440, atualize ledger/riscos/resultado e pare no G36-A.
-
+Não há gate pendente dentro de D-36. Publicação, logos vetoriais e qualquer nova
+direção criativa exigem uma decisão separada, com esta versão preservada como base.

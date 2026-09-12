@@ -10,7 +10,8 @@
 | D-35 | executada | adicionar texto à cortina vazia | `d35-painel-com-conteudo/README.md` | resolveu o vazio, criou repetição editorial |
 | D-36 | opção A aprovada | estabilização dirigida | aprovação do dono em 10/09/2026 | P36-A e P36-B executados |
 | G36-A | aprovado | aceitar P36-A e iniciar P36-B | “vamos prosseguir parceiro” em 11/09/2026 | liberou Casa → Marcas |
-| G36-B | pendente | aceitar ou reprovar P36-B | `outputs/pilotos/p36-b-resultado.md` | bloqueia qualquer nova intervenção |
+| G36-B | aprovado | aceitar P36-B e liberar auditoria final | aprovação explícita do dono em 12/09/2026 | liberou Fase 4 |
+| A36-F | aprovada | encerrar a recuperação como candidato apresentável | `outputs/fases/f4-auditoria-final.md` | D-36 concluída sem publicação |
 
 ## Fatos observados em 10/09/2026
 
@@ -28,6 +29,11 @@
 | F36-10 | O documento medido tem 8.918 px em 1280 × 720 e nenhum overflow horizontal no fim. | inspeção DOM |
 | F36-11 | Build de produção e `tsc --noEmit` passam. | execução local em 10/09/2026 |
 | F36-12 | `styles.css` tem 3.984 linhas e 78 regras iniciadas pelos seletores das cenas auditadas. | contagem local |
+| F36-13 | Há exatamente um `aria-current` em todas as quatro fronteiras; a troca ocorre quando a seção entrante cruza a faixa central. | amostragem em 1440 × 900 |
+| F36-14 | A rota mede 0 → 0,2502 → 0,5006 → 0,9999 → 1 no desktop e retorna a 0 na volta. | amostragem do `--rota` em 1440 × 900 |
+| F36-15 | As cinco larguras de gate não apresentam overflow positivo. | 375, 768, 1024, 1440 e 1920 |
+| F36-16 | 19 imagens carregaram, sem ativo quebrado, link vazio, ID duplicado, erro ou aviso de console. | inspeção integral no navegador local |
+| F36-17 | O lint histórico falha por CRLF/Prettier em massa; fora da formatação há 10 avisos de Fast Refresh e um `no-empty`. | ESLint agrupado por regra em 12/09/2026 |
 
 ## Informações ausentes
 

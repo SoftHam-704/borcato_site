@@ -59,3 +59,20 @@ quadros vazios, costuras, manchetes duplicadas ou capítulos simultâneos.
 | S36-11 | passa no piloto | na volta de 200 px para 100 px após o pino, `--esteira-t` retorna de 0,0283 para 0 sem salto |
 | S36-12 | passa por contrato | em movimento reduzido a esteira continua livre e a passagem usa somente fluxo e sobreposição equivalente |
 | S36-13 | passa no piloto | 375/1440 sem overflow positivo ou erro de console; `tsc`, build e `diff --check` passam |
+
+## Encerramento da auditoria final
+
+| Critério | Estado final | Evidência |
+|---|---|---|
+| S36-01–03 | passa | cronologia móvel confirma 2026 assentado, pausa preservada, lâmina integral e Hero final completo |
+| S36-04–06 | passa | G36-B aprovado pelo dono; painel real e repouso de 18vh confirmados |
+| S36-07 | passa | rota monotônica em desktop e mobile, completa antes de O Nome e recompõe na volta |
+| S36-08–09 | passa | O Nome fornece a própria superfície e já leva rótulo/H.M. durante a cobertura |
+| S36-10 | passa | exatamente um capítulo ativo em cada uma das seis amostras de fronteira |
+| S36-11 | passa | esteira e rota retornam aos valores anteriores na rolagem reversa |
+| S36-12 | passa por contrato | todos os componentes críticos têm estado final explícito; nenhum relógio móvel é exigido |
+| S36-13 | passa | cinco larguras sem overflow; ativos, console, TypeScript, build e `diff --check` limpos |
+
+O ESLint global não integra o gate de S36-13: ele já falhava por incompatibilidade
+histórica entre CRLF e Prettier. A dívida está registrada em F36-17 e não foi
+misturada à recuperação visual.
