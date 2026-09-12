@@ -9,6 +9,10 @@ tinha um único capítulo ativo, porém era o capítulo errado enquanto a quinta
 peça ainda dominava o quadro. A sincronização e o refresh no topo foram
 corrigidos e medidos em `outputs/fases/f5-errata-sincronia-e-refresh.md`.
 
+**CALIBRAÇÃO PÓS-AUDITORIA:** a rolagem do palco foi ampliada de cerca de 71 px
+para 223 px úteis por ato, eliminando o salto de quase três peças por gesto.
+A medição está em `outputs/fases/f6-calibracao-palco.md`.
+
 Este pacote transforma a auditoria visual de 10/09/2026 em uma recuperação curta,
 mensurável e reversível. O objetivo imediato é deixar o site seguro para uma
 apresentação ao cliente. A ambição de prêmio continua como direção de qualidade,

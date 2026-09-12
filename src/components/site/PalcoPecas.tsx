@@ -70,19 +70,21 @@ export function PalcoPecas({ abre }: { abre?: ReactNode }) {
         // inteira, e a passagem tem trecho próprio depois delas.
         // A PISTA EM PROPORÇÃO, não em trechos iguais.
         //
-        // São seis trechos de 22vh (a abertura + cinco categorias) MAIS a passagem,
-        // que vale 34vh — ela precisa de mais rolagem que uma troca de peça,
+        // São seis trechos iguais (a abertura + cinco categorias) MAIS a passagem,
+        // que tem peso próprio — ela precisa de mais rolagem que uma troca de peça,
         // porque nela acontecem três estados (VP inteira → VP e mapa juntos →
         // mapa assumindo).
         //
         // Antes eu dividia a pista em 13 fatias IGUAIS enquanto o CSS
         // reservava 12: a passagem ficava sem altura própria e durava ~110px.
         // Aqui as duas contas nascem da mesma proporção.
-        const IGUAIS = CATEGORIAS.length + 1; // abertura + 5 categorias, 22vh cada
-        // 50/22: a passagem vale 2,27 trechos. O 50 vem de medição — com 34
-        // ela corria em 210px porque a pista útil é `altura − 100vh`. Este
-        // número e o `+ 50vh` do CSS têm de andar juntos.
-        const PESO_PASSAGEM = 50 / 22;
+        const IGUAIS = CATEGORIAS.length + 1;
+        // O CSS é a fonte única das duas medidas. Assim a altura visual e este
+        // relógio não voltam a divergir quando a sensibilidade for calibrada.
+        const estilos = getComputedStyle(palco);
+        const pesoIgual = parseFloat(estilos.getPropertyValue("--palco-trecho")) || 45;
+        const pesoPassagem = parseFloat(estilos.getPropertyValue("--palco-passagem")) || 50;
+        const PESO_PASSAGEM = pesoPassagem / pesoIgual;
         const TOTAL = IGUAIS + PESO_PASSAGEM;
         const trecho = t * 0.999 * TOTAL;
         const abre = Math.min(1, Math.max(0, trecho));
