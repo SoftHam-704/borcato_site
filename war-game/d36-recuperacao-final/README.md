@@ -4,6 +4,11 @@
 
 **D-36 ENCERRADA. G36-A E G36-B APROVADOS; AUDITORIA FINAL APROVADA.**
 
+**ERRATA PÓS-AUDITORIA:** a captura do dono revelou que a passagem 02 → 03
+tinha um único capítulo ativo, porém era o capítulo errado enquanto a quinta
+peça ainda dominava o quadro. A sincronização e o refresh no topo foram
+corrigidos e medidos em `outputs/fases/f5-errata-sincronia-e-refresh.md`.
+
 Este pacote transforma a auditoria visual de 10/09/2026 em uma recuperação curta,
 mensurável e reversível. O objetivo imediato é deixar o site seguro para uma
 apresentação ao cliente. A ambição de prêmio continua como direção de qualidade,

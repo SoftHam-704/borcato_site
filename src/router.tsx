@@ -8,7 +8,9 @@ export const getRouter = () => {
   const router = createRouter({
     routeTree,
     context: { queryClient },
-    scrollRestoration: true,
+    // Esta experiência sempre reabre pela abertura e pelo Hero. Restaurar a
+    // posição anterior no reload faria a cortina terminar no meio da história.
+    scrollRestoration: false,
     defaultPreloadStaleTime: 0,
   });
 

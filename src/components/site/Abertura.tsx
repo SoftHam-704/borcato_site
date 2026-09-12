@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useLayoutEffect, useRef, useState } from "react";
 
 import { anosDeEstrada, INICIO } from "@/lib/dados";
 
@@ -87,6 +87,21 @@ export function Abertura() {
   const [fase, setFase] = useState<"escuro" | "luz" | "nome" | "abrindo">("escuro");
   const relogios = useRef<number[]>([]);
   const encerrando = useRef(false);
+
+  // A abertura roda sempre, portanto precisa começar sempre no mesmo quadro.
+  // Em um reload o navegador costuma restaurar a posição anterior antes de o
+  // React montar; o preloader ficava correto, mas entregava o visitante no meio
+  // da página. O reset acontece antes da pintura e antes de o Lenis capturar a
+  // posição inicial.
+  useLayoutEffect(() => {
+    const restauracaoAnterior = window.history.scrollRestoration;
+    window.history.scrollRestoration = "manual";
+    window.scrollTo({ top: 0, left: 0, behavior: "instant" });
+
+    return () => {
+      window.history.scrollRestoration = restauracaoAnterior;
+    };
+  }, []);
 
   // DOIS CAMINHOS, não um.
   //

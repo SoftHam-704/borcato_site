@@ -10,9 +10,11 @@ import { useEffect, useRef, useState } from "react";
 // Aqui os quatro capítulos SÃO a história do Fábio, na ordem em que ela convence:
 // quem é → o que carrega → até onde vai → por que se chama assim.
 //
-// O rótulo do capítulo ativo é escrito por IntersectionObserver, e aqui ele SERVE:
-// diferente do leque da SoftHam (onde o elemento vive dentro de palco preso e o
-// observer disparava cedo demais), estas seções estão em fluxo normal de documento.
+// A passagem 02 -> 03 é a exceção ao fluxo normal: o capítulo 03 começa 60vh antes
+// para cobrir o palco das peças. Por isso a navegação não pode olhar apenas a caixa
+// da seção. Ela troca de capítulo quando a entrega visual realmente muda de dono.
+const ENTREGA_COMECA_ESTRADA = 0.38;
+const ENTREGA_ESTRADA_DOMINANTE = 0.64;
 export const CAPITULOS = [
   { id: "cap-casa", destino: "cap-casa", num: "01", rotulo: "A casa" },
   { id: "cap-marcas", destino: "marcas-inicio", num: "02", rotulo: "As marcas" },
@@ -25,25 +27,49 @@ export function NavCapitulos() {
   const marcado = useRef<string>(CAPITULOS[0].id);
 
   useEffect(() => {
-    const alvos = CAPITULOS.map((c) => document.getElementById(c.id)).filter(
-      (el): el is HTMLElement => Boolean(el)
-    );
-    if (!alvos.length) return;
+    const casa = document.getElementById("cap-casa");
+    const marcas = document.getElementById("cap-marcas");
+    const nome = document.getElementById("cap-nome");
+    if (!casa || !marcas || !nome) return;
 
-    const io = new IntersectionObserver(
-      (entradas) => {
-        // a seção que ocupa a faixa central da tela é a que manda
-        for (const e of entradas) {
-          if (e.isIntersecting && e.target.id !== marcado.current) {
-            marcado.current = e.target.id;
-            setAtivo(e.target.id);
-          }
+    let pedido = 0;
+    const marcar = (id: string) => {
+      if (id === marcado.current) return;
+      marcado.current = id;
+      setAtivo(id);
+    };
+    const medir = () => {
+      if (pedido) return;
+      pedido = window.requestAnimationFrame(() => {
+        pedido = 0;
+        const linhaDeTroca = window.innerHeight * 0.55;
+        const entrega = parseFloat(
+          getComputedStyle(document.documentElement).getPropertyValue("--entrega"),
+        ) || 0;
+
+        // O Nome volta ao critério geométrico porque já não divide palco com
+        // outro capítulo. Estrada usa o relógio da entrega: sua margem negativa
+        // cruza o centro cedo demais, enquanto a quinta peça ainda manda no quadro.
+        if (nome.getBoundingClientRect().top <= linhaDeTroca) {
+          marcar("cap-nome");
+        } else if (entrega >= ENTREGA_ESTRADA_DOMINANTE) {
+          marcar("cap-estrada");
+        } else if (marcas.getBoundingClientRect().top <= linhaDeTroca) {
+          marcar("cap-marcas");
+        } else {
+          marcar("cap-casa");
         }
-      },
-      { rootMargin: "-45% 0px -45% 0px" }
-    );
-    alvos.forEach((el) => io.observe(el));
-    return () => io.disconnect();
+      });
+    };
+
+    medir();
+    window.addEventListener("scroll", medir, { passive: true });
+    window.addEventListener("resize", medir);
+    return () => {
+      window.removeEventListener("scroll", medir);
+      window.removeEventListener("resize", medir);
+      if (pedido) cancelAnimationFrame(pedido);
+    };
   }, []);
 
   return (
@@ -122,17 +148,21 @@ export function Capitulo({ id, children, className }: CapituloProps) {
         // negativa no CSS) e pinta por cima dele. Se ele usasse a PROPRIA
         // medida aqui, ja estaria 53% revelado no instante em que a passagem
         // comeca — cobrindo o texto do palco antes da hora.
-        // Entao, enquanto a entrega corre (0 -> 1), e ELA que abre o capitulo:
-        // o clip-path, a opacidade e o deslocamento seguem o mesmo relogio que
-        // esmaece a peca. Zero = fechado, a peca intacta; um = aberto. Quando a
-        // entrega termina (>= 0,98), a medida propria assume — e ela ja passou
-        // de 0,65 a essa altura, entao nao ha salto.
+        // Entao, enquanto a entrega corre (0 -> 1), e ELA que abre o capitulo.
+        // A abertura começa em 0,38: antes disso a quinta peça ainda é o quadro,
+        // e revelar qualquer faixa do mapa cria exatamente a sobreposição errada
+        // vista na auditoria pós-D36. De 0,38 a 1 a nova cena cobre a anterior;
+        // existe coexistência, mas o capítulo 03 não nasce como rodapé fantasma.
         // Reversivel: ao voltar, a entrega cai e o capitulo fecha de novo.
         if (el.id === "cap-estrada") {
           const e = parseFloat(
             getComputedStyle(document.documentElement).getPropertyValue("--entrega"),
           ) || 0;
-          t = e >= 0.98 ? Math.max(t, 1) : e;
+          const passagem = Math.min(
+            1,
+            Math.max(0, (e - ENTREGA_COMECA_ESTRADA) / (1 - ENTREGA_COMECA_ESTRADA)),
+          );
+          t = e >= 0.98 ? Math.max(t, 1) : passagem;
         }
         el.style.setProperty("--cap-entra", String(Math.min(1, Math.max(0, t))));
       });
