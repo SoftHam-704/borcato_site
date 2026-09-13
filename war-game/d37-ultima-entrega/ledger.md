@@ -10,10 +10,10 @@
 | Copy e contatos | não aprovados pelo cliente | informação ausente no ledger D-36 | validar com Fábio |
 | Performance física | não medida | informação ausente | testar em aparelho real |
 | Lint/metadados | dívida conhecida | F36-17 | fechar em rodada técnica |
+| FotoViva | corrigida | `fotoviva.md`, validação no preview | manter cinco PNGs como fonte |
 
 ## Suposições que não podem virar fato silencioso
 
 - “Visualmente funcional” não significa “aprovado pelo cliente”.
 - SVG recebido pode ter proporção ou respiro incompatível; cada arquivo passa pelo mesmo contrato.
 - Uma captura bonita não prova uma transição estável; a prova é temporal, em ida e volta.
-

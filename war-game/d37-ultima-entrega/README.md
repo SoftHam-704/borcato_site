@@ -11,6 +11,7 @@ de código começa antes do gate do dono.
 Hero, abertura com pausa de 2 s, costuras Casa → Marcas e Peças → Estrada,
 mapa, fecho frontal e rolagem do palco de peças estão funcionais. TypeScript,
 build e `git diff --check` passam. A última correção está no commit `a55ccc0`.
+O scrub da FotoViva foi suavizado e está registrado em `fotoviva.md`.
 
 ## Decisão recomendada
 
@@ -22,4 +23,3 @@ a uma passagem crítica por item, com reversão imediata se uma cena aprovada re
 
 O dono deve aprovar a lista e a ordem. Sem essa aprovação, o executor apenas
 inspeciona e atualiza as evidências.
-

@@ -11,10 +11,10 @@ import f4 from "@/assets/site/frames/4.avif";
 // É a diferença entre um retrato e uma presença: ele começa olhando para quem
 // chegou e vai virando para a estrada. O gesto é literalmente o assunto do site.
 //
-// SEQUÊNCIA DE FRAMES, não vídeo. A skill de produção da casa registra que o
-// scrub de frames em canvas é "a versão superior do scrub de vídeo — mais suave
-// e confiável entre navegadores". Vídeo tem `currentTime` que engasga e pede
-// codec por navegador; canvas desenha o quadro que eu mandar.
+// SEQUÊNCIA DE FRAMES, não vídeo. Vídeo tem `currentTime` que engasga e pede
+// codec por navegador; canvas mantém o gesto sob nosso controle. Como são só
+// cinco quadros, a troca precisa ser interpolada visualmente para não virar um
+// flip-book.
 //
 // Os 5 quadros foram gerados a partir da foto real do Fábio e VALIDADOS: a
 // cabeça muda entre 8,6 e 13,9 de diferença média enquanto o corpo fica em ~6
@@ -26,6 +26,7 @@ export function FotoViva() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const imgsRef = useRef<HTMLImageElement[]>([]);
   const atualRef = useRef(-1);
+  const progressoRef = useRef(0);
 
   useEffect(() => {
     const canvas = canvasRef.current;
@@ -36,16 +37,42 @@ export function FotoViva() {
     let vivo = true;
     let pedido = 0;
 
-    /** Desenha o quadro n, cobrindo o canvas (object-fit: cover na mão). */
-    const desenhar = (n: number) => {
-      const img = imgsRef.current[n];
-      if (!img?.complete || !img.naturalWidth) return;
+    /** Dimensões para cobrir o canvas (object-fit: cover na mão). */
+    const dimensoes = (img: HTMLImageElement) => {
       const cw = canvas.width;
       const ch = canvas.height;
       const escala = Math.max(cw / img.naturalWidth, ch / img.naturalHeight);
       const w = img.naturalWidth * escala;
       const h = img.naturalHeight * escala;
-      ctx.drawImage(img, (cw - w) / 2, (ch - h) / 2, w, h);
+      return { x: (cw - w) / 2, y: (ch - h) / 2, w, h };
+    };
+
+    /** Desenha um quadro com alpha e um blur mínimo no ponto médio da troca. */
+    const pintar = (img: HTMLImageElement, alpha: number, blur: number) => {
+      const { x, y, w, h } = dimensoes(img);
+      ctx.save();
+      ctx.globalAlpha = alpha;
+      ctx.filter = blur > 0 ? `blur(${blur}px)` : "none";
+      ctx.drawImage(img, x, y, w, h);
+      ctx.restore();
+    };
+
+    /** Interpola os quadros vizinhos, cobrindo o canvas (object-fit: cover). */
+    const desenhar = (t: number) => {
+      const posicao = Math.min(QUADROS.length - 1, Math.max(0, t * (QUADROS.length - 1)));
+      const n = Math.floor(posicao);
+      const frac = posicao - n;
+      const atual = imgsRef.current[n];
+      const proximo = imgsRef.current[Math.min(QUADROS.length - 1, n + 1)];
+      if (!atual?.complete || !atual.naturalWidth) return;
+
+      // Acelera no meio e alivia a sensação de régua no começo e no fim.
+      const blur = Math.sin(frac * Math.PI) * 0.7;
+      pintar(atual, 1, blur);
+      if (frac > 0 && proximo?.complete && proximo.naturalWidth) {
+        pintar(proximo, frac, blur);
+      }
+      progressoRef.current = t;
       atualRef.current = n;
     };
 
@@ -59,9 +86,9 @@ export function FotoViva() {
         canvas.width = larg;
         canvas.height = alt;
         // redimensionar limpa o canvas: repinta o quadro que estava
-        const n = atualRef.current;
+        const progresso = progressoRef.current;
         atualRef.current = -1;
-        desenhar(n < 0 ? 0 : n);
+        desenhar(progresso);
       }
     };
 
@@ -74,9 +101,11 @@ export function FotoViva() {
         const vh = window.innerHeight;
         // a virada acontece na PRIMEIRA tela: começa de frente e, quando o hero
         // saiu de cena, ele já está olhando a estrada
-        const t = Math.min(1, Math.max(0, window.scrollY / (vh * 0.85)));
-        const n = Math.min(QUADROS.length - 1, Math.round(t * (QUADROS.length - 1)));
-        if (n !== atualRef.current) desenhar(n);
+        const bruto = Math.min(1, Math.max(0, window.scrollY / (vh * 0.85)));
+        const t = bruto < 0.5
+          ? 2 * bruto * bruto
+          : 1 - Math.pow(-2 * bruto + 2, 2) / 2;
+        desenhar(t);
       });
     };
 
