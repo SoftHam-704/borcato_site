@@ -11,3 +11,7 @@ Thumbs.db
 !.env.example
 *.mp4
 
+
+# Saida do portao de vistoria (capturas) e memoria de ferramenta de terceiro
+ferramentas/vistoria/
+.workbuddy-ai/
