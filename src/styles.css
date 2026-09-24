@@ -2066,8 +2066,38 @@ body.is-abrindo {
      direita. As duas cenas no mesmo quadro.
      Seis tentativas de `translate` no mapa falharam antes disto: o alvo
      estava a 1900px e o capitulo inteiro recortado. Nao se empurra um
-     elemento para dentro de uma caixa invisivel — abre-se a caixa. */
-  margin-top: -60vh;
+     elemento para dentro de uma caixa invisivel — abre-se a caixa.
+     L1 (parecer de juri 24/09, achado J1): MEDIDO no build, entre o instante
+     em que `--entrega` satura (~0,99, a peca some) e o instante em que esta
+     secao alcanca o topo da viewport e `.estrada__cena` trava no sticky, ha
+     um trecho de rolagem (a 1440x900: y=7110 a y=7190, ~80px) em que a peca
+     ja sumiu, o mapa mostra so 10-25% de altura (a franja do topo do
+     `.estrada__cena` ainda entrando pelo fluxo normal) e nenhum texto do
+     capitulo esta legivel — o quadro citado no parecer.
+     -70vh (mais 9vh que antes) cobre esse trecho morto no DESKTOP: a secao
+     chega mais cedo ao topo da viewport, entao o sticky trava antes do vazio
+     acontecer.
+     NAO mexe na pista do palco (uma peca por gesto, 45vh por ato) nem no
+     relogio do mapa — so ENCURTA quanto a estrada demora a entrar. */
+  margin-top: -70vh;
+}
+
+@media (max-width: 900px) {
+  /* L1 (24/09), achado no MOBILE: o mesmo vazio existia a 375x812 mesmo antes
+     desta rodada (confirmado no baseline, sem nenhuma mudanca minha) — so nao
+     estava coberto pela spec original, que so falava do y=7250 a 1440px.
+     MEDIDO: em y=5000, a peca do palco (opacity efetiva 0, ja apagada) ainda
+     ocupa a tela inteira via sticky porque a pista do palco (altura em vh)
+     ainda nao terminou fisicamente ali, e a Estrada so bate o topo da
+     viewport ~400px de scroll DEPOIS — sem `--mapa-sobe` no mobile (essa
+     mecanica e so >=901px), nao ha o que preencher esse intervalo.
+     -70vh nao bastava aqui: a proporcao da pista do palco (calculada em vh)
+     contra a altura menor do celular deixa uma folga maior para cobrir.
+     -120vh fecha o intervalo medido sem tocar na pista do palco nem no
+     relogio do mapa — so antecipa quando a Estrada alcanca o topo. */
+  .cap--estrada {
+    margin-top: -120vh;
+  }
 }
 
 /* 04 · O NOME — do centro para as bordas: a revelação se abre */
