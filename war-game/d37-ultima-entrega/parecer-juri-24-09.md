@@ -72,3 +72,35 @@ segunda cai como consequência do L1.
 
 Copy e contatos aprovados pelo Fábio · logotipos oficiais em SVG · teste em aparelho real ·
 publicação (o domínio `hmborcato.com.br` ainda serve o site antigo).
+
+## Revisão do parecer pela pesquisa de nicho (Outlier, 24/09)
+
+Fonte: `pesquisa/outlier-representacao-autopecas.{html,md}` — 36 sites abertos, 22 escritórios
+de representação de autopeças com site próprio, 10 vencedores + 3 de contraste. Amostra pequena
+(cada site vale 10 pontos percentuais): indica tendência, não lei. A régua do nicho é baixa —
+nenhum passaria numa avaliação de agência.
+
+O júri Awwwards e o comprador de distribuidora medem coisas diferentes. A pesquisa mede o
+segundo, e mudou três pontos do parecer:
+
+1. **Contato persistente sobe para P0 (novo L5).** 7/10 vencedores têm contato no cabeçalho e
+   10/10 têm WhatsApp; o Borçato só mostra contato no hero e no fecho, com ~10.000 px entre os
+   dois, numa página 2,7× mais longa que a média do nicho. Um comprador que decide no meio da
+   rolagem não tem por onde falar. Elemento novo → **decisão do dono (D-38)**. Recomendação:
+   discreto, na paleta, preso ao trilho de capítulos — não o botão verde flutuante genérico.
+
+2. **Marcas cedo: reabre a D-15 com dado novo.** Nos vencedores a primeira marca aparece em
+   média na posição 1,8 (5/10 na primeira dobra); no Borçato, na posição 3, a ~2.780 px. A
+   barra de logos saiu do hero em 06/09 porque os logos ficavam com 58×9 px — o motivo era o
+   tamanho, não a ideia. **Decisão do dono (D-15 revisitada):** manter como está, ou nomear as
+   11 indústrias em texto no hero (o hero já diz "onze indústrias" sem dizer quais).
+
+3. **J4 (três retratos) é rebaixado.** Só 1 dos 10 vencedores mostra gente. O rosto do Fábio é
+   o maior diferencial do site no nicho — não se tira. Continua valendo não repetir o retrato
+   duas vezes no mesmo quadro (passagem Hero → Casa).
+
+Confirmado como diferencial (nenhum concorrente faz): rosto do fundador, palco de peças por
+categoria, 8 regiões nomeadas, a origem do nome, navegação por capítulos.
+
+**Lote revisado:** L1, L2, L3 seguem como estavam. L5 (contato persistente) e D-15 aguardam o
+dono. L4 sai do lote.

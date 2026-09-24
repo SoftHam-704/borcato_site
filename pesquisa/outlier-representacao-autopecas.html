@@ -1,0 +1,961 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Blueprint Representação Autopeças</title>
+<meta name="description" content="Estrutura de home vencedora de escritórios de representação comercial de autopeças no Brasil, com comparação com a H.M. Borçato.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600;700&family=Newsreader:ital,wght@1,400;1,500;1,600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #0a0a0b;
+  --bg-2: #111114;
+  --bg-3: #16161a;
+  --bg-4: #1c1c22;
+  --border: #23232a;
+  --border-2: #2f2f38;
+  --text: #f4f4f5;
+  --muted: #a1a1aa;
+  --dim: #71717a;
+  --mint: #10B981;
+  --mint-light: #34d399;
+  --amber: #ffd166;
+  --red: #ef476f;
+  --violet: #8B5CF6;
+  --peach: #ff8c5a;
+  --blue: #4285F4;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+html { scroll-behavior: smooth; }
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  font-size: 16px;
+  line-height: 1.6;
+  min-height: 100vh;
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+  background-image:
+    radial-gradient(ellipse 800px 600px at 20% 5%, rgba(139, 92, 246, 0.08), transparent),
+    radial-gradient(ellipse 700px 500px at 90% 30%, rgba(255, 140, 90, 0.05), transparent);
+  background-attachment: fixed;
+}
+
+.wrap {
+  max-width: 1060px;
+  margin: 0 auto;
+  padding: 64px 32px 96px;
+}
+
+/* ──────────────── HERO ──────────────── */
+.hero { padding: 64px 0 56px; border-bottom: 1px solid var(--border); margin-bottom: 80px; }
+.tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--peach);
+  background: rgba(255, 140, 90, 0.08);
+  border: 1px solid rgba(255, 140, 90, 0.25);
+  padding: 8px 16px;
+  border-radius: 100px;
+  margin-bottom: 32px;
+}
+.tag::before { content: ''; width: 6px; height: 6px; border-radius: 50%; background: var(--peach); box-shadow: 0 0 12px var(--peach); animation: pulse 2s ease-in-out infinite; }
+@keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.4; } }
+
+.hero h1 {
+  font-size: 64px;
+  font-weight: 800;
+  line-height: 1.05;
+  letter-spacing: -0.035em;
+  margin-bottom: 24px;
+  max-width: 920px;
+}
+.hero h1 em {
+  font-family: 'Newsreader', Georgia, serif;
+  font-style: italic;
+  font-weight: 500;
+  background: linear-gradient(135deg, var(--peach), var(--amber));
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+.standfirst {
+  font-size: 22px;
+  line-height: 1.5;
+  color: var(--muted);
+  max-width: 720px;
+  margin-bottom: 40px;
+}
+
+.meta-row { display: flex; flex-wrap: wrap; gap: 12px; }
+.meta-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--muted);
+  background: var(--bg-2);
+  border: 1px solid var(--border);
+  padding: 8px 14px;
+  border-radius: 8px;
+}
+.meta-pill img { width: 14px; height: 14px; }
+.meta-pill.mint { color: var(--mint-light); border-color: rgba(16, 185, 129, 0.3); background: rgba(16, 185, 129, 0.06); }
+
+/* ──────────────── SECTION HEADS ──────────────── */
+section { margin-bottom: 96px; }
+
+.section-eyebrow {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--dim);
+  margin-bottom: 16px;
+}
+.section-h2 {
+  font-size: 42px;
+  font-weight: 800;
+  letter-spacing: -0.025em;
+  line-height: 1.1;
+  margin-bottom: 16px;
+}
+.section-h2 em {
+  font-family: 'Newsreader', Georgia, serif;
+  font-style: italic;
+  font-weight: 500;
+  color: var(--peach);
+}
+.section-lede { font-size: 18px; color: var(--muted); max-width: 700px; margin-bottom: 40px; }
+
+/* ──────────────── LOGO GRID ──────────────── */
+.logo-grid {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 16px;
+  margin-bottom: 24px;
+}
+.logo-card {
+  background: var(--bg-2);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 24px 16px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  transition: all 0.2s;
+}
+.logo-card:hover { border-color: var(--border-2); transform: translateY(-2px); }
+.logo-card img {
+  width: 36px;
+  height: 36px;
+  object-fit: contain;
+}
+.logo-card .name { font-size: 13px; font-weight: 600; color: var(--text); }
+.logo-card .url { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--dim); }
+.logo-card.dark-bg img { filter: brightness(0) invert(1); }
+
+.contrast-row {
+  margin-top: 24px;
+  padding: 16px 20px;
+  background: rgba(239, 71, 111, 0.04);
+  border: 1px solid rgba(239, 71, 111, 0.2);
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.contrast-row::before { content: ''; width: 8px; height: 8px; border-radius: 50%; background: var(--red); flex-shrink: 0; }
+.contrast-row .contrast-label { font-size: 14px; color: var(--muted); }
+.contrast-row strong { color: var(--text); font-weight: 600; }
+
+/* ──────────────── ARCHETYPE ──────────────── */
+.archetype-card {
+  background: linear-gradient(135deg, rgba(139, 92, 246, 0.06), rgba(16, 185, 129, 0.04));
+  border: 1px solid var(--border-2);
+  border-radius: 20px;
+  padding: 40px;
+  display: grid;
+  grid-template-columns: 220px 1fr;
+  gap: 40px;
+  align-items: center;
+}
+.archetype-name {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 12px;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--violet);
+  line-height: 1.6;
+  border-right: 1px solid var(--border-2);
+  padding-right: 32px;
+}
+.archetype-card p { font-size: 17px; color: var(--text); line-height: 1.6; }
+.archetype-card p em { font-family: 'Newsreader', serif; font-style: italic; color: var(--mint-light); font-weight: 500; }
+
+/* ──────────────── BLUEPRINT WIREFRAME ──────────────── */
+.blueprint {
+  background: var(--bg-2);
+  border: 1px solid var(--border);
+  border-radius: 24px;
+  padding: 40px;
+  position: relative;
+}
+.bp-stack { display: flex; flex-direction: column; gap: 0; }
+.bp-block {
+  display: grid;
+  grid-template-columns: 56px 1fr 80px;
+  align-items: center;
+  gap: 24px;
+  padding: 20px 24px;
+  background: var(--bg-3);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  margin-bottom: 8px;
+  position: relative;
+  transition: all 0.2s;
+}
+.bp-block:hover { border-color: var(--border-2); background: var(--bg-4); }
+.bp-block .bp-num {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 22px;
+  font-weight: 700;
+  color: var(--peach);
+  text-align: center;
+}
+.bp-block .bp-body { display: flex; flex-direction: column; gap: 6px; }
+.bp-block .bp-name { font-size: 17px; font-weight: 700; color: var(--text); letter-spacing: -0.01em; }
+.bp-block .bp-hint { font-size: 13px; color: var(--muted); }
+.bp-block .bp-freq {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 14px;
+  font-weight: 700;
+  padding: 8px 12px;
+  border-radius: 8px;
+  text-align: center;
+  letter-spacing: 0.02em;
+}
+.bp-freq.full { color: var(--mint-light); background: rgba(16, 185, 129, 0.1); border: 1px solid rgba(16, 185, 129, 0.3); }
+.bp-freq.maj  { color: var(--amber); background: rgba(255, 209, 102, 0.08); border: 1px solid rgba(255, 209, 102, 0.25); }
+.bp-freq.split { color: var(--dim); background: var(--bg-4); border: 1px solid var(--border-2); }
+
+.bp-connector {
+  width: 2px;
+  height: 16px;
+  background: linear-gradient(180deg, var(--border-2), transparent);
+  margin: 0 auto;
+}
+
+.bp-legend {
+  display: flex;
+  gap: 24px;
+  justify-content: center;
+  margin-top: 32px;
+  padding-top: 32px;
+  border-top: 1px solid var(--border);
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+.bp-legend .legend-item { display: flex; align-items: center; gap: 8px; color: var(--muted); }
+.bp-legend .legend-dot { width: 10px; height: 10px; border-radius: 50%; }
+.bp-legend .legend-dot.mint { background: var(--mint-light); }
+.bp-legend .legend-dot.amber { background: var(--amber); }
+.bp-legend .legend-dot.dim { background: var(--dim); }
+
+/* ──────────────── BEAT CARDS ──────────────── */
+.beat-grid { display: flex; flex-direction: column; gap: 32px; }
+.beat {
+  background: var(--bg-2);
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  padding: 40px;
+  display: grid;
+  grid-template-columns: 80px 1fr;
+  gap: 32px;
+}
+.beat-num {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 56px;
+  font-weight: 700;
+  color: var(--peach);
+  line-height: 1;
+  letter-spacing: -0.02em;
+}
+.beat-num small { display: block; font-size: 10px; color: var(--dim); letter-spacing: 0.2em; text-transform: uppercase; margin-top: 8px; font-weight: 500; }
+.beat-content { display: flex; flex-direction: column; gap: 24px; }
+
+.beat-head { display: flex; align-items: flex-start; gap: 16px; flex-wrap: wrap; }
+.beat-head h3 { font-size: 28px; font-weight: 700; letter-spacing: -0.02em; line-height: 1.2; }
+.beat-head .freq-badge {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 12px;
+  font-weight: 700;
+  padding: 6px 12px;
+  border-radius: 6px;
+  margin-top: 4px;
+}
+.freq-badge.full { color: var(--mint-light); background: rgba(16, 185, 129, 0.1); border: 1px solid rgba(16, 185, 129, 0.3); }
+.freq-badge.maj  { color: var(--amber); background: rgba(255, 209, 102, 0.08); border: 1px solid rgba(255, 209, 102, 0.25); }
+.freq-badge.split { color: var(--dim); background: var(--bg-4); border: 1px solid var(--border-2); }
+
+/* Mini wireframe inside beat */
+.mini-wf {
+  background: var(--bg-4);
+  border: 1px dashed var(--border-2);
+  border-radius: 10px;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.mini-wf .wf-row { display: flex; gap: 8px; align-items: center; }
+.mini-wf .wf-box {
+  background: linear-gradient(135deg, #2a2a35, #1f1f28);
+  border: 1px solid var(--border-2);
+  border-radius: 4px;
+  height: 14px;
+}
+.mini-wf .wf-box.h1 { height: 28px; background: linear-gradient(135deg, #3a2a25, #2a1f1c); border-color: rgba(255, 140, 90, 0.3); }
+.mini-wf .wf-box.cta { background: linear-gradient(135deg, var(--peach), #d4663d); border: none; width: 120px; height: 32px; border-radius: 6px; box-shadow: 0 0 20px rgba(255, 140, 90, 0.3); }
+.mini-wf .wf-box.cta-2 { background: transparent; border: 1px solid var(--border-2); color: var(--muted); width: 100px; height: 32px; border-radius: 6px; }
+.mini-wf .wf-box.full { flex: 1; }
+.mini-wf .wf-box.half { width: 50%; }
+.mini-wf .wf-box.third { width: 33%; }
+.mini-wf .wf-box.tall { height: 80px; }
+.mini-wf .wf-logo { width: 40px; height: 14px; background: #2a2a35; border-radius: 3px; opacity: 0.5; }
+.mini-wf .wf-card { flex: 1; height: 80px; background: var(--bg-3); border: 1px solid var(--border); border-radius: 6px; padding: 8px; display: flex; flex-direction: column; gap: 4px; }
+.mini-wf .wf-card .wf-box { height: 8px; }
+.mini-wf .wf-label { font-family: 'JetBrains Mono', monospace; font-size: 9px; color: var(--dim); letter-spacing: 0.1em; text-transform: uppercase; padding-top: 4px; }
+
+/* Winners include block */
+.winners-block { background: rgba(16, 185, 129, 0.04); border: 1px solid rgba(16, 185, 129, 0.2); border-radius: 12px; padding: 20px 24px; }
+.winners-block .winners-head { font-family: 'JetBrains Mono', monospace; font-size: 11px; letter-spacing: 0.18em; text-transform: uppercase; color: var(--mint-light); margin-bottom: 14px; font-weight: 600; }
+.winners-block ul { list-style: none; display: flex; flex-direction: column; gap: 10px; }
+.winners-block li { font-size: 15px; color: var(--text); padding-left: 20px; position: relative; line-height: 1.5; }
+.winners-block li::before { content: '✓'; position: absolute; left: 0; top: 0; color: var(--mint-light); font-weight: 700; }
+
+/* Real examples block */
+.examples-block { display: flex; flex-direction: column; gap: 10px; }
+.example-row {
+  display: grid;
+  grid-template-columns: 130px 1fr;
+  gap: 16px;
+  align-items: center;
+  background: var(--bg-3);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 14px 18px;
+}
+.example-row .ex-brand { display: flex; align-items: center; gap: 10px; }
+.example-row .ex-brand img { width: 20px; height: 20px; object-fit: contain; }
+.example-row .ex-brand.dark-bg img { filter: brightness(0) invert(1); }
+.example-row .ex-brand .ex-name { font-size: 13px; font-weight: 600; color: var(--muted); }
+.example-row .ex-headline {
+  font-family: 'Newsreader', Georgia, serif;
+  font-style: italic;
+  font-size: 17px;
+  color: var(--text);
+  line-height: 1.4;
+}
+.example-row .ex-headline::before { content: '"'; color: var(--dim); margin-right: 2px; }
+.example-row .ex-headline::after  { content: '"'; color: var(--dim); margin-left: 2px; }
+
+/* Winners vs losers one-liner */
+.vs-line {
+  display: grid;
+  grid-template-columns: 1fr 32px 1fr;
+  gap: 16px;
+  align-items: center;
+  padding: 18px 22px;
+  background: var(--bg-3);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+}
+.vs-line .vs-side { font-size: 14px; line-height: 1.5; }
+.vs-line .vs-side.winners { color: var(--text); }
+.vs-line .vs-side.winners strong { color: var(--mint-light); font-family: 'JetBrains Mono', monospace; font-size: 10px; letter-spacing: 0.18em; text-transform: uppercase; display: block; margin-bottom: 4px; font-weight: 700; }
+.vs-line .vs-side.losers { color: var(--dim); }
+.vs-line .vs-side.losers strong { color: var(--red); font-family: 'JetBrains Mono', monospace; font-size: 10px; letter-spacing: 0.18em; text-transform: uppercase; display: block; margin-bottom: 4px; font-weight: 700; }
+.vs-line .vs-arrow { text-align: center; color: var(--dim); font-family: 'JetBrains Mono', monospace; font-size: 18px; }
+
+/* ──────────────── PULL QUOTE ──────────────── */
+.pull-quote-section { text-align: center; padding: 32px 0; }
+.pull-quote {
+  font-family: 'Newsreader', Georgia, serif;
+  font-style: italic;
+  font-weight: 500;
+  font-size: 40px;
+  line-height: 1.3;
+  color: var(--text);
+  max-width: 880px;
+  margin: 0 auto;
+  position: relative;
+  padding: 24px 0;
+  letter-spacing: -0.015em;
+}
+.pull-quote .pq-mark {
+  font-family: 'Newsreader', serif;
+  font-size: 120px;
+  color: var(--peach);
+  opacity: 0.3;
+  line-height: 0;
+  position: absolute;
+  top: 32px;
+  left: -8px;
+}
+.pull-quote em { background: linear-gradient(135deg, var(--peach), var(--amber)); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; }
+
+/* ──────────────── LOSERS SECTION ──────────────── */
+.losers-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; }
+.loser-card {
+  background: rgba(239, 71, 111, 0.04);
+  border: 1px solid rgba(239, 71, 111, 0.25);
+  border-radius: 14px;
+  padding: 22px 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.loser-card .loser-num {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--red);
+  font-weight: 700;
+}
+.loser-card .loser-title { font-size: 17px; font-weight: 700; color: var(--text); }
+.loser-card .loser-detail { font-size: 14px; color: var(--muted); line-height: 1.5; }
+
+/* ──────────────── MONDAY CHECKLIST ──────────────── */
+.checklist-box {
+  background: linear-gradient(135deg, rgba(16, 185, 129, 0.06), rgba(139, 92, 246, 0.04));
+  border: 1px solid var(--border-2);
+  border-radius: 20px;
+  padding: 40px;
+}
+.checklist {
+  list-style: none;
+  counter-reset: cl;
+}
+.checklist li {
+  counter-increment: cl;
+  padding: 16px 0 16px 56px;
+  position: relative;
+  border-bottom: 1px solid var(--border);
+  font-size: 16px;
+  color: var(--text);
+  line-height: 1.5;
+}
+.checklist li:last-child { border-bottom: none; }
+.checklist li::before {
+  content: counter(cl, decimal-leading-zero);
+  position: absolute;
+  left: 0;
+  top: 16px;
+  width: 36px;
+  height: 36px;
+  border-radius: 8px;
+  background: rgba(16, 185, 129, 0.1);
+  border: 1px solid rgba(16, 185, 129, 0.35);
+  color: var(--mint-light);
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 12px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  letter-spacing: 0.02em;
+}
+.checklist li strong { color: var(--mint-light); font-weight: 600; }
+
+/* ──────────────── OUTRO ──────────────── */
+.outro {
+  text-align: center;
+  padding: 56px 0 0;
+  border-top: 1px solid var(--border);
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 12px;
+  color: var(--dim);
+  letter-spacing: 0.08em;
+  line-height: 1.8;
+}
+.outro img { width: 14px; height: 14px; vertical-align: middle; margin: 0 6px; }
+.outro .disclaimer { display: block; margin-top: 16px; color: var(--dim); font-size: 11px; font-style: italic; letter-spacing: 0.04em; max-width: 720px; margin-left: auto; margin-right: auto; }
+
+/* ──────────────── RESPONSIVE ──────────────── */
+@media (max-width: 860px) {
+  .wrap { padding: 32px 20px 64px; }
+  .hero h1 { font-size: 44px; }
+  .section-h2 { font-size: 32px; }
+  .pull-quote { font-size: 28px; }
+  .archetype-card { grid-template-columns: 1fr; gap: 20px; }
+  .archetype-name { border-right: none; border-bottom: 1px solid var(--border-2); padding-right: 0; padding-bottom: 16px; }
+  .logo-grid { grid-template-columns: repeat(3, 1fr); }
+  .beat { grid-template-columns: 1fr; gap: 20px; }
+  .beat-num { font-size: 40px; }
+  .losers-grid { grid-template-columns: 1fr; }
+  .vs-line { grid-template-columns: 1fr; }
+  .vs-line .vs-arrow { display: none; }
+  .bp-block { grid-template-columns: 40px 1fr 64px; gap: 14px; padding: 14px 16px; }
+}
+
+/* ─── adições desta pesquisa ─── */
+.logo-card img { border-radius: 6px; background: #fff; padding: 2px; }
+.example-row .ex-brand img { border-radius: 4px; background:#fff; padding:1px; }
+.example-row .ex-brand .ex-name { line-height: 1.25; }
+.logo-card .uf { font-family:'JetBrains Mono',monospace; font-size:10px; color: var(--mint-light); letter-spacing:.08em; }
+.logo-grid.losers .logo-card { border-color: rgba(239,71,111,.3); background: rgba(239,71,111,.04); }
+.logo-grid.losers .logo-card .uf { color: var(--red); }
+.sub-h { font-family:'JetBrains Mono',monospace; font-size:11px; letter-spacing:.2em; text-transform:uppercase; color: var(--dim); margin: 32px 0 14px; }
+.honest { margin-top: 24px; padding: 18px 22px; background: rgba(255,209,102,.05); border:1px solid rgba(255,209,102,.25); border-radius:12px; font-size:15px; color: var(--muted); }
+.honest strong { color: var(--amber); }
+.xcut { display:grid; grid-template-columns: repeat(3,1fr); gap:12px; margin-top: 24px; }
+.xcut div { background: var(--bg-3); border:1px solid var(--border); border-radius:12px; padding:16px 18px; }
+.xcut b { display:block; font-family:'JetBrains Mono',monospace; font-size:22px; color: var(--mint-light); }
+.xcut b.amb { color: var(--amber); } .xcut b.red { color: var(--red); }
+.xcut span { font-size:13px; color: var(--muted); line-height:1.45; display:block; margin-top:4px; }
+.split-list { display:grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 16px; }
+.split-list div { background: var(--bg-3); border:1px dashed var(--border-2); border-radius:10px; padding:12px 16px; font-size:14px; color: var(--muted); }
+.split-list b { color: var(--text); font-weight:600; }
+.split-list .f { font-family:'JetBrains Mono',monospace; font-size:12px; color: var(--dim); float:right; }
+table.cmp { width:100%; border-collapse: collapse; font-size:14px; }
+table.cmp th, table.cmp td { text-align:left; padding: 12px 12px; border-bottom:1px solid var(--border); vertical-align: top; }
+table.cmp th { font-family:'JetBrains Mono',monospace; font-size:10px; letter-spacing:.16em; text-transform:uppercase; color: var(--dim); font-weight:600; }
+table.cmp td:first-child { font-weight:600; color: var(--text); white-space: nowrap; }
+table.cmp td { color: var(--muted); }
+.st { display:inline-block; font-family:'JetBrains Mono',monospace; font-size:10px; font-weight:700; letter-spacing:.1em; text-transform:uppercase; padding:3px 8px; border-radius:5px; white-space:nowrap; }
+.st.ok { color: var(--mint-light); background: rgba(16,185,129,.1); border:1px solid rgba(16,185,129,.3); }
+.st.gap { color: var(--red); background: rgba(239,71,111,.08); border:1px solid rgba(239,71,111,.3); }
+.st.late { color: var(--amber); background: rgba(255,209,102,.08); border:1px solid rgba(255,209,102,.3); }
+.st.uniq { color: #c4b5fd; background: rgba(139,92,246,.1); border:1px solid rgba(139,92,246,.35); }
+.cmp-wrap { background: var(--bg-2); border:1px solid var(--border); border-radius: 20px; padding: 24px; overflow-x:auto; }
+.bz-grid { display:grid; grid-template-columns: repeat(3,1fr); gap:16px; margin-top: 24px; }
+.bz-card { border-radius:14px; padding: 20px 22px; border:1px solid var(--border); background: var(--bg-3); }
+.bz-card h4 { font-family:'JetBrains Mono',monospace; font-size:11px; letter-spacing:.18em; text-transform:uppercase; margin-bottom: 12px; }
+.bz-card.has h4 { color: var(--mint-light); } .bz-card.miss h4 { color: var(--red); } .bz-card.diff h4 { color: #c4b5fd; }
+.bz-card.has { border-color: rgba(16,185,129,.25); } .bz-card.miss { border-color: rgba(239,71,111,.3); } .bz-card.diff { border-color: rgba(139,92,246,.35); }
+.bz-card ul { list-style:none; display:flex; flex-direction:column; gap:10px; }
+.bz-card li { font-size:14px; color: var(--muted); line-height:1.5; }
+.bz-card li b { color: var(--text); }
+.bz-strip { display:flex; gap:6px; flex-wrap:wrap; margin: 20px 0 8px; }
+.bz-strip span { font-family:'JetBrains Mono',monospace; font-size:11px; padding:6px 10px; border-radius:6px; background: var(--bg-3); border:1px solid var(--border-2); color: var(--muted); }
+.bz-strip span.w { border-color: rgba(16,185,129,.35); color: var(--mint-light); }
+.bz-strip span.b { border-color: rgba(139,92,246,.4); color:#c4b5fd; }
+.bz-strip .lbl { background:none; border:none; color: var(--dim); padding-left:0; min-width: 110px; }
+code { font-family:'JetBrains Mono',monospace; font-size: .88em; color: var(--amber); }
+@media (max-width: 860px) {
+  .xcut, .bz-grid, .split-list { grid-template-columns: 1fr; }
+  .example-row { grid-template-columns: 1fr; gap: 8px; }
+}
+@media (max-width: 480px) {
+  .wrap { padding: 24px 16px 56px; }
+  .hero h1 { font-size: 34px; }
+  .standfirst { font-size: 18px; }
+  .section-h2 { font-size: 27px; }
+  .logo-grid { grid-template-columns: repeat(2, 1fr); }
+  .beat, .blueprint, .archetype-card, .checklist-box { padding: 20px; }
+  .pull-quote { font-size: 23px; }
+  .checklist li { padding-left: 48px; font-size: 15px; }
+  .bp-block { grid-template-columns: 30px 1fr 54px; gap: 10px; padding: 12px; }
+  .bp-block .bp-num { font-size: 17px; } .bp-block .bp-freq { font-size: 12px; padding: 6px 6px; }
+  .bz-strip .lbl { min-width: 100%; }
+  table.cmp td:first-child { white-space: normal; }
+}
+.logo-card { min-width: 0; }
+.logo-card .url, .logo-card .name, .logo-card .uf { overflow-wrap: anywhere; text-align: center; }
+.logo-grid.three { grid-template-columns: repeat(3,1fr); }
+@media (max-width: 480px) { .logo-grid.three { grid-template-columns: 1fr; } .logo-card { padding: 16px 10px; } }
+
+</style>
+</head>
+<body>
+<main class="wrap">
+
+<section class="hero">
+  <div class="tag">Outlier Research · Representação de autopeças · Brasil</div>
+  <h1>Como é a home de um <em>escritório de representação</em> de autopeças que funciona.</h1>
+  <p class="standfirst">Estrutura levantada em 22 sites reais de representantes de autopeças do Brasil. As seções, as posições e as manchetes vêm do que está publicado hoje, sem modelo genérico de landing page. No fim, a H.M. Borçato comparada posição a posição.</p>
+  <div class="meta-row">
+    <span class="meta-pill mint">10 vencedores</span>
+    <span class="meta-pill">9 intermediários</span>
+    <span class="meta-pill">3 de contraste</span>
+    <span class="meta-pill">14 buscas · Playwright 1440 + 375 px</span>
+    <span class="meta-pill mint">4 seções universais</span>
+    <span class="meta-pill">24/09/2026</span>
+  </div>
+</section>
+
+<section>
+  <div class="section-eyebrow">Os concorrentes</div>
+  <h2 class="section-h2">Os 10 sites que desmontamos</h2>
+  <p class="section-lede">Todos são escritórios de representação com domínio próprio que fazem a ponte entre indústria e distribuidor. Não há avaliações neste nicho, então a ordem segue um proxy de qualidade: site vivo e responsivo, ano recente visível, marcas claras, área explícita e contato acessível.</p>
+  <div class="logo-grid">
+    <div class="logo-card"><img src="https://www.google.com/s2/favicons?domain=gadelharepresentacoes.com.br&amp;sz=128" alt=""><div class="name">Gadelha</div><div class="uf">GO · DF</div><div class="url">gadelharepresentacoes.com.br</div></div>
+    <div class="logo-card"><img src="https://www.google.com/s2/favicons?domain=trucksulrep.com.br&amp;sz=128" alt=""><div class="name">Truck Sul</div><div class="uf">CE · MA · PI</div><div class="url">trucksulrep.com.br</div></div>
+    <div class="logo-card"><img src="https://www.google.com/s2/favicons?domain=bnrep.com.br&amp;sz=128" alt=""><div class="name">BNREP</div><div class="uf">SP</div><div class="url">bnrep.com.br</div></div>
+    <div class="logo-card"><img src="https://www.google.com/s2/favicons?domain=jwgrepres.com.br&amp;sz=128" alt=""><div class="name">JWG</div><div class="uf">CE · Nordeste</div><div class="url">jwgrepres.com.br</div></div>
+    <div class="logo-card"><img src="https://www.google.com/s2/favicons?domain=jmrautomotive.com.br&amp;sz=128" alt=""><div class="name">JMR Automotive</div><div class="uf">CE</div><div class="url">jmrautomotive.com.br</div></div>
+    <div class="logo-card"><img src="https://www.google.com/s2/favicons?domain=kaloka.com.br&amp;sz=128" alt=""><div class="name">Kaloka</div><div class="uf">SC</div><div class="url">kaloka.com.br</div></div>
+    <div class="logo-card"><img src="https://www.google.com/s2/favicons?domain=betelrepresentacoes.com.br&amp;sz=128" alt=""><div class="name">Betel</div><div class="uf">MG · ES</div><div class="url">betelrepresentacoes.com.br</div></div>
+    <div class="logo-card"><img src="https://www.google.com/s2/favicons?domain=furlanrepresentacoes.com&amp;sz=128" alt=""><div class="name">Furlan</div><div class="uf">RS · SC</div><div class="url">furlanrepresentacoes.com</div></div>
+    <div class="logo-card"><img src="https://www.google.com/s2/favicons?domain=lagrepresentacoes.com.br&amp;sz=128" alt=""><div class="name">LAG</div><div class="uf">SP</div><div class="url">lagrepresentacoes.com.br</div></div>
+    <div class="logo-card"><img src="https://www.google.com/s2/favicons?domain=repfilgueiras.com.br&amp;sz=128" alt=""><div class="name">Filgueiras</div><div class="uf">CE · PI · MA · BA</div><div class="url">repfilgueiras.com.br</div></div>
+  </div>
+  <div class="sub-h">Contraste: os 3 mais fracos</div>
+  <div class="logo-grid losers three">
+    <div class="logo-card"><img src="https://www.google.com/s2/favicons?domain=ginn.com.br&amp;sz=128" alt=""><div class="name">Ginn</div><div class="uf">SP · notícias de 2015</div><div class="url">ginn.com.br</div></div>
+    <div class="logo-card"><img src="https://www.google.com/s2/favicons?domain=mdrvendas.com.br&amp;sz=128" alt=""><div class="name">MDR</div><div class="uf">1 tela de texto</div><div class="url">mdrvendas.com.br</div></div>
+    <div class="logo-card"><img src="https://www.google.com/s2/favicons?domain=multimercadorepresentacoes.com&amp;sz=128" alt=""><div class="name">Multimercado</div><div class="uf">RJ · © 2021</div><div class="url">multimercadorepresentacoes.com</div></div>
+  </div>
+  <div class="contrast-row"><span class="contrast-label">Também analisados, fora dos dois grupos: <strong>J. Granja, Dinâmica, Carvalho, Regis, Convert, HSW, Assis, Brekapeças, Fana</strong>. Rejeitados: Capelini (fora do nicho), B2B Autoparts (licenciamento/private label), Rocha e 2D (DNS morto), FA Martins e Remape (em manutenção), WAE Forte (bloqueio anti-bot), além de diretórios, distribuidoras e fabricantes.</span></div>
+  <div class="honest"><strong>Sobre a amostra.</strong> Das ~40 URLs encontradas, só 22 são escritórios de autopeças com site que abre, e só 10 dão para chamar de decentes. "Vencedor" aqui quer dizer <em>o melhor que o nicho tem</em>. Nenhum passaria numa régua de agência. Com n = 10, cada site vale 10 pontos percentuais. Leia os números como tendência.</div>
+</section>
+
+<section>
+  <div class="section-eyebrow">O arquétipo</div>
+  <h2 class="section-h2">Por que <em>esta</em> estrutura e não outra</h2>
+  <div class="archetype-card">
+    <div class="archetype-name">B2B regional<br>Serviço profissional<br>Portfólio de terceiros</div>
+    <p>Quem visita é comprador de distribuidora ou gerente comercial de indústria. Ninguém compra no site. O visitante quer confirmar três coisas: <em>quais marcas vocês têm, onde vocês atendem e com quem eu falo</em>. O produto do escritório é o portfólio de outras empresas, então a marca representada ocupa o lugar que em SaaS é da demonstração. A conversão é uma conversa, e no Brasil de 2026 essa conversa é pelo <em>WhatsApp</em>.</p>
+  </div>
+</section>
+
+<section>
+  <div class="section-eyebrow">O blueprint</div>
+  <h2 class="section-h2">A ordem que os vencedores compartilham</h2>
+  <p class="section-lede">Cada bloco é uma seção, na ordem da posição média em que aparece. A frequência conta quantos dos 10 vencedores têm a seção. Verde = universal (≥ 8), âmbar = maioria (5–7), cinza = dividido.</p>
+  <div class="blueprint">
+    <div class="bp-stack">
+      <div class="bp-block"><div class="bp-num">01</div><div class="bp-body"><div class="bp-name">Hero: quem é, o que representa, onde atua</div><div class="bp-hint">Manchete declarativa (7/10) ou carrossel de banners da representada (3/10). Região e tempo de mercado costumam aparecer já aqui.</div></div><div class="bp-freq full">10/10</div></div>
+      <div class="bp-connector"></div>
+      <div class="bp-block"><div class="bp-num">02</div><div class="bp-body"><div class="bp-name">Marcas representadas</div><div class="bp-hint">A 1ª marca aparece em média na posição 1,8, e em 5/10 já na primeira dobra. Seção própria na posição média 3,0.</div></div><div class="bp-freq full">10/10</div></div>
+      <div class="bp-connector"></div>
+      <div class="bp-block"><div class="bp-num">03</div><div class="bp-body"><div class="bp-name">Área de atuação nomeada</div><div class="bp-hint">Estados ou regiões por extenso. 1ª menção na posição média 2,4. Só 3/10 transformam a área numa seção visual.</div></div><div class="bp-freq full">8/10</div></div>
+      <div class="bp-connector"></div>
+      <div class="bp-block"><div class="bp-num">04</div><div class="bp-body"><div class="bp-name">Sobre / quem somos com tempo de mercado</div><div class="bp-hint">"Desde 1974", "há 40 anos", "26 anos de atuação". Posição média 2,9.</div></div><div class="bp-freq full">9/10</div></div>
+      <div class="bp-connector"></div>
+      <div class="bp-block"><div class="bp-num">05</div><div class="bp-body"><div class="bp-name">Diferenciais: "por que nós"</div><div class="bp-hint">De 3 a 4 cards, quase sempre promotoria, suporte a vendas, atendimento técnico e base regional. Posição média 4,3.</div></div><div class="bp-freq maj">7/10</div></div>
+      <div class="bp-connector"></div>
+      <div class="bp-block"><div class="bp-num">06</div><div class="bp-body"><div class="bp-name">Catálogo das representadas</div><div class="bp-hint">Acesso a PDF ou portal de cada marca, na home (4/10, posição média 2,3) ou no menu.</div></div><div class="bp-freq maj">6/10</div></div>
+      <div class="bp-connector"></div>
+      <div class="bp-block"><div class="bp-num">07</div><div class="bp-body"><div class="bp-name">Conteúdo, blog ou eventos</div><div class="bp-hint">Blog 4/10 (posição média 5,5) e feiras/eventos 3/10. Prova de que o escritório está vivo.</div></div><div class="bp-freq split">4/10</div></div>
+      <div class="bp-connector"></div>
+      <div class="bp-block"><div class="bp-num">08</div><div class="bp-body"><div class="bp-name">CTA final de contato, de preferência WhatsApp</div><div class="bp-hint">Faixa curta logo antes do rodapé. Posição média 5,7, quase sempre a penúltima.</div></div><div class="bp-freq maj">6/10</div></div>
+    </div>
+    <div class="bp-legend">
+      <div class="legend-item"><div class="legend-dot mint"></div>Universal ≥ 8/10</div>
+      <div class="legend-item"><div class="legend-dot amber"></div>Maioria 5–7</div>
+      <div class="legend-item"><div class="legend-dot dim"></div>Dividido &lt; 5</div>
+    </div>
+  </div>
+
+  <div class="xcut">
+    <div><b>10/10</b><span>têm WhatsApp em algum lugar. É a única coisa presente em todos os vencedores além do hero e das marcas.</span></div>
+    <div><b class="amb">7/10</b><span>põem telefone ou WhatsApp no cabeçalho, numa barra superior ou num botão do menu. 5/10 usam WhatsApp flutuante.</span></div>
+    <div><b class="red">1/10</b><span>mostra rosto de gente de verdade (JWG). Num negócio de relacionamento, quase ninguém mostra quem atende.</span></div>
+  </div>
+
+  <div class="sub-h">Divididos: aparecem, mas não definem o padrão</div>
+  <div class="split-list">
+    <div><span class="f">4/10</span><b>Falar com a indústria</b>: "Seja representado", "Sua marca aqui"</div>
+    <div><span class="f">2/10</span><b>Depoimentos</b> de clientes nomeados</div>
+    <div><span class="f">2/10</span><b>Marcas por linha</b> (leve, pesada, ferramentas)</div>
+    <div><span class="f">2/10</span><b>Missão / visão / valores</b></div>
+    <div><span class="f">2/10</span><b>Instagram</b> incorporado</div>
+    <div><span class="f">1/10</span><b>FAQ</b>, <b>newsletter</b>, <b>formulário</b> na home</div>
+  </div>
+</section>
+
+<section class="pull-quote-section">
+  <blockquote class="pull-quote"><span class="pq-mark">"</span>O produto do representante é o portfólio de outras empresas. Os vencedores <em>põem as marcas antes de falar de si</em>.</blockquote>
+</section>
+
+<section>
+  <div class="section-eyebrow">Seção por seção</div>
+  <h2 class="section-h2">O que cada seção <em>contém</em></h2>
+  <p class="section-lede">Manchetes copiadas das páginas no dia da coleta, com a grafia original.</p>
+  <div class="beat-grid">
+
+    <article class="beat">
+      <div class="beat-num">01<small>Hero</small></div>
+      <div class="beat-content">
+        <div class="beat-head"><h3>Quem é, o que representa, onde atua</h3><div class="freq-badge full">10/10</div></div>
+        <div class="mini-wf">
+          <div class="wf-row"><div class="wf-box third"></div></div>
+          <div class="wf-row"><div class="wf-box full h1"></div></div>
+          <div class="wf-row"><div class="wf-box half"></div></div>
+          <div class="wf-row"><div class="wf-box cta"></div><div class="wf-box cta-2"></div></div>
+          <div class="wf-label">sobrelinha regional · H1 · subtítulo com tempo de mercado · WhatsApp + "ver marcas"</div>
+        </div>
+        <div class="winners-block"><div class="winners-head">Os vencedores incluem</div><ul>
+          <li><strong>Região na primeira dobra</strong>: sobrelinha "A FORÇA DE GOIÁS E DF" (Gadelha), "no estado do Ceará" (Truck Sul)</li>
+          <li><strong>Público nomeado</strong>: "para o distribuidor" (Furlan), "indústria e distribuidor" (BNREP)</li>
+          <li><strong>Dois botões</strong>: um de contato (WhatsApp) e um que leva às marcas. O melhor exemplo é a Gadelha: "Falar com um Especialista" + "Nossas Marcas"</li>
+          <li>Tempo de mercado como selo ("40 ANOS+") em vez de parágrafo</li>
+          <li>Variante de 3/10 (JMR, Kaloka, Betel): o hero é um carrossel de banners das indústrias. A marca do escritório sai do hero e entra a da fábrica.</li>
+        </ul></div>
+        <div class="examples-block">
+          <div class="example-row"><div class="ex-brand"><img src="https://www.google.com/s2/favicons?domain=gadelharepresentacoes.com.br&amp;sz=128" alt=""><span class="ex-name">Gadelha</span></div><div class="ex-headline">TRADIÇÃO QUE MOVE A INDÚSTRIA. Há 40 anos conectando as maiores fabricantes do Brasil ao mercado de Goiás e DF</div></div>
+          <div class="example-row"><div class="ex-brand"><img src="https://www.google.com/s2/favicons?domain=furlanrepresentacoes.com&amp;sz=128" alt=""><span class="ex-name">Furlan</span></div><div class="ex-headline">Representando há 40 anos os melhores produtos da indústria para o distribuidor</div></div>
+          <div class="example-row"><div class="ex-brand"><img src="https://www.google.com/s2/favicons?domain=trucksulrep.com.br&amp;sz=128" alt=""><span class="ex-name">Truck Sul</span></div><div class="ex-headline">Escritório de representação comercial do setor automotivo no estado do Ceará.</div></div>
+        </div>
+        <div class="vs-line"><div class="vs-side winners"><strong>Vencedores</strong>Quem + para quem + onde, com botão de WhatsApp visível.</div><div class="vs-arrow">→</div><div class="vs-side losers"><strong>Perdedores</strong>"SOMOS ESPECIALISTAS EM REPRESENTAÇÃO COMERCIAL…" sobre um carro esportivo de banco de imagem (Multimercado), sem região e sem botão.</div></div>
+      </div>
+    </article>
+
+    <article class="beat">
+      <div class="beat-num">02<small>Marcas</small></div>
+      <div class="beat-content">
+        <div class="beat-head"><h3>Marcas representadas: cedo, nomeadas, clicáveis</h3><div class="freq-badge full">10/10</div></div>
+        <div class="mini-wf">
+          <div class="wf-row"><div class="wf-box third"></div></div>
+          <div class="wf-row" style="gap:10px"><div class="wf-card"><div class="wf-box half"></div><div class="wf-box full"></div></div><div class="wf-card"><div class="wf-box half"></div><div class="wf-box full"></div></div><div class="wf-card"><div class="wf-box half"></div><div class="wf-box full"></div></div><div class="wf-card"><div class="wf-box half"></div><div class="wf-box full"></div></div></div>
+          <div class="wf-label">logo + o que a marca faz em 1 linha + "saiba mais / ver catálogo"</div>
+        </div>
+        <div class="winners-block"><div class="winners-head">Os vencedores incluem</div><ul>
+          <li>A <strong>1ª marca aparece na posição 1,8 em média</strong>. Em 5/10 já está na primeira dobra (card no hero, faixa de logos ou banner).</li>
+          <li>Os melhores escrevem <strong>o que cada marca faz</strong>: "AJUSA · Juntas de motor, parafusos de cabeçote…" (Gadelha). Logo solto não diz a categoria.</li>
+          <li>Cada logo leva a algum lugar: página da marca, catálogo em PDF ou portal da fábrica</li>
+          <li>Com portfólio grande, agrupam <strong>por linha</strong> (JMR: pesada / leve / ferramentas) ou <strong>por estado</strong> (HSW: "PR e SC" / "PR")</li>
+        </ul></div>
+        <div class="examples-block">
+          <div class="example-row"><div class="ex-brand"><img src="https://www.google.com/s2/favicons?domain=kaloka.com.br&amp;sz=128" alt=""><span class="ex-name">Kaloka</span></div><div class="ex-headline">Conheça as marcas que representamos para toda Santa Catarina</div></div>
+          <div class="example-row"><div class="ex-brand"><img src="https://www.google.com/s2/favicons?domain=jmrautomotive.com.br&amp;sz=128" alt=""><span class="ex-name">JMR</span></div><div class="ex-headline">Nossas representadas · Linha pesada - Caminhões, pick-ups e utilitários</div></div>
+          <div class="example-row"><div class="ex-brand"><img src="https://www.google.com/s2/favicons?domain=betelrepresentacoes.com.br&amp;sz=128" alt=""><span class="ex-name">Betel</span></div><div class="ex-headline">Conheça as empresas parceiras! Clique em cada uma e seja redirecionado para seu catálogo!</div></div>
+        </div>
+        <div class="vs-line"><div class="vs-side winners"><strong>Vencedores</strong>Marcas antes da história do escritório, com nome e categoria.</div><div class="vs-arrow">→</div><div class="vs-side losers"><strong>Perdedores</strong>Nenhuma marca (MDR) ou uma coluna de 1.555 px de logos sem nome e sem link (Ginn).</div></div>
+      </div>
+    </article>
+
+    <article class="beat">
+      <div class="beat-num">03<small>Área</small></div>
+      <div class="beat-content">
+        <div class="beat-head"><h3>Área de atuação escrita por extenso</h3><div class="freq-badge full">8/10</div></div>
+        <div class="mini-wf">
+          <div class="wf-row" style="gap:14px"><div class="wf-card" style="height:80px"><div class="wf-box full"></div><div class="wf-box half"></div></div><div class="wf-box tall" style="flex:1;height:80px"></div></div>
+          <div class="wf-label">na maioria é uma frase dentro do hero ou do "sobre"; só 3/10 fazem um bloco com mapa ou cidades</div>
+        </div>
+        <div class="winners-block"><div class="winners-head">Os vencedores incluem</div><ul>
+          <li>Estados nomeados, não "todo o Brasil". O comprador quer saber se o representante <strong>visita a praça dele</strong>.</li>
+          <li>1ª menção na <strong>posição 2,4</strong>, geralmente no hero ou no "sobre"</li>
+          <li>Os 3 que fizeram seção própria usam <strong>cidades-polo</strong> (Gadelha: "Anápolis &amp; DAIA · Catalão · Rio Verde…"), <strong>mapa</strong> (Betel: MG/ES) ou um card "Região de abrangência" (Filgueiras)</li>
+          <li>Com filiais, o rodapé lista matriz e filiais com telefone de cada uma (Filgueiras: CE, PI/MA, BA)</li>
+        </ul></div>
+        <div class="examples-block">
+          <div class="example-row"><div class="ex-brand"><img src="https://www.google.com/s2/favicons?domain=gadelharepresentacoes.com.br&amp;sz=128" alt=""><span class="ex-name">Gadelha</span></div><div class="ex-headline">ONDE A INDÚSTRIA ACONTECE, A GADELHA ESTÁ PRESENTE.</div></div>
+          <div class="example-row"><div class="ex-brand"><img src="https://www.google.com/s2/favicons?domain=jwgrepres.com.br&amp;sz=128" alt=""><span class="ex-name">JWG</span></div><div class="ex-headline">O elo confiável entre indústrias automotivas e redes de distribuição em todo o Nordeste.</div></div>
+        </div>
+        <div class="vs-line"><div class="vs-side winners"><strong>Vencedores</strong>A região aparece antes da metade da página.</div><div class="vs-arrow">→</div><div class="vs-side losers"><strong>Perdedores</strong>Área só no rodapé ("Atuamos em todo Estado do Rio de Janeiro", Multimercado) ou em lugar nenhum (MDR). Dois vencedores, BNREP e LAG, também esqueceram.</div></div>
+      </div>
+    </article>
+
+    <article class="beat">
+      <div class="beat-num">04<small>Sobre</small></div>
+      <div class="beat-content">
+        <div class="beat-head"><h3>Quem somos, com tempo de estrada</h3><div class="freq-badge full">9/10</div></div>
+        <div class="mini-wf">
+          <div class="wf-row" style="gap:14px"><div class="wf-box tall" style="flex:1;height:70px"></div><div class="wf-card" style="height:70px"><div class="wf-box half"></div><div class="wf-box full"></div><div class="wf-box full"></div></div></div>
+          <div class="wf-label">parágrafo curto + ano de fundação + (às vezes) números</div>
+        </div>
+        <div class="winners-block"><div class="winners-head">Os vencedores incluem</div><ul>
+          <li><strong>Ano de fundação</strong> em todos: 1974, 1982, 1983, 1995, 2014…</li>
+          <li>Números em destaque quando existem: "Anos de atuação 26 · Fábricas representadas 9" (JWG)</li>
+          <li>Fundador com nome e apelido: "Luiz Alberto Grizolli, mais conhecido como 'Butina'" (LAG). Mesmo assim, quase nunca aparece foto.</li>
+          <li>A quem atende, dito com clareza: "Atendemos vendas somente à distribuidores regionais e nacionais" (Regis)</li>
+        </ul></div>
+        <div class="examples-block">
+          <div class="example-row"><div class="ex-brand"><img src="https://www.google.com/s2/favicons?domain=trucksulrep.com.br&amp;sz=128" alt=""><span class="ex-name">Truck Sul</span></div><div class="ex-headline">Prazer, somos a Truck Sul Representações</div></div>
+          <div class="example-row"><div class="ex-brand"><img src="https://www.google.com/s2/favicons?domain=bnrep.com.br&amp;sz=128" alt=""><span class="ex-name">BNREP</span></div><div class="ex-headline">O elo entre a Indústria e o Distribuidor</div></div>
+        </div>
+        <div class="vs-line"><div class="vs-side winners"><strong>Vencedores</strong>Sobre curto e concreto: ano, estados, a quem atende.</div><div class="vs-arrow">→</div><div class="vs-side losers"><strong>Perdedores</strong>Missão, visão e valores genéricos ("Foco · Seriedade · Competência") no lugar de fatos.</div></div>
+      </div>
+    </article>
+
+    <article class="beat">
+      <div class="beat-num">05<small>Diferenciais</small></div>
+      <div class="beat-content">
+        <div class="beat-head"><h3>"Por que nós": o serviço além da venda</h3><div class="freq-badge maj">7/10</div></div>
+        <div class="mini-wf"><div class="wf-row"><div class="wf-box third"></div></div><div class="wf-row" style="gap:12px"><div class="wf-card"><div class="wf-box half"></div><div class="wf-box full"></div></div><div class="wf-card"><div class="wf-box half"></div><div class="wf-box full"></div></div><div class="wf-card"><div class="wf-box half"></div><div class="wf-box full"></div></div></div><div class="wf-label">3–4 cards · ícone + título curto</div></div>
+        <div class="winners-block"><div class="winners-head">Os vencedores incluem</div><ul>
+          <li>O que o representante faz <strong>pelo distribuidor</strong>: qualificação de estoque, promotor exclusivo, treinamento (LAG)</li>
+          <li>Base física e agilidade: "BASE EM GOIÂNIA/GO", "ATENDIMENTO TÉCNICO" (Gadelha)</li>
+          <li>Quando a seção é boa, fala com os dois públicos. J. Granja (intermediário) separa "para quem vende" e "para quem compra".</li>
+        </ul></div>
+        <div class="examples-block">
+          <div class="example-row"><div class="ex-brand"><img src="https://www.google.com/s2/favicons?domain=lagrepresentacoes.com.br&amp;sz=128" alt=""><span class="ex-name">LAG</span></div><div class="ex-headline">Qualificação de estoque · Promotor exclusivo · Ações comerciais · Treinamento comercial</div></div>
+          <div class="example-row"><div class="ex-brand"><img src="https://www.google.com/s2/favicons?domain=gadelharepresentacoes.com.br&amp;sz=128" alt=""><span class="ex-name">Gadelha</span></div><div class="ex-headline">POR QUE A GADELHA? 40 ANOS DE MERCADO · BASE EM GOIÂNIA/GO · ATENDIMENTO TÉCNICO</div></div>
+        </div>
+        <div class="vs-line"><div class="vs-side winners"><strong>Vencedores</strong>Diferenciais que um comprador consegue conferir.</div><div class="vs-arrow">→</div><div class="vs-side losers"><strong>Perdedores</strong>"Suporte a vendas / Melhores produtos / Região de Abragência": texto quase igual em dois sites diferentes (Ginn e Filgueiras), com o mesmo erro.</div></div>
+      </div>
+    </article>
+
+    <article class="beat">
+      <div class="beat-num">06<small>Catálogo</small></div>
+      <div class="beat-content">
+        <div class="beat-head"><h3>Catálogo das representadas a um clique</h3><div class="freq-badge maj">6/10</div></div>
+        <div class="mini-wf"><div class="wf-row" style="gap:10px"><div class="wf-card"><div class="wf-box half"></div><div class="wf-box full"></div><div class="wf-box third"></div></div><div class="wf-card"><div class="wf-box half"></div><div class="wf-box full"></div><div class="wf-box third"></div></div><div class="wf-card"><div class="wf-box half"></div><div class="wf-box full"></div><div class="wf-box third"></div></div></div><div class="wf-label">marca · categoria · "abrir catálogo" / "baixar PDF"</div></div>
+        <div class="winners-block"><div class="winners-head">Os vencedores incluem</div><ul>
+          <li>É o uso recorrente de quem já é cliente: o comprador volta ao site para <strong>achar a referência</strong></li>
+          <li>BNREP montou a home inteira em volta disso. O hero é o catálogo.</li>
+          <li>Catálogo também pelo WhatsApp: "quer receber os catálogos direto no WhatsApp?" (BNREP)</li>
+          <li>Quem não hospeda o arquivo manda para o portal da fábrica (Betel, Assis)</li>
+        </ul></div>
+        <div class="examples-block">
+          <div class="example-row"><div class="ex-brand"><img src="https://www.google.com/s2/favicons?domain=bnrep.com.br&amp;sz=128" alt=""><span class="ex-name">BNREP</span></div><div class="ex-headline">Catálogos das principais indústrias de autopeças em um só lugar</div></div>
+          <div class="example-row"><div class="ex-brand"><img src="https://www.google.com/s2/favicons?domain=jmrautomotive.com.br&amp;sz=128" alt=""><span class="ex-name">JMR</span></div><div class="ex-headline">CATÁLOGO INTERATIVO LD3 — BAIXE AGORA</div></div>
+        </div>
+        <div class="vs-line"><div class="vs-side winners"><strong>Vencedores</strong>Um card por marca, com catálogo atual e link que funciona.</div><div class="vs-arrow">→</div><div class="vs-side losers"><strong>Perdedores</strong>"BAIXE AQUI NOSSAS LISTAS DE PREÇOS" num site com notícias de 2015 (Ginn).</div></div>
+      </div>
+    </article>
+
+    <article class="beat">
+      <div class="beat-num">07<small>Conteúdo</small></div>
+      <div class="beat-content">
+        <div class="beat-head"><h3>Blog, notícias ou feiras: sinal de vida</h3><div class="freq-badge split">4/10</div></div>
+        <div class="winners-block"><div class="winners-head">Os vencedores incluem</div><ul>
+          <li>Três posts recentes com data, na posição média 5,5</li>
+          <li>Temas de balcão: "por que comprar direto da fábrica através de um escritório de representação" (Truck Sul)</li>
+          <li>Feiras e eventos com fotos da equipe no estande (JWG, LAG, BNREP)</li>
+          <li><strong>Risco real:</strong> blog abandonado pesa contra. JMR parou em 02/2024 e JWG mostra um shortcode cru onde deveriam estar as notícias.</li>
+        </ul></div>
+        <div class="examples-block">
+          <div class="example-row"><div class="ex-brand"><img src="https://www.google.com/s2/favicons?domain=trucksulrep.com.br&amp;sz=128" alt=""><span class="ex-name">Truck Sul</span></div><div class="ex-headline">Autopeças: por que comprar direto da fábrica através de um escritório de representação?</div></div>
+        </div>
+        <div class="vs-line"><div class="vs-side winners"><strong>Vencedores</strong>Poucos posts, datados e sobre o balcão do cliente.</div><div class="vs-arrow">→</div><div class="vs-side losers"><strong>Perdedores</strong>"Expediente Final de Ano, dezembro 8, 2015" como notícia mais nova (Ginn).</div></div>
+      </div>
+    </article>
+
+    <article class="beat">
+      <div class="beat-num">08<small>CTA final</small></div>
+      <div class="beat-content">
+        <div class="beat-head"><h3>Uma faixa curta: fale com a gente no WhatsApp</h3><div class="freq-badge maj">6/10</div></div>
+        <div class="mini-wf"><div class="wf-row"><div class="wf-box full h1"></div></div><div class="wf-row"><div class="wf-box cta" style="margin:0 auto"></div></div><div class="wf-label">pergunta ou convite · 1 botão · WhatsApp</div></div>
+        <div class="winners-block"><div class="winners-head">Os vencedores incluem</div><ul>
+          <li>Uma frase e <strong>um botão</strong>, quase sempre de WhatsApp. Formulário só na Betel.</li>
+          <li>Fica na penúltima posição, logo antes do rodapé com telefone, e-mail e endereço</li>
+          <li>O WhatsApp abre com mensagem pronta: "Olá! Vim pelo site da Truck Sul…", "Olá, Roberto!…" (Gadelha)</li>
+        </ul></div>
+        <div class="examples-block">
+          <div class="example-row"><div class="ex-brand"><img src="https://www.google.com/s2/favicons?domain=kaloka.com.br&amp;sz=128" alt=""><span class="ex-name">Kaloka</span></div><div class="ex-headline">Entre em contato para falar com nossos representantes. — Chame no WhatsApp</div></div>
+          <div class="example-row"><div class="ex-brand"><img src="https://www.google.com/s2/favicons?domain=trucksulrep.com.br&amp;sz=128" alt=""><span class="ex-name">Truck Sul</span></div><div class="ex-headline">Ainda tem alguma dúvida? Fique à vontade em entrar em contato conosco.</div></div>
+        </div>
+        <div class="vs-line"><div class="vs-side winners"><strong>Vencedores</strong>WhatsApp com mensagem pronta, no topo e no fim.</div><div class="vs-arrow">→</div><div class="vs-side losers"><strong>Perdedores</strong>Formulário de 5 campos (4/9 dos intermediários) ou um e-mail @uol em texto (Multimercado).</div></div>
+      </div>
+    </article>
+  </div>
+</section>
+
+<section class="pull-quote-section">
+  <blockquote class="pull-quote"><span class="pq-mark">"</span>Num negócio que vive de visita e aperto de mão, <em>9 de 10 sites não mostram um rosto</em>.</blockquote>
+</section>
+
+<section>
+  <div class="section-eyebrow">Anti-padrões</div>
+  <h2 class="section-h2">O que os mais fracos fazem</h2>
+  <p class="section-lede">Padrões que aparecem nos perdedores e nos intermediários mais fracos. Alguns escapam até nos vencedores.</p>
+  <div class="losers-grid">
+    <div class="loser-card"><div class="loser-num">Anti-padrão 01</div><div class="loser-title">Site congelado no tempo</div><div class="loser-detail">© 2019, 2020, 2021; notícias de 2015; "25 anos" que não muda desde a publicação. Para o comprador, site parado sugere escritório parado. 9/10 vencedores mostram 2024 ou depois. Entre os perdedores, 0/3.</div></div>
+    <div class="loser-card"><div class="loser-num">Anti-padrão 02</div><div class="loser-title">Logos sem nome, sem categoria, sem link</div><div class="loser-detail">Uma parede de marcas que o comprador precisa decifrar. O logo não diz se a marca faz rolamento ou retrovisor.</div></div>
+    <div class="loser-card"><div class="loser-num">Anti-padrão 03</div><div class="loser-title">Formulário no lugar do WhatsApp</div><div class="loser-detail">Os intermediários usam formulário na home 4 vezes mais que os vencedores (4/9 contra 1/10). O comprador de distribuidora resolve pelo celular.</div></div>
+    <div class="loser-card"><div class="loser-num">Anti-padrão 04</div><div class="loser-title">Bastidor publicado</div><div class="loser-detail">Shortcode cru (<code>[blog_posts …]</code> na JWG, <code>[instagram-feed feed=1]</code> na Betel) e nota interna de briefing como texto (BNREP: "Aqui é o coração do site. O usuário bate o olho…"). Aparece até entre os vencedores.</div></div>
+    <div class="loser-card"><div class="loser-num">Anti-padrão 05</div><div class="loser-title">Texto de template compartilhado</div><div class="loser-detail">Ginn (SP) e Filgueiras (CE) publicam o mesmo trio de diferenciais, com o mesmo erro "Abragência". Se dois concorrentes dizem a mesma coisa, o texto não diferencia nenhum dos dois.</div></div>
+    <div class="loser-card"><div class="loser-num">Anti-padrão 06</div><div class="loser-title">Imagem genérica no lugar do território</div><div class="loser-detail">Carro esportivo, aperto de mão, executivos de terno. A mesma foto serviria em qualquer estado e para qualquer escritório.</div></div>
+  </div>
+</section>
+
+<section id="borcato">
+  <div class="section-eyebrow">Onde a H.M. Borçato está</div>
+  <h2 class="section-h2">O site novo contra o blueprint, <em>posição a posição</em></h2>
+  <p class="section-lede">Build local (não publicado), extraído do mesmo jeito que os outros: 1440×900, esperando a abertura sumir. Não entra no ranking. Serve para saber o que o site já cobre e o que falta.</p>
+
+  <div class="bz-strip"><span class="lbl">Vencedores</span><span class="w">1 Hero</span><span class="w">2 Marcas</span><span class="w">3 Área</span><span class="w">4 Sobre</span><span class="w">5 Diferenciais</span><span class="w">6 Catálogo</span><span class="w">7 Conteúdo</span><span class="w">8 CTA final</span></div>
+  <div class="bz-strip"><span class="lbl">Borçato</span><span class="b">1 Hero + área + rosto</span><span class="b">2 A Casa</span><span class="b">3 As Marcas (11)</span><span class="b">4 Peças por categoria</span><span class="b">5 A Estrada (8 regiões)</span><span class="b">6 O Nome</span><span class="b">7 Fecho / contato</span></div>
+
+  <div class="cmp-wrap">
+  <table class="cmp">
+    <thead><tr><th>Blueprint</th><th>Vencedores</th><th>Borçato</th><th>Situação</th></tr></thead>
+    <tbody>
+      <tr><td>Hero declarativo</td><td>10/10 · pos. 1</td><td>Pos. 1: "TODO DISTRIBUIDOR DE MINAS CONHECE O NOME." + "DESDE 2018 · BELO HORIZONTE · MG" + botão WhatsApp</td><td><span class="st ok">tem</span></td></tr>
+      <tr><td>Área no topo</td><td>8/10 · 1ª menção 2,4</td><td>Pos. 1 (8 regiões de MG no hero) e pos. 5 (seção com mapa)</td><td><span class="st ok">acima do padrão</span></td></tr>
+      <tr><td>1ª marca visível</td><td>pos. média 1,8 · 5/10 na dobra</td><td>Pos. 3, a ~2.780 px. No hero, só o texto "Ver as onze marcas ↓"</td><td><span class="st late">tarde</span></td></tr>
+      <tr><td>Sobre + tempo de mercado</td><td>9/10 · pos. 2,9</td><td>Pos. 2: "ANTES DE SER BORÇATO, JÁ ERAM CATORZE ANOS DE ESTRADA."</td><td><span class="st ok">tem</span></td></tr>
+      <tr><td>Marcas com categoria</td><td>10/10 · seção pos. 3,0</td><td>Pos. 3: 11 marcas numeradas, cada uma com categoria e link "PORTAL ↗"</td><td><span class="st ok">tem</span></td></tr>
+      <tr><td>Diferenciais em cards</td><td>7/10 · pos. 4,3</td><td>Não há bloco "por que nós". O argumento aparece no texto ("…resolve a bomba d'água, o filtro, a lanterna e o óleo na mesma conversa").</td><td><span class="st late">implícito</span></td></tr>
+      <tr><td>Catálogo</td><td>6/10</td><td>Não há rota de catálogo. Os links de portal das fábricas cobrem parte disso. O hero diz "não por catálogo".</td><td><span class="st gap">falta</span></td></tr>
+      <tr><td>Conteúdo / eventos</td><td>4/10 (dividido)</td><td>Não tem</td><td><span class="st late">opcional</span></td></tr>
+      <tr><td>CTA final</td><td>6/10 · penúltima</td><td>Pos. 7: "FALE COM QUEM RODA A ESTRADA." com celular/WhatsApp, fixo e e-mail</td><td><span class="st ok">tem</span></td></tr>
+      <tr><td>Contato persistente</td><td>7/10 cabeçalho · 5/10 flutuante</td><td>Nenhum. Os elementos fixos são a navegação por capítulos e o cursor. O contato aparece nas posições 1 e 7, que ficam a ~10.000 px de distância.</td><td><span class="st gap">falta</span></td></tr>
+      <tr><td>Rosto real</td><td>1/10</td><td>Foto do fundador no hero</td><td><span class="st uniq">diferencial</span></td></tr>
+    </tbody>
+  </table>
+  </div>
+
+  <div class="bz-grid">
+    <div class="bz-card has"><h4>Tem o que os vencedores têm</h4><ul>
+      <li><b>Hero declarativo</b> com região, ano e WhatsApp</li>
+      <li><b>Sobre</b> com tempo de estrada, na posição 2</li>
+      <li><b>Marcas com categoria e link</b>, o formato que só a Gadelha faz bem</li>
+      <li><b>Área de atuação</b> no topo e em seção própria, que só 3/10 fazem</li>
+      <li><b>Fecho</b> com os três canais</li>
+    </ul></div>
+    <div class="bz-card miss"><h4>O que falta</h4><ul>
+      <li><b>Marca na primeira dobra.</b> Os vencedores mostram a 1ª marca na posição 1,8. No Borçato ela chega na posição 3, depois de ~3 telas. Uma faixa com os 11 logos no hero ou logo abaixo resolveria sem mexer no resto.</li>
+      <li><b>Contato que acompanha a rolagem.</b> A página tem 11.780 px, 2,7 vezes a média dos vencedores (4.364 px), e não tem cabeçalho com telefone nem WhatsApp flutuante.</li>
+      <li><b>Caminho para catálogo</b>, mesmo que seja "peça o catálogo pelo WhatsApp", como faz a BNREP</li>
+    </ul></div>
+    <div class="bz-card diff"><h4>O que só ele faz (é diferencial, não defeito)</h4><ul>
+      <li><b>Rosto do fundador no hero.</b> Só 1 em 10 mostra gente.</li>
+      <li><b>Peças por categoria</b> (Movimento · Filtração · Iluminação · Lubrificação · Plásticos): argumento de mix que ninguém mais desenvolve</li>
+      <li><b>Área como território</b>: 8 regiões nomeadas e mapa, contra "atendemos o estado"</li>
+      <li><b>Origem do nome</b> (Henrique e Mateus) e <b>navegação por capítulos</b>: nenhum concorrente conta história assim</li>
+      <li><b>Texto próprio</b>, num nicho em que concorrentes publicam o mesmo parágrafo</li>
+    </ul></div>
+  </div>
+</section>
+
+<section>
+  <div class="section-eyebrow">Checklist</div>
+  <h2 class="section-h2">Confira a sua home <em>hoje</em></h2>
+  <p class="section-lede">Dez perguntas de sim ou não, tiradas dos dados. Se a resposta for "não", corrija essa linha primeiro.</p>
+  <div class="checklist-box"><ol class="checklist">
+    <li>O hero diz <strong>quem é, para quem e em que região</strong> em uma frase?</li>
+    <li>Tem um <strong>botão de WhatsApp</strong> no hero, com mensagem pronta?</li>
+    <li>Alguma <strong>marca representada aparece na primeira dobra</strong>?</li>
+    <li>Cada marca diz <strong>o que ela fabrica</strong> e leva a algum lugar (portal ou catálogo)?</li>
+    <li>A <strong>área de atuação</strong> está escrita por extenso antes da metade da página?</li>
+    <li>O "sobre" tem <strong>ano de fundação e a quem atende</strong>, sem missão/visão/valores genéricos?</li>
+    <li>O comprador consegue <strong>chegar ao catálogo</strong> em um clique ou pedir pelo WhatsApp?</li>
+    <li>O <strong>contato continua visível</strong> durante a rolagem (cabeçalho ou botão flutuante)?</li>
+    <li>O site mostra <strong>2024 ou depois</strong> em algum lugar e não tem shortcode nem nota interna publicada?</li>
+    <li>A primeira dobra a <strong>375 px</strong> mostra manchete e botão, sem overflow e sem banner de cookie tampando?</li>
+  </ol></div>
+</section>
+
+<footer class="outro">
+  Outlier Research Engine · adaptado ao Brasil · 14 buscas · 36 URLs abertas no Playwright · 22 sites válidos · 24/09/2026
+  <span class="disclaimer">As manchetes estão como aparecem nas páginas no dia da coleta, com a grafia original. Frequências calculadas sobre os 10 vencedores; com uma amostra desse tamanho, indicam tendência. Os dados crus estão em outlier-representacao-autopecas.md.</span>
+</footer>
+
+</main>
+
+</body>
+</html>
