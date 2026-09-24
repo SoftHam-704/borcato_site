@@ -76,12 +76,17 @@
   }
 
   body {
-    background-color: var(--color-background);
+    /* L6 (24/09): fundo real do chao (--br-chao do capitulo inicial), nao o
+       quase-branco herdado do Lovable. Nas costuras onde uma secao nao cobre
+       o quadro inteiro (ex.: palco -> Estrada), o que vaza por baixo agora e
+       o mesmo escuro do site, nao uma faixa branca. */
+    background-color: #0a0a0c;
     color: var(--color-foreground);
     font-family: var(--font-sans);
   }
 
   html {
+    background-color: #0a0a0c;
     scroll-behavior: smooth;
   }
 }
