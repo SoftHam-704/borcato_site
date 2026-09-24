@@ -90,7 +90,12 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
         content: "Onze indústrias representadas em Minas Gerais. Todo distribuidor de Minas conhece o nome.",
       },
       { property: "og:type", content: "website" },
+      { property: "og:url", content: "https://www.hmborcato.com.br/" },
+      { property: "og:image", content: "https://www.hmborcato.com.br/og.png" },
+      { property: "og:image:width", content: "1200" },
+      { property: "og:image:height", content: "630" },
       { name: "twitter:card", content: "summary_large_image" },
+      { name: "twitter:image", content: "https://www.hmborcato.com.br/og.png" },
     ],
     links: [
       {
@@ -104,6 +109,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
         href: "https://fonts.googleapis.com/css2?family=Archivo:ital,wdth,wght@0,62..125,300..700;1,62..125,300..700&display=swap",
       },
       { rel: "icon", href: "/favicon.png", type: "image/png" },
+      { rel: "canonical", href: "https://www.hmborcato.com.br/" },
     ],
   }),
   shellComponent: RootShell,
