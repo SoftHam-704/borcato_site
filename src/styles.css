@@ -3248,13 +3248,17 @@ body.is-abrindo {
   position: relative;
   z-index: 1;
   max-width: 34ch;
-  /* A frase encosta na BASE das letras, sem cruzar os traços.
+  /* A frase respira ABAIXO da base das letras, sem cruzar os traços.
      Com -9vh ela atravessava o meio do H e do M: legível (zero colisão de
      tinta, medido), mas confuso — texto sobre tipografia não é "atravessar o
      espaço", é ruído. Depois que os nomes pequenos saíram (R3-01), o vão
      abaixo ficou livre, e é lá que ela respira.
-     -3vh mantém a sobreposição do RODAPÉ das letras — o gesto continua. */
-  margin: clamp(-40px, -3vh, -14px) auto 0;
+     L2 (parecer de juri 24/09): medido no estado final (H e M em opacidade 1),
+     a margem negativa (-27px a 900px de altura) fazia o paragrafo PISAR na
+     base das letras — o "H" ficava parcialmente coberto. Positivo (>=24px de
+     vao) tira a sobreposicao em qualquer instante da cena, mantendo a mesma
+     resposta a altura da viewport que o valor anterior tinha. */
+  margin: clamp(24px, 3vh, 48px) auto 0;
   padding-inline: clamp(12px, 2vw, 24px);
   font-size: clamp(0.95rem, 1.5vmin, 1.15rem);
   line-height: 1.6;
@@ -3294,9 +3298,12 @@ body.is-abrindo {
      "MATEUS" sumiam por baixo e o "M." ficava ilegivel. O gesto de atravessar
      depende de haver largura sobrando dos dois lados; em 375 nao ha.
      Aqui a frase pousa ABAIXO, com respiro. A cena continua sendo as duas
-     letras em planos diferentes — que e o que carrega o capitulo. */
+     letras em planos diferentes — que e o que carrega o capitulo.
+     L2 (24/09): MEDIDO em 375x812, o piso de 12px dava so 16px de vao real
+     (2vh ~ 16px nessa altura) — abaixo dos 24px exigidos pelo aceite, embora
+     sem sobreposicao. Piso subiu para 24px. */
   .nome__homenagem {
-    margin-top: clamp(12px, 2vh, 24px);
+    margin-top: clamp(24px, 3vh, 32px);
     background: none;
   }
 }
