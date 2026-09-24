@@ -104,3 +104,21 @@ categoria, 8 regiões nomeadas, a origem do nome, navegação por capítulos.
 
 **Lote revisado:** L1, L2, L3 seguem como estavam. L5 (contato persistente) e D-15 aguardam o
 dono. L4 sai do lote.
+
+## Resultado do lote (24/09) — revisado medindo
+
+| Item | Veredito | Medido na revisão |
+|---|---|---|
+| L6 fundo | ✅ | zero faixa branca de cima a baixo, 1440 e 375 |
+| L3 cartão | ✅ | og.png 1200×630, 142 KB; canonical e og:url presentes |
+| L2 O Nome | ✅ | folga ≥ 24 px entre letras e parágrafo em 4 larguras; contraste 14:1 |
+| L1 desktop | ✅ | vazio fechado com `-70vh` só ≥ 901 px; rota nunca anda com o mapa coberto |
+| L1 celular | ❌ revertido | `-120vh` fazia a rota correr de 29% a 89% com o palco cobrindo o mapa |
+
+Erro do revisor: o invariante da especificação dizia "rota de 0 a 1 antes de O Nome" e não
+"a rota só anda com o mapa visível". E aprovei o `-70vh` como "só desktop" sem ver que estava na
+regra base. Ambos corrigidos; celular idêntico ao baseline.
+
+**Aberto no celular (pré-existente, não é regressão):** quadro vazio na entrada da Estrada e
+1 quadro (~50 px) em que a rota começa a 6,6% com a peça ainda por cima. Orçamento do L1
+esgotado — exige nova rodada planejada (fronteira da D-13).
