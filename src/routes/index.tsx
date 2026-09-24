@@ -68,7 +68,6 @@ function Index() {
       <div className="passagem-casa-marcas">
       {/* 01 — A CASA. Quem e, e de onde fala. */}
       <Capitulo id="cap-casa" className="cap--casa">
-        <p className="cap__num" data-revela>01 / A casa</p>
         <div className="casa">
           {/* A COLUNA QUE FALA */}
           <div className="casa__dizer">
@@ -181,7 +180,6 @@ function Index() {
         <EsteiraMarcas
           cabeca={
             <>
-              <p className="cap__num" data-revela>02 / As marcas</p>
               <h2 className="cap__titulo esteira__titulo" data-revela>
                 <Palavras texto="De rolamento a filtro de cabine. Onze indústrias na mesma pasta." />
               </h2>
@@ -223,8 +221,6 @@ function Index() {
           por praca, e a prova estava no material dele o tempo todo ("atendeu todos
           os distribuidores regionais de MG e as filiais dos nacionais no estado"). */}
       <Capitulo id="cap-estrada" className="cap--estrada">
-        <p className="cap__num">03 / A estrada</p>
-
         {/* O MAPA ABRE O CAPITULO (05/09). A tira de contatos de 24 quadros
             mostrou os capitulos 01, 02 e 03 abrindo com o MESMO esqueleto: um
             titulo de 3 linhas em caixa alta. Aqui a primeira vista passa a ser
@@ -278,8 +274,6 @@ function Index() {
 
       {/* 04 — O NOME. A revelação, guardada até o fim. */}
       <Capitulo id="cap-nome" className="cap--nome">
-        <p className="cap__num">04 / O nome</p>
-
         {/* AS LETRAS COMO ARQUITETURA. Parecer de juri: "a homenagem a Henrique
             e Mateus e provavelmente o conteudo mais unico do site. Hoje ela
             termina como titulo H.M. centralizado e um paragrafo. Eu faria as

@@ -975,14 +975,6 @@
   }
 }
 
-.cap__num {
-  margin: 0 0 clamp(18px, 2.6vh, 30px);
-  font-size: 11px;
-  letter-spacing: 0.22em;
-  text-transform: uppercase;
-  color: var(--br-luz);
-}
-
 .cap__titulo {
   max-width: 20ch;
   margin: 0;
@@ -1543,12 +1535,7 @@
   initial-value: 1;
 }
 
-/* 01 · A CASA — o texto SOBE, como quem chega. O rótulo do capítulo entra antes
-   do título, então a leitura acontece na ordem em que foi escrita. */
-.cap--casa .cap__num {
-  opacity: var(--cap-entra, 1);
-  transform: translateY(calc((1 - var(--cap-entra, 1)) * 20px));
-}
+/* 01 · A CASA — o texto SOBE, como quem chega. */
 .cap--casa .cap__titulo {
   /* o título chega DEPOIS: a curva é a mesma, mas atrasada
      (clamp de 0.15 a 1 remapeado para 0→1) */
@@ -1631,7 +1618,6 @@
 
 @media (prefers-reduced-motion: reduce) {
   /* sem movimento tudo existe, inteiro e parado */
-  .cap--casa .cap__num,
   .cap--casa .cap__titulo,
   .cap--casa .cap__corpo,
   .cap--marcas .marcas-lista li,
@@ -2092,7 +2078,6 @@ body.is-abrindo {
      fluxo e foi a origem da faixa preta observada no navegador. */
   clip-path: none;
 }
-.cap--nome > .cap__num,
 .cap--nome > .nome,
 .cap--nome > .fecho {
   clip-path: none;
@@ -3593,9 +3578,6 @@ body.is-abrindo {
   translate: calc(var(--abre, 0) * -18px) 0;
   pointer-events: none;
 }
-.palco-pecas__abre .cap__num {
-  margin-bottom: clamp(12px, 1.6vw, 22px);
-}
 /* o titulo no tamanho da coluna do palco, nao no do capitulo */
 .palco-pecas__titulo {
   font-size: clamp(1.55rem, 4.6vmin, 3.1rem);
@@ -3630,7 +3612,6 @@ body.is-abrindo {
     scale: 1;
   }
   .cap--nome,
-  .cap--nome > .cap__num,
   .cap--nome > .nome,
   .cap--nome > .fecho {
     clip-path: none;
