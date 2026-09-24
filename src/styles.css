@@ -2066,20 +2066,37 @@ body.is-abrindo {
      direita. As duas cenas no mesmo quadro.
      Seis tentativas de `translate` no mapa falharam antes disto: o alvo
      estava a 1900px e o capitulo inteiro recortado. Nao se empurra um
-     elemento para dentro de uma caixa invisivel — abre-se a caixa.
-     L1 (parecer de juri 24/09, achado J1): MEDIDO no build, entre o instante
-     em que `--entrega` satura (~0,99, a peca some) e o instante em que esta
-     secao alcanca o topo da viewport e `.estrada__cena` trava no sticky, ha
-     um trecho de rolagem (a 1440x900: y=7110 a y=7190, ~80px) em que a peca
-     ja sumiu, o mapa mostra so 10-25% de altura (a franja do topo do
-     `.estrada__cena` ainda entrando pelo fluxo normal) e nenhum texto do
-     capitulo esta legivel — o quadro citado no parecer.
-     -70vh (mais 9vh que antes) cobre esse trecho morto no DESKTOP: a secao
-     chega mais cedo ao topo da viewport, entao o sticky trava antes do vazio
-     acontecer.
+     elemento para dentro de uma caixa invisivel — abre-se a caixa. */
+  margin-top: -60vh;
+}
+
+@media (min-width: 901px) {
+  /* L1 (parecer de juri 24/09, achado J1) — SO DESKTOP.
+     MEDIDO no build, entre o instante em que `--entrega` satura (~0,99, a
+     peca some) e o instante em que esta secao alcanca o topo da viewport e
+     `.estrada__cena` trava no sticky, ha um trecho de rolagem (a 1440x900:
+     y=7110 a y=7190, ~80px) em que a peca ja sumiu, o mapa mostra so 10-25%
+     de altura (a franja do topo do `.estrada__cena` ainda entrando pelo
+     fluxo normal) e nenhum texto do capitulo esta legivel — o quadro citado
+     no parecer.
+     -70vh (mais 9vh que a base) cobre esse trecho morto: a secao chega mais
+     cedo ao topo da viewport, entao o sticky trava antes do vazio acontecer.
+     RESTRITO a >=901px (o mesmo breakpoint do sticky da propria Estrada,
+     `.cap--estrada .estrada` abaixo) porque no celular o -70vh no lugar do
+     -60vh da base PIORAVA o invariante F-01 (a rota do mapa andando antes de
+     o mapa estar de fato pintado, coberto pelo palco sticky): medido, o
+     baseline (-60vh) ja tinha 1 quadro de violacao em y=5000 (--rota=0,066
+     com 0/3 pontos do mapa pintados); com -70vh na regra base (sem escopo)
+     virou 2 quadros, --rota chegando a 0,209 ainda coberto. A correcao do
+     vazio J1 e so do desktop porque so o desktop tem o sticky de 200vh do
+     `.estrada__cena` que cria a franja pequena; o celular fica na BASE
+     (-60vh), sem regressao.
      NAO mexe na pista do palco (uma peca por gesto, 45vh por ato) nem no
-     relogio do mapa — so ENCURTA quanto a estrada demora a entrar. */
-  margin-top: -70vh;
+     relogio do mapa — so ENCURTA quanto a estrada demora a entrar, e so
+     onde o defeito existe. */
+  .cap--estrada {
+    margin-top: -70vh;
+  }
 }
 
 /* 04 · O NOME — do centro para as bordas: a revelação se abre */
