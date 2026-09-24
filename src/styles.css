@@ -523,95 +523,7 @@
     }
   }
 
-  /* ---------- Custom cursor ---------- */
-  .has-custom-cursor,
-  .has-custom-cursor a,
-  .has-custom-cursor button,
-  .has-custom-cursor [data-cursor] {
-    cursor: none;
-  }
-
-  .cursor-dot,
-  .cursor-ring {
-    position: fixed;
-    top: 0;
-    left: 0;
-    z-index: 200;
-    pointer-events: none;
-    mix-blend-mode: difference;
-    will-change: transform;
-  }
-
-  .cursor-dot {
-    width: 6px;
-    height: 6px;
-    margin: -3px 0 0 -3px;
-    border-radius: 999px;
-    background: white;
-    transition: opacity 0.25s ease;
-  }
-
-  .cursor-dot[data-active="true"] {
-    opacity: 0;
-  }
-
-  .cursor-ring {
-    display: grid;
-    place-items: center;
-    width: 34px;
-    height: 34px;
-    margin: -17px 0 0 -17px;
-    border: 1px solid oklch(1 0 0 / 0.85);
-    border-radius: 999px;
-    transition:
-      width 0.35s cubic-bezier(0.22, 1, 0.36, 1),
-      height 0.35s cubic-bezier(0.22, 1, 0.36, 1),
-      margin 0.35s cubic-bezier(0.22, 1, 0.36, 1),
-      background-color 0.3s ease,
-      border-color 0.3s ease;
-  }
-
-  .cursor-ring[data-active="true"] {
-    width: 56px;
-    height: 56px;
-    margin: -28px 0 0 -28px;
-    background: oklch(1 0 0 / 0.14);
-    border-color: transparent;
-  }
-
-  .cursor-ring[data-pressed="true"] {
-    width: 26px;
-    height: 26px;
-    margin: -13px 0 0 -13px;
-  }
-
-  /* O ROTULO DO CURSOR EXISTE NO COMPONENTE E NAO E USADO — de proposito.
-     Tentei ligar (05/09) em CTA, contatos e nav. Em todos ele COLIDIU com o
-     texto do proprio alvo: sobre o botao saiu "FALAR COM A BORCAT[WHATSAPP]",
-     e na nav "A ESTRADAA ESTRADA", porque ela ja expande o rotulo no hover.
-     A conclusao vale mais que o efeito: neste site nenhum alvo precisa de
-     rotulo, porque todos ja dizem o que sao. Rotulo de cursor presta onde o
-     alvo e mudo (uma miniatura, um retangulo de imagem) — nao aqui.
-     Fica registrado para nao ser "consertado" de novo. */
-  .cursor-label {
-    position: absolute;
-    left: 100%;
-    top: 50%;
-    translate: 14px -50%;
-    font-family: var(--font-display), sans-serif;
-    font-size: 0.55rem;
-    font-weight: 600;
-    letter-spacing: 0.18em;
-    text-transform: uppercase;
-    white-space: nowrap;
-    color: white;
-  }
-
   @media (prefers-reduced-motion: reduce) {
-    .cursor-dot,
-    .cursor-ring {
-      display: none;
-    }
     .nav-roll-inner,
     .site-header,
     .mobile-menu,
@@ -1949,13 +1861,6 @@ body.is-abrindo {
 .abertura.fase-nome::before,
 .abertura.fase-abrindo::before,
 .abertura.is-saindo::before {
-  opacity: 0;
-}
-
-/* O cursor nasce no centro. Durante a abertura ele parecia um spinner de
-   carregamento e roubava a primeira impressão; volta quando a cena termina. */
-body.is-abrindo .cursor-dot,
-body.is-abrindo .cursor-ring {
   opacity: 0;
 }
 
