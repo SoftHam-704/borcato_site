@@ -159,6 +159,43 @@ img { max-width: 100%; display: block; }
 .d6 .fecho p { margin: 0 0 6px; font-size: 18px; }
 .d6 .fecho small { color: var(--fraco); font-size: 12px; letter-spacing: 0.14em; text-transform: uppercase; }
 
+/* ═════════ 6 · O CARTÃO QUE REVELA A PEÇA ═══════════════════════════════════ */
+.vira { background: var(--marcas); padding-block: 10vh 14vh; }
+.vira .trilho { list-style: none; margin: 0; display: flex; align-items: flex-start; gap: 18px; overflow-x: auto; padding: 8px var(--goteira) 24px; scroll-snap-type: x proximity; scrollbar-width: thin; }
+.vira .carta { flex: none; scroll-snap-align: start; perspective: 1400px; }
+.vira .carta--p { width: 260px; } .vira .carta--m { width: 390px; } .vira .carta--g { width: 560px; }
+.vira .carta--alto { margin-top: 0; } .vira .carta--meio { margin-top: 70px; } .vira .carta--baixo { margin-top: 140px; }
+.vira .girar { position: relative; display: block; width: 100%; height: 320px; padding: 0; border: 0; background: none; color: inherit; font: inherit; text-align: left; cursor: pointer; transform-style: preserve-3d; transition: transform 0.7s cubic-bezier(0.2, 0.7, 0.2, 1); }
+.vira .carta.is-aberta .girar { transform: rotateY(180deg); }
+.vira .face { position: absolute; inset: 0; border-radius: 14px; border: 1px solid rgba(160, 208, 240, 0.14); backface-visibility: hidden; -webkit-backface-visibility: hidden; overflow: hidden; }
+.vira .frente { background: var(--superficie); display: grid; grid-template-rows: auto 1fr auto; padding: 20px; }
+.vira .frente .num { color: var(--luz); font-size: 12px; letter-spacing: 0.1em; font-variant-numeric: tabular-nums; }
+.vira .frente .logo { display: flex; align-items: center; justify-content: center; }
+.vira .frente .logo img { max-height: 46px; max-width: 70%; width: auto; }
+.vira .frente strong { display: block; font-size: 15px; text-transform: uppercase; letter-spacing: 0.04em; }
+.vira .frente small { color: var(--fraco); font-size: 13px; }
+.vira .frente .dica { position: absolute; right: 18px; bottom: 18px; color: var(--luz); font-size: 12px; letter-spacing: 0.12em; text-transform: uppercase; }
+.vira .verso { transform: rotateY(180deg); background: radial-gradient(circle at 50% 42%, #173250 0%, #0c1421 72%); display: grid; grid-template-rows: 1fr auto; }
+.vira .verso img { width: auto; height: 100%; max-height: 210px; justify-self: center; align-self: center; -webkit-mask-image: radial-gradient(circle, #000 50%, transparent 70%); mask-image: radial-gradient(circle, #000 50%, transparent 70%); }
+.vira .verso .rodape { padding: 0 20px 18px; }
+.vira .verso strong { display: block; font-size: 17px; font-weight: 700; text-transform: uppercase; }
+.vira .verso small { color: var(--fraco); font-size: 12px; }
+/* o portal fica FORA do botão (link dentro de botão não é permitido) e só aparece com o cartão aberto */
+.vira .portal { display: inline-flex; align-items: center; min-height: 44px; margin-top: 4px; color: var(--luz); font-size: 12px; letter-spacing: 0.14em; text-transform: uppercase; text-decoration: none; visibility: hidden; opacity: 0; transition: opacity 0.3s ease 0.35s; }
+.vira .carta.is-aberta .portal { visibility: visible; opacity: 1; }
+.vira .girar:focus-visible .face { outline: 2px solid var(--luz); outline-offset: 3px; }
+@media (max-width: 767px) {
+  .vira .carta--p, .vira .carta--m, .vira .carta--g { width: 78vw; }
+  .vira .carta--meio, .vira .carta--baixo { margin-top: 0; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .vira .girar { transition: none; transform: none !important; }
+  .vira .face { backface-visibility: visible; transition: opacity 0.2s; }
+  .vira .verso { transform: none; opacity: 0; }
+  .vira .carta.is-aberta .verso { opacity: 1; }
+  .vira .carta.is-aberta .frente { opacity: 0; }
+}
+
 /* ── marcador de revisão (só do laboratório) ───────────────────────────────── */
 .hud { position: fixed; right: 16px; bottom: 16px; z-index: 50; background: rgba(10, 10, 12, 0.82); border: 1px solid rgba(160, 208, 240, 0.18); border-radius: 999px; padding: 8px 14px; font-size: 12px; color: var(--fraco); font-variant-numeric: tabular-nums; }
 .hud b { color: var(--luz); font-weight: 600; }
@@ -202,6 +239,7 @@ img { max-width: 100%; display: block; }
     <li><a href="#p2"><span>2</span><div><strong>A Casa → As Marcas · a pasta se abre</strong><em>As onze indústrias saem da pasta do representante e se espalham.</em></div></a></li>
     <li><a href="#p3"><span>3</span><div><strong>Esteira → Palco · entrar na marca</strong><em>A câmera entra no cartão da marca e encontra a peça que ela fabrica.</em></div></a></li>
     <li><a href="#p5"><span>4</span><div><strong>Estrada → O Nome · a estrada escreve o nome</strong><em>A rota não para no último ponto: continua e escreve H.M.</em></div></a></li>
+    <li><a href="#p7"><span>6</span><div><strong>Os cartões das indústrias · clique e a peça aparece</strong><em>Cada cartão vira e revela o que aquela indústria coloca na estrada.</em></div></a></li>
     <li><a href="#p6"><span>5</span><div><strong>O Nome → Fechamento · o nome revela o homem</strong><em>As letras viram janela, e através delas aparece o Fábio.</em></div></a></li>
   </ol>
 </header>
@@ -319,6 +357,15 @@ img { max-width: 100%; display: block; }
   </div>
 </section>
 
+<section class="cartela" id="p7">
+  <span class="de">Extra · As Marcas</span>
+  <h2>Clique e a peça aparece</h2>
+  <p>Cada cartão de indústria <b>vira</b> quando você clica e mostra, no verso, a peça que ela fornece, com o link do portal. Clique de novo para voltar. As peças são as mesmas do palco, sem marca visível.</p>
+</section>
+<section class="vira" aria-label="Indústrias representadas">
+  <ul class="trilho" id="trilho7" role="list"></ul>
+</section>
+
 <section class="cartela">
   <span class="de">Fim do laboratório</span>
   <h2>Qual entra no site?</h2>
@@ -344,6 +391,33 @@ img { max-width: 100%; display: block; }
     el.style.setProperty("--i", i);
     el.innerHTML = '<div class="logo"><img src="img/marcas/' + m[0] + '.png" alt="" /></div><div><strong>' + m[1] + "</strong><small>" + m[2] + "</small></div>";
     grade.appendChild(el);
+  });
+
+  /* 6 · os cartões que viram */
+  var pecas = { "ntn-snr": "rolamento", "filtros-brasil": "filtro", nidec: "bomba", cofran: "lanterna", pysko: "suspensao",
+    hexlub: "oleo", "meca-brazil": "injetor", "auto-america": "quimica", "mundial-prime": "spray", sintech: "motor", vp: "plastico" };
+  var sites = {"ntn-snr": "https://ntn.com.br/", "filtros-brasil": "https://www.filtrosbrasil.com.br/", "nidec": "http://www.nidec-gpm.com.br/", "cofran": "https://cofranlanternas.com.br/", "pysko": "https://www.pysko.com.br/", "hexlub": "https://hexxlub.com.br/", "meca-brazil": "https://mecabrazil.com/", "auto-america": "https://www.autoamerica.com.br/", "mundial-prime": "https://mundialprime.com.br/", "sintech": "https://www.sintechdobrasil.com.br/", "vp": "https://vp.ind.br/"};
+  var larg = ["p", "m", "g"], alt = ["alto", "meio", "baixo"];
+  var trilho = document.getElementById("trilho7");
+  marcas.forEach(function (m, i) {
+    var li = document.createElement("li");
+    li.className = "carta carta--" + larg[i % 3] + " carta--" + alt[(i * 2) % 3];
+    li.innerHTML =
+      '<button type="button" class="girar" aria-expanded="false" aria-label="' + m[1] + ", " + m[2] + '. Ver a peça.">' +
+        '<span class="face frente"><span class="num">' + String(i + 1).padStart(2, "0") + '</span>' +
+          '<span class="logo"><img src="img/marcas/' + m[0] + '.png" alt="" /></span>' +
+          '<span><strong>' + m[1] + '</strong><small>' + m[2] + '</small></span><span class="dica">Ver peça</span></span>' +
+        '<span class="face verso"><img src="img/pecas/' + pecas[m[0]] + '.jpg" alt="' + m[2] + '" loading="lazy" />' +
+          '<span class="rodape"><strong>' + m[2] + '</strong><small>fornecido por ' + m[1] + '</small></span></span>' +
+      '</button>' +
+      '<a class="portal" href="' + (sites[m[0]] || "#") + '" target="_blank" rel="noopener noreferrer">Portal da ' + m[1] + ' ↗</a>';
+    var bt = li.querySelector(".girar");
+    bt.addEventListener("click", function () {
+      var aberta = li.classList.toggle("is-aberta");
+      bt.setAttribute("aria-expanded", String(aberta));
+      bt.setAttribute("aria-label", m[1] + ", " + m[2] + (aberta ? ". Voltar para a marca." : ". Ver a peça."));
+    });
+    trilho.appendChild(li);
   });
 
   var pistas = Array.prototype.slice.call(document.querySelectorAll(".pista"));
