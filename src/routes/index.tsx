@@ -4,7 +4,7 @@ import { HeroTravessia } from "@/components/site/HeroTravessia";
 import { Capitulo, NavCapitulos } from "@/components/site/Capitulos";
 import { Estrada } from "@/components/site/Estrada";
 import { Palavras } from "@/components/site/Palavras";
-import { PalcoPecas } from "@/components/site/PalcoPecas";
+import { CarroOnze } from "@/components/site/CarroOnze";
 import { EsteiraMarcas } from "@/components/site/EsteiraMarcas";
 import { FechoFabio } from "@/components/site/FechoFabio";
 import { MapaMinas, PONTOS } from "@/components/site/MapaMinas";
@@ -197,21 +197,24 @@ function Index() {
           }
         />
 
-        <PalcoPecas
-          abre={
-            <>
-              {/* o titulo do capitulo ja esta na esteira; aqui so o paragrafo
-                  que prepara as pecas */}
-              <div className="cap__corpo">
-                <p>
-                  Um distribuidor que compra rolamento da NTN-SNR resolve a bomba d&apos;água, o
-                  filtro, a lanterna e o óleo na mesma conversa. É essa a diferença entre representar
-                  uma marca e representar um catálogo.
-                </p>
-              </div>
-            </>
-          }
-        />
+        {/* O PALCO DE PEÇAS FOI SUBSTITUÍDO PELA CENA DO CARRO (A2, 26/09):
+            o dono aprovou no laboratório (`laboratorio/transicoes/index.html`,
+            item ★, `#p9`) o carro em raio-X que ganha luz conforme as 11
+            peças chegam. `PalcoPecas.tsx` e suas regras CSS continuam no
+            repositório, sem uso — a limpeza vem depois, se o dono aprovar
+            esta etapa. O texto de abertura que o palco recebia ("Um
+            distribuidor que compra rolamento da NTN-SNR resolve a bomba
+            d'água...") não tinha lugar equivalente na cena do carro (que abre
+            direto com o título "Onze indústrias. Uma estrada só.") — decisão
+            conservadora: preservado aqui, como parágrafo de transição entre a
+            esteira e a cena do carro, em vez de descartado. */}
+        <p className="carro-onze__abre">
+          Um distribuidor que compra rolamento da NTN-SNR resolve a bomba d&apos;água, o
+          filtro, a lanterna e o óleo na mesma conversa. É essa a diferença entre representar
+          uma marca e representar um catálogo.
+        </p>
+
+        <CarroOnze />
       </Capitulo>
       </div>
 

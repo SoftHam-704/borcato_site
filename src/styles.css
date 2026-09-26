@@ -2878,6 +2878,384 @@ body.is-abrindo {
   scale: 1.5;
 }
 
+/* ═══════════════════════════════════════════════════════════════════════════
+   CARRO ONZE — a cena-assinatura que substitui o PalcoPecas (lab, item ★,
+   `#p9`). O carro em raio-X ganha luz conforme as 11 peças chegam, cada uma
+   pousa numa vaga e uma guia a liga ao componente dela dentro do carro.
+   Depois a EXPLOSÃO: as peças voam até as 8 regiões de Minas — a mesma
+   passagem que o PalcoPecas fazia para A Estrada, agora dentro desta cena.
+
+   CALIBRAÇÃO (26/09): a pista do palco antigo era 320vh ((5+1)*45vh+50vh) e
+   dava ~223px de leitura por peça (a proporção aprovada pós-D36). Com 11
+   peças na mesma proporção a pista pediria ~580vh — o dobro do orçamento de
+   altura (a página não pode crescer mais que 5%, medido a 1440×900). AQUI A
+   PISTA FICA EM 350vh: uma primeira tentativa em 380vh MEDIU 12.514px
+   (+7,2%, estourando o teto); 350vh entrega ~100px de leitura por peça —
+   MENOS DA METADE da calibração antiga. Decisão registrada, não escondida:
+   se o dono achar o ritmo apressado, o próximo ajuste é SÓ este número (a
+   fonte única de tempo é o `curso` calculado em `CarroOnze.tsx`, que lê a
+   altura real da pista — subir este valor sozinho já recalibra tudo, desde
+   que o orçamento de altura permita). */
+/* o parágrafo de transição herdado do PalcoPecas (ver `index.tsx`): fica no
+   fluxo normal do capítulo, entre a esteira e a pista do carro */
+.carro-onze__abre {
+  max-width: 60ch;
+  margin: 0 0 clamp(24px, 4vh, 48px);
+  padding-inline: var(--br-goteira);
+  font-size: clamp(0.95rem, 1.6vmin, 1.1rem);
+  line-height: 1.6;
+  color: var(--br-fraco);
+}
+@media (max-width: 900px) {
+  .carro-onze__abre {
+    padding-inline: clamp(20px, 6vw, 40px);
+  }
+}
+
+.carro-onze {
+  position: relative;
+  height: 350vh;
+}
+.carro-onze__cena {
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  overflow: hidden;
+  background: radial-gradient(ellipse at 50% 58%, color-mix(in srgb, var(--br-marca) 22%, var(--br-chao)) 0%, var(--br-chao) 62%);
+  display: grid;
+  grid-template-rows: auto 1fr;
+  padding: clamp(18px, 4vh, 44px) var(--br-goteira) clamp(10px, 3vh, 30px);
+}
+.carro-onze__topo {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 20px;
+  position: relative;
+  min-height: 64px;
+}
+.carro-onze__topo h3 {
+  margin: 0;
+  font-family: var(--font-display), sans-serif;
+  font-size: clamp(26px, 3.4vw, 46px);
+  line-height: 1;
+  font-weight: 300;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--br-tinta);
+  opacity: calc(var(--c, 0) * (1 - var(--fim, 0)));
+}
+.carro-onze__topo h3 b {
+  font-weight: 700;
+  font-stretch: 112%;
+  letter-spacing: -0.01em;
+  color: var(--br-luz);
+}
+.carro-onze__final {
+  position: absolute;
+  left: 0;
+  right: 110px;
+  top: 0;
+  margin: 0;
+  white-space: nowrap;
+  font-family: var(--font-display), sans-serif;
+  font-size: clamp(22px, 3vw, 44px);
+  line-height: 1;
+  font-weight: 700;
+  font-stretch: 108%;
+  text-transform: uppercase;
+  color: var(--br-tinta);
+  opacity: calc(var(--fim, 0) * (1 - var(--X, 0) * 2.5));
+  translate: 0 calc((1 - var(--fim, 0)) * 1.5vh);
+}
+.carro-onze__final span {
+  color: var(--br-luz);
+}
+.carro-onze__rumo {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  margin: 0;
+  font-family: var(--font-display), sans-serif;
+  font-size: clamp(22px, 3vw, 44px);
+  line-height: 1;
+  font-weight: 700;
+  font-stretch: 108%;
+  text-transform: uppercase;
+  white-space: nowrap;
+  color: var(--br-tinta);
+  opacity: var(--rumo, 0);
+  translate: 0 calc((1 - var(--rumo, 0)) * 1.5vh);
+}
+.carro-onze__rumo span {
+  color: var(--br-luz);
+}
+.carro-onze__conta {
+  font-family: var(--font-display), sans-serif;
+  font-size: clamp(22px, 2.4vw, 34px);
+  font-weight: 700;
+  color: var(--br-marca);
+  font-variant-numeric: tabular-nums;
+  opacity: calc(var(--c, 0) * (1 - var(--X, 0) * 3));
+}
+.carro-onze__conta small {
+  font-size: 0.5em;
+  color: var(--br-fraco);
+  font-weight: 400;
+}
+
+.carro-onze__svg {
+  width: 100%;
+  height: 100%;
+  min-height: 0;
+  overflow: visible;
+}
+.carro-onze__linha {
+  fill: none;
+  stroke: color-mix(in srgb, var(--br-luz) 55%, var(--br-fraco));
+  stroke-width: 1.6;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-dasharray: 1;
+  stroke-dashoffset: calc(1 - var(--c, 0));
+}
+.carro-onze__linha--viva {
+  stroke: var(--br-luz);
+  stroke-width: 2;
+  opacity: var(--fim, 0);
+  filter: drop-shadow(0 0 6px color-mix(in srgb, var(--br-luz) 55%, transparent));
+}
+.carro-onze__foto {
+  opacity: calc(var(--c, 0) * (1 - var(--X, 0) * 1.4));
+  filter: brightness(calc(0.5 + var(--mont, 0) * 0.25 + var(--fim, 0) * 0.35)) saturate(calc(0.8 + var(--fim, 0) * 0.3));
+}
+.carro-onze__ponto {
+  fill: var(--br-luz);
+  stroke: var(--br-chao);
+  stroke-width: 2.5;
+  paint-order: stroke;
+}
+.carro-onze__guia {
+  stroke-width: 1.4;
+}
+.carro-onze__interno {
+  fill: none;
+  stroke: color-mix(in srgb, var(--br-luz) 60%, var(--br-marca));
+  stroke-width: 1.1;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-dasharray: 1;
+  stroke-dashoffset: calc(1 - var(--mont, 0));
+  opacity: calc(0.25 + var(--mont, 0) * 0.6);
+}
+.carro-onze__interno.carro-onze__metal {
+  stroke: color-mix(in srgb, var(--br-luz) 80%, var(--br-tinta));
+}
+.carro-onze__interno.carro-onze__cheio {
+  fill: color-mix(in srgb, var(--br-luz) 8%, transparent);
+}
+.carro-onze__dentroVivo {
+  opacity: var(--fim, 0);
+  filter: drop-shadow(0 0 4px color-mix(in srgb, var(--br-luz) 60%, transparent));
+}
+.carro-onze__chao {
+  stroke: color-mix(in srgb, var(--br-luz) 18%, transparent);
+  stroke-width: 1;
+  stroke-dasharray: 6 8;
+  opacity: var(--c, 0);
+}
+.carro-onze__peca {
+  opacity: calc(clamp(0, calc(var(--k, 0) * 3), 1) * (1 - clamp(0, calc((var(--x, 0) - 0.86) / 0.14), 1)));
+  transform: translate(
+      calc((var(--dx, 0) * (1 - var(--k, 0)) + var(--mx, 0) * var(--x, 0)) * 1px),
+      calc((var(--dy, 0) * (1 - var(--k, 0)) + var(--my, 0) * var(--x, 0)) * 1px)
+    )
+    scale(calc((1 + (1 - var(--k, 0)) * 1.2) * (1 - var(--x, 0) * 0.86)));
+  transform-box: fill-box;
+  transform-origin: center;
+}
+.carro-onze__aro {
+  fill: none;
+  stroke: color-mix(in srgb, var(--br-luz) calc(20% + var(--k2, 0) * 50%), transparent);
+  stroke-width: 1.2;
+}
+.carro-onze__guia {
+  fill: none;
+  stroke: var(--br-luz);
+  stroke-width: 1.1;
+  stroke-dasharray: 1;
+  stroke-dashoffset: calc(1 - var(--k, 0));
+  opacity: calc(0.85 * (1 - var(--x, 0) * 3));
+}
+.carro-onze__ponto {
+  fill: var(--br-luz);
+  opacity: calc(var(--k2, 0) * (1 - var(--x, 0) * 3));
+  transform: scale(calc(0.4 + var(--k2, 0) * 0.6));
+  transform-box: fill-box;
+  transform-origin: center;
+}
+.carro-onze__halo {
+  fill: none;
+  stroke: var(--br-luz);
+  stroke-width: 1;
+  opacity: calc(var(--k2, 0) * (1 - var(--k2, 0)) * 3);
+  transform: scale(calc(1 + var(--k2, 0) * 2.4));
+  transform-box: fill-box;
+  transform-origin: center;
+}
+.carro-onze__rot {
+  font-family: var(--font-display), sans-serif;
+  text-anchor: middle;
+  opacity: calc(var(--k2, 0) * (1 - var(--x, 0) * 4));
+}
+.carro-onze__cat {
+  font-size: 14px;
+  font-weight: 700;
+  fill: var(--br-tinta);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+.carro-onze__mar {
+  font-size: 11.5px;
+  fill: var(--br-fraco);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+.carro-onze__lista {
+  display: none;
+}
+/* a explosão: o carro se abre e as peças seguem para as regiões de Minas */
+.carro-onze__carroG {
+  opacity: calc(1 - var(--X, 0) * 1.4);
+}
+.carro-onze__mapa {
+  opacity: var(--mapa, 0);
+}
+.carro-onze__mgSil {
+  fill: color-mix(in srgb, var(--br-marca) 55%, var(--br-chao));
+  stroke: color-mix(in srgb, var(--br-luz) 40%, transparent);
+  stroke-width: 1.3;
+  vector-effect: non-scaling-stroke;
+}
+.carro-onze__reg-ponto {
+  fill: var(--br-luz);
+  opacity: var(--lit, 0);
+}
+.carro-onze__reg-halo {
+  fill: none;
+  stroke: var(--br-luz);
+  stroke-width: 1.2;
+  opacity: calc(var(--lit, 0) * (1 - var(--lit, 0)) * 3.5);
+  transform: scale(calc(1 + var(--lit, 0) * 2.6));
+  transform-box: fill-box;
+  transform-origin: center;
+}
+.carro-onze__reg-nome {
+  font-family: var(--font-display), sans-serif;
+  font-size: 13px;
+  fill: var(--br-fraco);
+  letter-spacing: 0.04em;
+  opacity: calc(var(--lit, 0) * var(--nomes, 0));
+}
+
+@media (max-width: 767px) {
+  .carro-onze {
+    height: 340vh;
+  }
+  /* TENTATIVA 1 (encolher a cena via --X, técnica opção A do D-13) foi
+     REVERTIDA: MEDIDO que ela abre um vazio visual pior — o mapa do carro
+     desaparece do vão que se abre antes do mapa real da Estrada assumir o
+     lugar (ver captura em war-game, y=5310 mobile). O invariante 2 (nenhum
+     quadro vazio) já fecha em 0/73 sem esta regra; o que resta é uma
+     violação PONTUAL do invariante 1 (rota do mapa real mede ~0,05-0,07
+     antes de o próprio mapa estar fisicamente visível, coberta pelo carro
+     ainda sticky) em 1 de 73 quadros na ida e 1 de 73 na volta — ambos no
+     mesmo ponto (y≈5300, quando --entrega≈0,92, a cena já a caminho de
+     ceder). Documentado, não escondido: não travar aqui uma 3a tentativa
+     (a spec pede parar após 2). */
+  .carro-onze__rumo {
+    font-size: 22px;
+    white-space: normal;
+  }
+  .carro-onze__reg-nome {
+    display: none;
+  }
+  .carro-onze__cena {
+    grid-template-rows: auto auto 1fr;
+    gap: 10px;
+  }
+  .carro-onze__topo {
+    min-height: 58px;
+  }
+  .carro-onze__topo h3 {
+    font-size: 24px;
+    padding-right: 64px;
+  }
+  .carro-onze__final {
+    font-size: 22px;
+    white-space: normal;
+    right: 64px;
+  }
+  .carro-onze__desk {
+    display: none;
+  }
+  .carro-onze__svg {
+    height: auto;
+    translate: 0 calc(var(--X, 0) * 14vh);
+    scale: calc(1 + var(--X, 0) * 1.7);
+    transform-origin: 50% 0;
+  }
+  .carro-onze__lista {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px 10px;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    align-content: start;
+  }
+  .carro-onze__lista li {
+    display: grid;
+    grid-template-columns: 42px 1fr;
+    gap: 8px;
+    align-items: center;
+    opacity: calc((0.12 + var(--k2, 0) * 0.88) * (1 - var(--x, 0) * 2.5));
+    translate: 0 calc((1 - var(--k2, 0)) * 10px - var(--x, 0) * 14px);
+  }
+  .carro-onze__lista img {
+    width: 42px;
+    height: 42px;
+    border-radius: 50%;
+    object-fit: cover;
+  }
+  .carro-onze__lista b {
+    display: block;
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+    line-height: 1.15;
+  }
+  .carro-onze__lista small {
+    font-size: 10px;
+    color: var(--br-fraco);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  /* sem movimento: a cena entrega o estado final (carro montado, peças nas
+     regiões) direto — mesmo padrão do PalcoPecas neste modo */
+  .carro-onze {
+    height: auto;
+    min-height: 100vh;
+  }
+  .carro-onze__cena {
+    position: relative;
+  }
+}
+
 /* ── celular: o objeto vai para cima, o texto embaixo ─────────────────────── */
 @media (max-width: 900px) {
   .palco-pecas__cena {
