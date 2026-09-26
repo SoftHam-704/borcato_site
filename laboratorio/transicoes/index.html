@@ -159,6 +159,49 @@ img { max-width: 100%; display: block; }
 .d6 .fecho p { margin: 0 0 6px; font-size: 18px; }
 .d6 .fecho small { color: var(--fraco); font-size: 12px; letter-spacing: 0.14em; text-transform: uppercase; }
 
+/* ═════════ ★ O CARRO QUE AS ONZE MONTAM ══════════════════════════════════════ */
+.d9 { height: 560vh; }
+.d9 .cena { background: radial-gradient(ellipse at 50% 58%, #10233a 0%, var(--marcas) 62%); display: grid; grid-template-rows: auto 1fr; padding: clamp(18px, 4vh, 44px) var(--goteira) clamp(10px, 3vh, 30px); }
+.d9 {
+  --c: clamp(0, calc(var(--e) / 0.1), 1);
+  --fim: clamp(0, calc((var(--e) - 0.86) / 0.1), 1);
+}
+.d9 .topo { display: flex; justify-content: space-between; align-items: baseline; gap: 20px; position: relative; min-height: 64px; }
+.d9 .topo h3 { margin: 0; font-size: clamp(26px, 3.4vw, 46px); line-height: 1; font-weight: 300; text-transform: uppercase; letter-spacing: 0.04em; opacity: calc(var(--c) * (1 - var(--fim))); }
+.d9 .topo h3 b { font-weight: 700; font-stretch: 112%; letter-spacing: -0.01em; color: var(--luz); }
+.d9 .topo .final { position: absolute; left: 0; right: 110px; top: 0; margin: 0; white-space: nowrap; font-size: clamp(22px, 3vw, 44px); line-height: 1; font-weight: 700; font-stretch: 108%; text-transform: uppercase; opacity: var(--fim); transform: translateY(calc((1 - var(--fim)) * 1.5vh)); }
+.d9 .topo .final span { color: var(--luz); }
+.d9 .conta { font-size: clamp(22px, 2.4vw, 34px); font-weight: 700; color: var(--azul); font-variant-numeric: tabular-nums; opacity: var(--c); }
+.d9 .conta small { font-size: 0.5em; color: var(--fraco); font-weight: 400; }
+.d9 svg.carro { width: 100%; height: 100%; min-height: 0; overflow: visible; }
+.d9 .linha { fill: none; stroke: #5d7fa3; stroke-width: 1.6; stroke-linecap: round; stroke-linejoin: round; stroke-dasharray: 1; stroke-dashoffset: calc(1 - var(--c)); }
+.d9 .linha.viva { stroke: var(--luz); stroke-width: 2; opacity: var(--fim); filter: drop-shadow(0 0 6px rgba(160, 208, 240, 0.55)); }
+.d9 .chao { stroke: rgba(160, 208, 240, 0.18); stroke-width: 1; stroke-dasharray: 6 8; opacity: var(--c); }
+.d9 .peca { opacity: clamp(0, calc(var(--k) * 3), 1); transform: translate(calc(var(--dx) * (1 - var(--k)) * 1px), calc(var(--dy) * (1 - var(--k)) * 1px)) scale(calc(1 + (1 - var(--k)) * 1.2)); transform-box: fill-box; transform-origin: center; }
+.d9 .aro { fill: none; stroke: rgba(160, 208, 240, calc(0.2 + var(--k2) * 0.5)); stroke-width: 1.2; }
+.d9 .guia { fill: none; stroke: var(--luz); stroke-width: 1.1; stroke-dasharray: 1; stroke-dashoffset: calc(1 - var(--k2)); opacity: 0.85; }
+.d9 .ponto { fill: var(--luz); opacity: var(--k2); transform: scale(calc(0.4 + var(--k2) * 0.6)); transform-box: fill-box; transform-origin: center; }
+.d9 .halo { fill: none; stroke: var(--luz); stroke-width: 1; opacity: calc(var(--k2) * (1 - var(--k2)) * 3); transform: scale(calc(1 + var(--k2) * 2.4)); transform-box: fill-box; transform-origin: center; }
+.d9 .rot { font-family: "Archivo", sans-serif; text-anchor: middle; opacity: var(--k2); }
+.d9 .rot .cat { font-size: 14px; font-weight: 700; fill: var(--tinta); text-transform: uppercase; letter-spacing: 0.04em; }
+.d9 .rot .mar { font-size: 11.5px; fill: var(--fraco); letter-spacing: 0.08em; text-transform: uppercase; }
+.d9 .lista { display: none; }
+@media (max-width: 767px) {
+  .d9 { height: 520vh; }
+  .d9 .cena { grid-template-rows: auto auto 1fr; gap: 10px; }
+  .d9 .topo { min-height: 58px; }
+  .d9 .topo h3 { font-size: 24px; }
+  .d9 .topo .final { font-size: 22px; white-space: normal; right: 64px; }
+  .d9 .topo h3 { padding-right: 64px; }
+  .d9 .desk { display: none; }
+  .d9 svg.carro { height: auto; }
+  .d9 .lista { display: grid; grid-template-columns: 1fr 1fr; gap: 8px 10px; list-style: none; margin: 0; padding: 0; align-content: start; }
+  .d9 .lista li { display: grid; grid-template-columns: 42px 1fr; gap: 8px; align-items: center; opacity: calc(0.12 + var(--k2) * 0.88); transform: translateY(calc((1 - var(--k2)) * 10px)); }
+  .d9 .lista img { width: 42px; height: 42px; border-radius: 50%; object-fit: cover; }
+  .d9 .lista b { display: block; font-size: 11px; text-transform: uppercase; letter-spacing: 0.03em; line-height: 1.15; }
+  .d9 .lista small { font-size: 10px; color: var(--fraco); text-transform: uppercase; letter-spacing: 0.06em; }
+}
+
 /* ═════════ 6 · O CARTÃO QUE REVELA A PEÇA ═══════════════════════════════════ */
 .vira { background: var(--marcas); padding-block: 10vh 14vh; }
 .vira .trilho { list-style: none; margin: 0; display: flex; align-items: flex-start; gap: 18px; overflow-x: auto; padding: 8px var(--goteira) 24px; scroll-snap-type: x proximity; scrollbar-width: thin; }
@@ -235,6 +278,7 @@ img { max-width: 100%; display: block; }
   <h1>Laboratório de <b>passagens</b></h1>
   <p>Cinco formas de uma cena do Borçato virar a próxima. Cada uma roda aqui sozinha, fora do site, com as fotos, as marcas e o mapa reais. Role devagar, e role de volta: toda passagem funciona nos dois sentidos. A passagem das peças para o mapa não está aqui porque fica como está.</p>
   <ol>
+    <li><a href="#p9"><span>★</span><div><strong>O carro que as onze montam</strong><em>A cena-assinatura: cada indústria traz a sua peça, e o carro se completa.</em></div></a></li>
     <li><a href="#p1"><span>1</span><div><strong>Hero → A Casa · a cápsula se abre</strong><em>O retrato cresce e vira a cena seguinte. Um Fábio só, contínuo.</em></div></a></li>
     <li><a href="#p2"><span>2</span><div><strong>A Casa → As Marcas · a pasta se abre</strong><em>As onze indústrias saem da pasta do representante e se espalham.</em></div></a></li>
     <li><a href="#p3"><span>3</span><div><strong>Esteira → Palco · entrar na marca</strong><em>A câmera entra no cartão da marca e encontra a peça que ela fabrica.</em></div></a></li>
@@ -243,6 +287,34 @@ img { max-width: 100%; display: block; }
     <li><a href="#p6"><span>5</span><div><strong>O Nome → Fechamento · o nome revela o homem</strong><em>As letras viram janela, e através delas aparece o Fábio.</em></div></a></li>
   </ol>
 </header>
+
+<!-- ★ ──────────────────────────────────────────────────────────────────────── -->
+<section class="cartela" id="p9">
+  <span class="de">Cena-assinatura · As Marcas</span>
+  <h2>O carro que as onze montam</h2>
+  <p>O Fábio não vende uma peça: ele representa <b>onze indústrias que, juntas, cobrem o carro inteiro</b>. Aqui isso vira imagem. O carro começa vazio, desenhado como projeto técnico. Conforme você rola, cada indústria traz a sua peça, que encaixa no lugar dela. Na última, o carro está completo.</p>
+</section>
+<section class="pista d9" data-demo="9">
+  <div class="cena">
+    <div class="topo">
+      <h3>Onze indústrias. <b>Uma estrada só.</b></h3>
+      <p class="final">Onze indústrias. <span>Um carro inteiro.</span></p>
+      <div class="conta"><span id="conta9">00</span> <small>/ 11</small></div>
+    </div>
+    <svg class="carro" id="carro9" viewBox="0 0 1000 660" preserveAspectRatio="xMidYMid meet" aria-label="Um carro desenhado em linha, montado pelas peças das onze indústrias">
+      <defs><clipPath id="circ9" clipPathUnits="objectBoundingBox"><circle cx="0.5" cy="0.5" r="0.5" /></clipPath></defs>
+      <g id="guias9" class="desk"></g>
+      <g transform="translate(0 150)">
+        <path class="chao" d="M 30,362 L 970,362" />
+        <g id="tracos9"></g>
+        <g id="vivos9"></g>
+      </g>
+      <g id="pontos9"></g>
+      <g id="pecas9" class="desk"></g>
+    </svg>
+    <ul class="lista" id="lista9"></ul>
+  </div>
+</section>
 
 <!-- 1 ─────────────────────────────────────────────────────────────────────── -->
 <section class="cartela" id="p1">
@@ -420,6 +492,80 @@ img { max-width: 100%; display: block; }
     trilho.appendChild(li);
   });
 
+  /* ★ · o carro que as onze montam */
+  (function () {
+    var NS = "http://www.w3.org/2000/svg";
+    var mk = function (tag, at) { var e = document.createElementNS(NS, tag); for (var k in at) e.setAttribute(k, at[k]); return e; };
+    var TRACOS = [
+      "M 72,302 L 62,258 Q 60,222 96,208 L 182,170 Q 205,158 232,150 L 330,126 Q 360,120 400,119 L 560,119 Q 600,120 628,134 L 712,184 Q 725,190 742,192 L 870,210 Q 915,217 932,240 L 942,272 Q 944,296 924,302 L 858,302 A 66 66 0 0 0 726,302 L 282,302 A 66 66 0 0 0 150,302 Z",
+      "M 238,184 L 272,154 Q 296,141 336,136 L 552,135 Q 590,136 612,149 L 672,184 Z",
+      "M 452,136 L 452,184", "M 238,192 L 690,192", "M 452,192 L 452,296", "M 672,192 L 688,294", "M 238,192 L 236,296",
+      "M 400,212 L 428,212", "M 610,212 L 638,212",
+      "M 900,222 Q 922,226 930,242 L 905,244 Q 896,236 900,222 Z", "M 66,236 L 92,222 L 96,244 L 68,252 Z",
+      "M 880,280 L 940,282", "M 64,282 L 120,284", "M 676,186 L 700,176 L 706,190 Z",
+      "M 740,306 A 52 52 0 1 0 844,306 A 52 52 0 1 0 740,306", "M 758,306 A 34 34 0 1 0 826,306 A 34 34 0 1 0 758,306",
+      "M 164,306 A 52 52 0 1 0 268,306 A 52 52 0 1 0 164,306", "M 182,306 A 34 34 0 1 0 250,306 A 34 34 0 1 0 182,306"
+    ];
+    var tr = document.getElementById("tracos9"), vv = document.getElementById("vivos9");
+    TRACOS.forEach(function (d) {
+      tr.appendChild(mk("path", { d: d, "class": "linha", pathLength: 1 }));
+      vv.appendChild(mk("path", { d: d, "class": "linha viva", pathLength: 1 }));
+    });
+    var P = [
+      ["rolamento", "Rolamentos", "NTN-SNR", 792, 306, "b", 600],
+      ["suspensao", "Suspensão", "Pysko", 216, 244, "b", 170],
+      ["filtro", "Filtros", "Filtros Brasil", 805, 226, "t", 746],
+      ["oleo", "Óleo lubrificante", "Hexlub", 700, 250, "b", 400],
+      ["injetor", "Bicos injetores", "Meca Brazil", 760, 214, "t", 582],
+      ["bomba", "Bombas d\u2019água", "Nidec", 882, 262, "b", 780],
+      ["motor", "Peças de motor", "Sintech", 850, 232, "t", 910],
+      ["lanterna", "Lanternas", "Cofran", 80, 237, "t", 90],
+      ["plastico", "Peças plásticas", "VP", 936, 284, "b", 930],
+      ["quimica", "Química automotiva", "Auto América", 330, 250, "t", 254],
+      ["spray", "Sprays", "Mundial Prime", 560, 250, "t", 418]
+    ];
+    var gG = document.getElementById("guias9"), gP = document.getElementById("pontos9"), gC = document.getElementById("pecas9"), lista = document.getElementById("lista9");
+    var R = 44, elems = [];
+    P.forEach(function (x) {
+      var ax = x[3], ay = x[4] + 150, topo = x[5] === "t", sx = x[6], sy = topo ? 92 : 552;
+      var ey = topo ? sy + R : sy - R;
+      var g1 = mk("path", { d: "M " + sx + "," + ey + " L " + ax + "," + ay, "class": "guia", pathLength: 1 });
+      gG.appendChild(g1);
+      var pg = mk("g", {}); gP.appendChild(pg);
+      pg.appendChild(mk("circle", { cx: ax, cy: ay, r: 9, "class": "halo" }));
+      pg.appendChild(mk("circle", { cx: ax, cy: ay, r: 4.5, "class": "ponto" }));
+      var pc = mk("g", { "class": "peca" });
+      pc.style.setProperty("--dx", ((sx - 500) * 1.3).toFixed(1));
+      pc.style.setProperty("--dy", ((sy - 330) * 1.6).toFixed(1));
+      pc.appendChild(mk("image", { href: "img/pecas/" + x[0] + ".jpg", x: sx - R, y: sy - R, width: 2 * R, height: 2 * R, "clip-path": "url(#circ9)", preserveAspectRatio: "xMidYMid slice" }));
+      pc.appendChild(mk("circle", { cx: sx, cy: sy, r: R, "class": "aro" }));
+      var rt = mk("text", { "class": "rot", x: sx, y: topo ? 26 : 620 });
+      var c1 = mk("tspan", { "class": "cat", x: sx }); c1.textContent = x[1];
+      var c2 = mk("tspan", { "class": "mar", x: sx, dy: 18 }); c2.textContent = x[2];
+      rt.appendChild(c1); rt.appendChild(c2); pc.appendChild(rt);
+      gC.appendChild(pc);
+      var li = document.createElement("li");
+      li.innerHTML = '<img src="img/pecas/' + x[0] + '.jpg" alt="" /><span><b>' + x[1] + '</b><small>' + x[2] + '</small></span>';
+      lista.appendChild(li);
+      elems.push([g1, pg, pc, li]);
+    });
+    var conta = document.getElementById("conta9");
+    window.__carro9 = function (e) {
+      var n = 0;
+      elems.forEach(function (el, i) {
+        var ini = 0.13 + i * 0.066;
+        var k = Math.min(1, Math.max(0, (e - ini) / 0.085));
+        var k2 = Math.min(1, Math.max(0, (k - 0.55) / 0.45));
+        el.forEach(function (x) { x.style.setProperty("--k", k.toFixed(4)); x.style.setProperty("--k2", k2.toFixed(4)); });
+        if (k2 > 0.6) n++;
+      });
+      conta.textContent = String(n).padStart(2, "0");
+    };
+    window.__carroGeo9 = function () {
+      document.getElementById("carro9").setAttribute("viewBox", innerWidth < 768 ? "40 262 920 262" : "0 0 1000 660");
+    };
+  })();
+
   var pistas = Array.prototype.slice.call(document.querySelectorAll(".pista"));
   var reduz = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
   var liso = function (t) { return t * t * (3 - 2 * t); };
@@ -455,7 +601,7 @@ img { max-width: 100%; display: block; }
     fila.style.setProperty("--oy", (a.top - f.top + a.height * 0.55) + "px");
   }
 
-  var nomes = { 1: "cápsula", 2: "pasta", 3: "entrar na marca", 5: "estrada → nome", 6: "nome → homem" };
+  var nomes = { 9: "o carro", 1: "cápsula", 2: "pasta", 3: "entrar na marca", 5: "estrada → nome", 6: "nome → homem" };
   var hudP = document.getElementById("hud-p"), hudV = document.getElementById("hud-v");
   var pedido = 0;
   function quadro() {
@@ -473,6 +619,7 @@ img { max-width: 100%; display: block; }
         var a3 = cl((e - 0.1) / 0.55);
         p.querySelector(".fila").style.setProperty("--z", Math.pow(30, a3).toFixed(4));
       }
+      if (d === "9" && window.__carro9) window.__carro9(e);
       if (d === "6") {
         var a6 = cl((e - 0.14) / 0.62);
         p.style.setProperty("--z", Math.pow(46, a6).toFixed(4));
@@ -506,7 +653,7 @@ img { max-width: 100%; display: block; }
       im.setAttribute("height", cel ? "2600" : "1920");
     });
   }
-  function mede() { geometria(); mediuPasta(); mediuAlvo(); quadro(); }
+  function mede() { geometria(); if (window.__carroGeo9) window.__carroGeo9(); mediuPasta(); mediuAlvo(); quadro(); }
   addEventListener("scroll", pede, { passive: true });
   addEventListener("resize", mede);
   if (document.fonts && document.fonts.ready) document.fonts.ready.then(mede);
