@@ -1,0 +1,444 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Laboratório de passagens — H.M. Borçato</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:ital,wdth,wght@0,62..125,300..700;1,62..125,300..700&display=swap" />
+<style>
+/* ─────────────────────────────────────────────────────────────────────────────
+   LABORATÓRIO DE PASSAGENS — fora do site, para o dono escolher antes.
+   Mesma técnica do site: o JS escreve só o progresso (--p, --e) de cada pista;
+   o CSS compõe o gesto. Sem GSAP, sem Three.js, sem Lenis.
+   ───────────────────────────────────────────────────────────────────────────── */
+:root {
+  --chao: #0a0a0c;
+  --marcas: #0c1421;
+  --superficie: #131a23;
+  --estrada: #0f1f34;
+  --nome: #122a44;
+  --marca: #005f96;
+  --azul: #1c7fc2;
+  --luz: #a0d0f0;
+  --tinta: #d8d8f0;
+  --fraco: #8a8fa3;
+  --goteira: clamp(20px, 11vw, 190px);
+}
+* { box-sizing: border-box; }
+html, body { margin: 0; background: var(--chao); color: var(--tinta); }
+body { font-family: "Archivo", system-ui, sans-serif; -webkit-font-smoothing: antialiased; }
+img { max-width: 100%; display: block; }
+
+/* ── capa do laboratório ───────────────────────────────────────────────────── */
+.capa { min-height: 100vh; padding-block: 12vh 8vh; padding-inline: var(--goteira); display: grid; align-content: center; gap: 28px; }
+.capa h1 { margin: 0; font-weight: 300; font-size: clamp(36px, 6vw, 84px); line-height: 0.95; text-transform: uppercase; letter-spacing: 0.02em; text-wrap: balance; }
+.capa h1 b { font-weight: 700; font-stretch: 112%; color: var(--luz); letter-spacing: -0.01em; }
+.capa p { max-width: 60ch; margin: 0; color: var(--fraco); line-height: 1.6; font-size: 16px; }
+.capa ol { list-style: none; margin: 8px 0 0; padding: 0; display: grid; gap: 2px; max-width: 720px; }
+.capa li a { display: grid; grid-template-columns: 3ch 1fr; gap: 16px; padding: 14px 0; min-height: 44px; border-top: 1px solid rgba(160, 208, 240, 0.12); color: var(--tinta); text-decoration: none; }
+.capa li a span { color: var(--luz); font-variant-numeric: tabular-nums; }
+.capa li a em { font-style: normal; color: var(--fraco); display: block; font-size: 14px; margin-top: 4px; }
+.capa li a:hover strong, .capa li a:focus-visible strong { color: var(--luz); }
+
+/* ── cartela que apresenta cada passagem ───────────────────────────────────── */
+.cartela { min-height: 70vh; padding-block: 14vh; padding-inline: var(--goteira); display: grid; align-content: center; gap: 14px; background: var(--chao); border-top: 1px solid rgba(160, 208, 240, 0.08); }
+.cartela .de { color: var(--luz); font-size: 13px; letter-spacing: 0.14em; text-transform: uppercase; }
+.cartela h2 { margin: 0; font-size: clamp(30px, 4.6vw, 60px); font-weight: 700; font-stretch: 108%; line-height: 1; text-transform: uppercase; text-wrap: balance; }
+.cartela p { margin: 0; max-width: 58ch; color: var(--fraco); line-height: 1.6; }
+.cartela p b { color: var(--tinta); font-weight: 500; }
+
+/* ── a pista e a cena presa (o padrão do site) ─────────────────────────────── */
+.pista { position: relative; height: 340vh; }
+.cena { position: sticky; top: 0; height: 100vh; overflow: hidden; }
+
+/* ═════════ 1 · HERO → A CASA · a cápsula se abre ═════════════════════════════ */
+.d1 .cena { background: var(--chao); }
+.d1 {
+  /* --a: a cápsula cresce · --b: a sombra para ler o texto · --c: A Casa entra */
+  --s: clamp(0, calc((var(--e) - 0.02) / 0.26), 1);
+  --a: clamp(0, calc((var(--e) - 0.08) / 0.56), 1);
+  --b: clamp(0, calc((var(--e) - 0.42) / 0.3), 1);
+  --c: clamp(0, calc((var(--e) - 0.62) / 0.28), 1);
+}
+.d1 .janela {
+  position: absolute;
+  top: calc((1 - var(--a)) * 13vh);
+  bottom: calc((1 - var(--a)) * 13vh);
+  right: calc((1 - var(--a)) * 5vw);
+  left: calc((1 - var(--a)) * 58vw);
+  border-radius: calc((1 - var(--a)) * clamp(120px, 18vw, 280px)) 0 0 calc((1 - var(--a)) * clamp(120px, 18vw, 280px));
+  overflow: hidden;
+  background: #111;
+}
+.d1 .janela img { width: 100%; height: 100%; object-fit: cover; object-position: 50% 24%; transform: translateX(calc(var(--b) * 17vw)) scale(calc(1.06 - var(--a) * 0.06)); }
+.d1 .janela::after { content: ""; position: absolute; inset: 0; background: linear-gradient(90deg, rgba(10, 10, 12, 0.94) 0%, rgba(10, 10, 12, 0.78) 38%, rgba(10, 10, 12, 0.1) 70%); opacity: var(--b); }
+.d1 .hero { position: absolute; left: var(--goteira); top: 50%; transform: translate(calc(var(--s) * -6vw), -50%); opacity: calc(1 - var(--s)); }
+.d1 .hero .eb { color: var(--luz); font-size: 12px; letter-spacing: 0.2em; text-transform: uppercase; margin: 0 0 22px; }
+.d1 .hero h3 { margin: 0; font-size: clamp(38px, 7.2vmin, 88px); line-height: 0.95; text-transform: uppercase; font-weight: 300; letter-spacing: 0.06em; }
+.d1 .hero h3 span { display: block; }
+.d1 .hero h3 .forte { font-weight: 700; font-stretch: 112%; letter-spacing: -0.01em; color: var(--luz); }
+.d1 .casa { position: absolute; left: var(--goteira); top: 50%; max-width: min(560px, 80vw); transform: translateY(calc(-50% + (1 - var(--c)) * 4vh)); opacity: var(--c); }
+.d1 .casa h3 { margin: 0 0 20px; font-size: clamp(30px, 5vmin, 62px); line-height: 1.02; font-weight: 700; text-transform: uppercase; text-wrap: balance; }
+.d1 .casa p { margin: 0; color: #b6bccb; line-height: 1.6; max-width: 46ch; }
+
+/* ═════════ 2 · A CASA → AS MARCAS · a pasta se abre ══════════════════════════ */
+.d2 .cena { background: var(--marcas); }
+.d2 { --tt: clamp(0, calc((var(--e) - 0.0) / 0.18), 1); --pasta: clamp(0, calc((var(--e) - 0.05) / 0.25), 1); }
+.d2 .titulo { position: absolute; left: var(--goteira); top: 14vh; max-width: min(460px, 34vw); opacity: calc(0.35 + var(--tt) * 0.65); }
+.d2 .titulo h3 { margin: 0 0 16px; font-size: clamp(26px, 3.6vw, 48px); line-height: 1; font-weight: 700; text-transform: uppercase; text-wrap: balance; }
+.d2 .titulo p { margin: 0; color: var(--fraco); line-height: 1.55; font-size: 15px; }
+.d2 .grade { position: absolute; left: 44vw; right: 5vw; top: 14vh; bottom: 12vh; display: grid; grid-template-columns: repeat(4, 1fr); grid-auto-rows: 1fr; gap: 14px; }
+.d2 .cartao {
+  --t: clamp(0, calc((var(--e) - 0.12 - var(--i) * 0.036) / 0.3), 1);
+  position: relative; display: grid; align-content: space-between; gap: 10px; padding: 16px;
+  background: var(--superficie); border: 1px solid rgba(160, 208, 240, 0.14); border-radius: 12px;
+  transform: translate(calc(var(--dx, 0px) * (1 - var(--t))), calc(var(--dy, 0px) * (1 - var(--t)))) rotate(calc(var(--r, 0deg) * (1 - var(--t))));
+  box-shadow: 0 calc((1 - var(--t)) * 10px) 30px rgba(0, 0, 0, calc(0.45 * (1 - var(--t))));
+  z-index: calc(20 - var(--i));
+}
+.d2 .cartao .logo { height: 30px; display: flex; align-items: center; }
+.d2 .cartao .logo img { max-height: 26px; max-width: 80%; width: auto; object-fit: contain; }
+.d2 .cartao strong { font-size: 13px; letter-spacing: 0.04em; text-transform: uppercase; }
+.d2 .cartao small { display: block; color: var(--fraco); font-size: 12px; line-height: 1.4; margin-top: 4px; }
+/* a pasta: o verso onde as cartas estavam guardadas; some quando elas se espalham */
+.d2 .pasta { position: absolute; width: 250px; height: 170px; border-radius: 4px 12px 12px 12px; background: #1a2533; border: 1px solid rgba(160, 208, 240, 0.18); opacity: calc(1 - var(--pasta)); transform: translate(-50%, -50%) scale(calc(1 - var(--pasta) * 0.08)); left: var(--px, 70vw); top: var(--py, 56vh); }
+.d2 .pasta::before { content: ""; position: absolute; left: -1px; top: -18px; width: 96px; height: 19px; border-radius: 8px 8px 0 0; background: #1a2533; border: 1px solid rgba(160, 208, 240, 0.18); border-bottom: 0; }
+
+/* ═════════ 3 · ESTEIRA → PALCO · entrar na marca ═════════════════════════════ */
+.d3 .cena { background: var(--marcas); }
+.d3 { --a: clamp(0, calc((var(--e) - 0.1) / 0.55), 1); --f: clamp(0, calc((var(--e) - 0.14) / 0.14), 1); --palco: clamp(0, calc((var(--e) - 0.18) / 0.22), 1); }
+.d3 .fila { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; gap: 22px; transform-origin: var(--ox, 50%) var(--oy, 50%); transform: scale(var(--z, 1)); }
+.d3 .item { width: clamp(180px, 22vw, 300px); aspect-ratio: 3 / 4; border-radius: 14px; background: var(--superficie); border: 1px solid rgba(160, 208, 240, 0.14); display: grid; align-content: space-between; padding: 20px; }
+.d3 .item:not(.alvo) { opacity: calc(1 - var(--f)); }
+.d3 .item.alvo { background: var(--estrada); border-color: rgba(160, 208, 240, calc(0.3 * (1 - var(--f)))); }
+.d3 .item .logo { height: 40px; display: flex; align-items: center; }
+.d3 .item .logo img { max-height: 30px; width: auto; }
+.d3 .item.alvo .logo, .d3 .item.alvo .nome { opacity: calc(1 - var(--f)); }
+.d3 .item .nome strong { display: block; font-size: 14px; text-transform: uppercase; letter-spacing: 0.05em; }
+.d3 .item .nome small { color: var(--fraco); font-size: 12px; }
+.d3 .palco { position: absolute; inset: 0; display: grid; grid-template-columns: 1fr 1fr; align-items: center; padding-inline: var(--goteira); opacity: var(--palco); pointer-events: none; }
+.d3 .palco .txt { transform: translateX(calc((1 - var(--palco)) * -3vw)); }
+.d3 .palco .num { color: var(--azul); font-size: 26px; font-weight: 700; font-variant-numeric: tabular-nums; }
+.d3 .palco .num small { color: var(--fraco); font-size: 13px; font-weight: 400; }
+.d3 .palco h3 { margin: 6px 0 8px; font-size: clamp(30px, 4vw, 54px); font-weight: 700; text-transform: uppercase; line-height: 1; }
+.d3 .palco p { margin: 0; color: var(--fraco); }
+.d3 .palco img { width: min(440px, 36vw); justify-self: center; transform: scale(calc(0.84 + var(--palco) * 0.16)); -webkit-mask-image: radial-gradient(circle, #000 52%, transparent 71%); mask-image: radial-gradient(circle, #000 52%, transparent 71%); }
+
+/* ═════════ 5 · ESTRADA → O NOME · a estrada escreve o nome ═══════════════════ */
+.d5 .cena { background: var(--estrada); }
+.d5 {
+  --m: clamp(0, calc((var(--e) - 0.18) / 0.4), 1);     /* o mapa recua */
+  --d1: clamp(0, calc((var(--e) - 0.1) / 0.22), 1);    /* o traço sai do Triângulo */
+  --d2: clamp(0, calc((var(--e) - 0.3) / 0.36), 1);    /* e escreve H.M. */
+  --g: clamp(0, calc((var(--e) - 0.68) / 0.18), 1);    /* o traço vira letra */
+  --t: clamp(0, calc((var(--e) - 0.82) / 0.14), 1);    /* a homenagem */
+}
+.d5 svg { position: absolute; inset: 0; width: 100%; height: 100%; }
+.d5 .mapa { opacity: calc(1 - var(--m) * 0.82); }
+.d5 .silhueta { fill: #12294a; stroke: rgba(160, 208, 240, 0.28); stroke-width: 0.35; }
+.d5 .rota { fill: none; stroke: var(--luz); stroke-width: 0.55; stroke-linejoin: round; stroke-linecap: round; }
+.d5 .ponto { fill: var(--luz); }
+.d5 .ligacao { fill: none; stroke: var(--luz); stroke-width: 0.55; stroke-linecap: round; stroke-dasharray: 1; stroke-dashoffset: calc(1 - var(--d1)); opacity: calc(1 - var(--g) * 0.7); }
+.d5 .letras { fill: none; stroke: var(--luz); stroke-linecap: square; stroke-linejoin: miter; stroke-dasharray: 1; stroke-dashoffset: calc(1 - var(--d2)); stroke-width: calc(0.55 + var(--g) * 6.2); }
+.d5 .letras.azul { stroke: var(--azul); opacity: var(--g); }
+.d5 .homenagem { position: absolute; left: 50%; bottom: 13vh; width: min(520px, 86vw); text-align: center; transform: translate(calc(-50% + 9vw), calc((1 - var(--t)) * 2vh)); opacity: var(--t); color: #cfd7e6; line-height: 1.6; margin: 0; }
+
+/* ═════════ 6 · O NOME → FECHO · o nome revela o homem ════════════════════════ */
+.d6 .cena { background: var(--nome); }
+.d6 { --o: clamp(0, calc((var(--e) - 0.12) / 0.14), 1); --fim: clamp(0, calc((var(--e) - 0.78) / 0.18), 1); }
+.d6 svg { position: absolute; inset: 0; width: 100%; height: 100%; }
+.d6 .cheia { opacity: clamp(0, calc((var(--e) - 0.56) / 0.12), 1); }
+.d6 .janela-txt { font-family: "Archivo", sans-serif; font-weight: 700; font-stretch: 100%; transform-box: view-box; transform-origin: var(--ox6, 820px) 450px; transform: scale(var(--z, 1)); }
+.d6 .contorno { fill: none; stroke: rgba(160, 208, 240, 0.22); stroke-width: 1.2; opacity: calc(1 - var(--o)); transform-box: view-box; transform-origin: var(--ox6, 820px) 450px; transform: scale(var(--z, 1)); }
+.d6 .homenagem { position: absolute; left: 50%; top: 67vh; width: min(460px, 86vw); text-align: center; transform: translateX(-50%); margin: 0; color: #cfd7e6; line-height: 1.6; opacity: calc(1 - var(--o)); }
+.d6 .sombra { position: absolute; inset: 0; background: linear-gradient(270deg, rgba(10, 14, 22, 0.95) 0%, rgba(10, 14, 22, 0.75) 36%, rgba(10, 14, 22, 0) 64%); opacity: var(--fim); }
+.d6 .fecho { position: absolute; right: var(--goteira); top: 50%; width: min(420px, 80vw); transform: translateY(calc(-50% + (1 - var(--fim)) * 4vh)); opacity: var(--fim); }
+.d6 .fecho h3 { margin: 0 0 22px; font-size: clamp(28px, 4vw, 52px); line-height: 1; font-weight: 700; text-transform: uppercase; }
+.d6 .fecho p { margin: 0 0 6px; font-size: 18px; }
+.d6 .fecho small { color: var(--fraco); font-size: 12px; letter-spacing: 0.14em; text-transform: uppercase; }
+
+/* ── marcador de revisão (só do laboratório) ───────────────────────────────── */
+.hud { position: fixed; right: 16px; bottom: 16px; z-index: 50; background: rgba(10, 10, 12, 0.82); border: 1px solid rgba(160, 208, 240, 0.18); border-radius: 999px; padding: 8px 14px; font-size: 12px; color: var(--fraco); font-variant-numeric: tabular-nums; }
+.hud b { color: var(--luz); font-weight: 600; }
+
+/* ── celular ───────────────────────────────────────────────────────────────── */
+@media (max-width: 767px) {
+  .d1 .janela { top: calc((1 - var(--a)) * 9vh); bottom: calc((1 - var(--a)) * 50vh); left: calc((1 - var(--a)) * 6vw); right: calc((1 - var(--a)) * 6vw); border-radius: calc((1 - var(--a)) * 90px) 0 0 calc((1 - var(--a)) * 90px); }
+  .d1 .hero { top: auto; bottom: 8vh; transform: translate(calc(var(--s) * -6vw), 0); }
+  .d1 .hero h3 { font-size: 40px; }
+  .d1 .casa { top: auto; bottom: 10vh; transform: translateY(calc((1 - var(--c)) * 4vh)); }
+  .d1 .janela::after { background: linear-gradient(0deg, rgba(10, 10, 12, 0.95) 0%, rgba(10, 10, 12, 0.7) 45%, rgba(10, 10, 12, 0.1) 75%); }
+  .d2 .titulo { max-width: none; right: var(--goteira); top: 7vh; }
+  .d2 .titulo p { display: none; }
+  .d2 .grade { left: var(--goteira); right: var(--goteira); top: 30vh; bottom: 6vh; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+  .d2 .cartao { padding: 10px; }
+  .d2 .cartao small { display: none; }
+  .d2 .cartao strong { font-size: 10px; }
+  .d2 .pasta { width: 180px; height: 120px; }
+  .d3 .item:not(.alvo) { display: none; }
+  .d3 .palco { grid-template-columns: 1fr; align-content: center; gap: 24px; text-align: left; }
+  .d3 .palco img { width: 70vw; order: -1; }
+  .d5 .homenagem { transform: translate(-50%, calc((1 - var(--t)) * 2vh)); bottom: 10vh; }
+  .d6 .fecho { right: auto; left: var(--goteira); top: auto; bottom: 8vh; transform: translateY(calc((1 - var(--fim)) * 4vh)); }
+  .d6 .sombra { background: linear-gradient(0deg, rgba(10, 14, 22, 0.95) 0%, rgba(10, 14, 22, 0.7) 40%, rgba(10, 14, 22, 0) 70%); }
+}
+
+/* ── sem movimento: cada passagem mostra o estado final, parada ─────────────── */
+@media (prefers-reduced-motion: reduce) {
+  .pista { height: 100vh; }
+  .pista { --e: 1 !important; --z: 1 !important; }
+}
+</style>
+</head>
+<body>
+
+<header class="capa" id="topo">
+  <h1>Laboratório de <b>passagens</b></h1>
+  <p>Cinco formas de uma cena do Borçato virar a próxima. Cada uma roda aqui sozinha, fora do site, com as fotos, as marcas e o mapa reais. Role devagar, e role de volta: toda passagem funciona nos dois sentidos. A passagem das peças para o mapa não está aqui porque fica como está.</p>
+  <ol>
+    <li><a href="#p1"><span>1</span><div><strong>Hero → A Casa · a cápsula se abre</strong><em>O retrato cresce e vira a cena seguinte. Um Fábio só, contínuo.</em></div></a></li>
+    <li><a href="#p2"><span>2</span><div><strong>A Casa → As Marcas · a pasta se abre</strong><em>As onze indústrias saem da pasta do representante e se espalham.</em></div></a></li>
+    <li><a href="#p3"><span>3</span><div><strong>Esteira → Palco · entrar na marca</strong><em>A câmera entra no cartão da marca e encontra a peça que ela fabrica.</em></div></a></li>
+    <li><a href="#p5"><span>4</span><div><strong>Estrada → O Nome · a estrada escreve o nome</strong><em>A rota não para no último ponto: continua e escreve H.M.</em></div></a></li>
+    <li><a href="#p6"><span>5</span><div><strong>O Nome → Fechamento · o nome revela o homem</strong><em>As letras viram janela, e através delas aparece o Fábio.</em></div></a></li>
+  </ol>
+</header>
+
+<!-- 1 ─────────────────────────────────────────────────────────────────────── -->
+<section class="cartela" id="p1">
+  <span class="de">Passagem 1 · Hero → A Casa</span>
+  <h2>A cápsula se abre</h2>
+  <p>A foto do hero está recortada na cápsula, a forma que o cliente escolheu. Ela cresce até ocupar a tela e <b>vira</b> a cena de A Casa. Hoje aparecem dois retratos do Fábio ao mesmo tempo nesta passagem; aqui ele é um só, do começo ao fim.</p>
+</section>
+<section class="pista d1" data-demo="1">
+  <div class="cena">
+    <div class="janela"><img src="img/fabio-travessia.jpg" alt="Fábio Borçato, de braços cruzados" /></div>
+    <div class="hero">
+      <p class="eb">Desde 2018 · Belo Horizonte</p>
+      <h3><span>Todo</span><span>distribuidor</span><span class="forte">de Minas</span><span>conhece</span><span>o nome.</span></h3>
+    </div>
+    <div class="casa">
+      <h3>Antes de ser Borçato, já eram catorze anos de estrada.</h3>
+      <p>A H.M. Borçato nasceu em setembro de 2018, em Belo Horizonte. A experiência, porém, começou muito antes.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 2 ─────────────────────────────────────────────────────────────────────── -->
+<section class="cartela" id="p2">
+  <span class="de">Passagem 2 · A Casa → As Marcas</span>
+  <h2>A pasta se abre</h2>
+  <p>O título do capítulo diz <b>"onze indústrias na mesma pasta"</b>. Então as marcas começam guardadas numa pasta, como a do representante na visita, e se espalham uma a uma, em ordem, quando você rola.</p>
+</section>
+<section class="pista d2" data-demo="2">
+  <div class="cena">
+    <div class="titulo">
+      <h3>De rolamento a filtro de cabine. Onze indústrias na mesma pasta.</h3>
+      <p>Primeiro as indústrias. Depois, o que cada uma coloca na estrada.</p>
+    </div>
+    <div class="pasta" aria-hidden="true"></div>
+    <div class="grade" id="grade2"></div>
+  </div>
+</section>
+
+<!-- 3 ─────────────────────────────────────────────────────────────────────── -->
+<section class="cartela" id="p3">
+  <span class="de">Passagem 3 · Esteira → Palco</span>
+  <h2>Entrar na marca</h2>
+  <p>Hoje, entre a esteira e o palco, passa um quase vazio. Aqui a câmera <b>entra</b> no cartão da NTN-SNR: os vizinhos ficam para trás, o cartão vira o palco e a peça que a marca fabrica aparece lá dentro.</p>
+</section>
+<section class="pista d3" data-demo="3">
+  <div class="cena">
+    <div class="fila" id="fila3">
+      <div class="item"><div class="logo"><img src="img/marcas/filtros-brasil.png" alt="" /></div><div class="nome"><strong>Filtros Brasil</strong><small>Filtros</small></div></div>
+      <div class="item alvo"><div class="logo"><img src="img/marcas/ntn-snr.png" alt="" /></div><div class="nome"><strong>NTN-SNR</strong><small>Rolamentos</small></div></div>
+      <div class="item"><div class="logo"><img src="img/marcas/nidec.png" alt="" /></div><div class="nome"><strong>Nidec</strong><small>Bombas d'água e de óleo</small></div></div>
+    </div>
+    <div class="palco">
+      <div class="txt"><div class="num">01 <small>/ 05</small></div><h3>Movimento</h3><p>Rolamentos · NTN-SNR</p></div>
+      <img src="img/rolamento.jpg" alt="Rolamento" />
+    </div>
+  </div>
+</section>
+
+<!-- 5 ─────────────────────────────────────────────────────────────────────── -->
+<section class="cartela" id="p5">
+  <span class="de">Passagem 4 · A Estrada → O Nome</span>
+  <h2>A estrada escreve o nome</h2>
+  <p>A rota pelas oito regiões de Minas termina no Triângulo. Aqui ela <b>não para</b>: o traço segue e desenha as letras H.M., que engrossam até virar o nome. A empresa nasce do caminho percorrido.</p>
+</section>
+<section class="pista d5" data-demo="5">
+  <div class="cena">
+    <svg id="svg5" viewBox="0 0 200 100" preserveAspectRatio="xMidYMid meet" aria-hidden="true">
+      <g class="mapa" id="mapa5" transform="translate(6 4)">
+        <path class="silhueta" d="M 42.6,6.0 L 61.5,8.4 L 67.8,13.9 L 78.0,15.8 L 85.9,21.8 L 91.4,26.9 L 94.0,34.7 L 88.3,42.6 L 82.0,47.2 L 80.4,55.5 L 85.1,62.4 L 79.6,67.5 L 73.3,71.2 L 67.0,78.1 L 59.9,81.8 L 54.4,82.8 L 46.5,86.0 L 39.5,83.2 L 33.9,79.5 L 28.4,72.1 L 18.2,61.1 L 11.9,55.5 L 6.0,52.7 L 7.2,46.3 L 12.7,41.7 L 18.2,39.8 L 26.1,37.0 L 33.9,32.4 L 38.7,25.0 L 44.2,18.6 L 46.5,12.1 Z" />
+        <polyline class="rota" points="62,58.5 54.6,60.5 46.3,73.5 66.6,75.5 73,54.3 62.6,29 41.7,46.1 27.8,49.2" />
+        <g class="pontos">
+          <circle class="ponto" cx="62" cy="58.5" r="1.1" /><circle class="ponto" cx="54.6" cy="60.5" r="1.1" /><circle class="ponto" cx="46.3" cy="73.5" r="1.1" /><circle class="ponto" cx="66.6" cy="75.5" r="1.1" />
+          <circle class="ponto" cx="73" cy="54.3" r="1.1" /><circle class="ponto" cx="62.6" cy="29" r="1.1" /><circle class="ponto" cx="41.7" cy="46.1" r="1.1" /><circle class="ponto" cx="27.8" cy="49.2" r="1.1" />
+        </g>
+      </g>
+      <!-- a rota continua: do Triângulo (27.8,49.2 + deslocamento 6,4) até o pé do H -->
+      <path class="ligacao" id="lig5" pathLength="1" d="M 33.8,53.2 C 30,74 52,92 84,90 C 104,89 112,84 116,76" />
+      <!-- H . M . num traço só (os subcaminhos seguem a mesma contagem do tracejado) -->
+      <path class="letras" id="let5a" pathLength="1" d="M 116,76 L 116,34 M 116,55 L 137,55 M 137,34 L 137,76 M 143.5,73 L 146.5,73 M 153,76 L 153,34 L 165,58 L 177,34 L 177,76 M 183.5,73 L 186.5,73" />
+      <path class="letras azul" id="let5b" pathLength="1" d="M 116,76 L 116,34 M 116,55 L 137,55 M 137,34 L 137,76 M 143.5,73 L 146.5,73 M 153,76 L 153,34 L 165,58 L 177,34 L 177,76 M 183.5,73 L 186.5,73" />
+    </svg>
+    <p class="homenagem">O nome da empresa é uma homenagem aos dois filhos do sócio-fundador, Henrique e Mateus, e ao nome de sua família.</p>
+  </div>
+</section>
+
+<!-- 6 ─────────────────────────────────────────────────────────────────────── -->
+<section class="cartela" id="p6">
+  <span class="de">Passagem 5 · O Nome → Fechamento</span>
+  <h2>O nome revela o homem</h2>
+  <p>As letras H.M. viram uma <b>janela</b>: através delas já se vê o Fábio. A câmera entra pela haste do M até a foto ocupar a tela, e o contato chega. O nome e a pessoa são a mesma coisa.</p>
+</section>
+<section class="pista d6" data-demo="6">
+  <div class="cena">
+    <svg id="svg6" viewBox="0 0 1600 1000" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+      <defs>
+        <mask id="m6" maskUnits="userSpaceOnUse" x="0" y="0" width="1600" height="1000">
+          <rect x="0" y="0" width="1600" height="1000" fill="black" />
+          <text class="janela-txt" x="800" y="610" text-anchor="middle" font-size="440" fill="white">H.M.</text>
+        </mask>
+      </defs>
+      <image class="cheia" href="img/fabio-travessia.jpg" x="0" y="-160" width="1600" height="1920" preserveAspectRatio="xMidYMin slice" />
+      <image href="img/fabio-travessia.jpg" x="0" y="-160" width="1600" height="1920" preserveAspectRatio="xMidYMin slice" mask="url(#m6)" />
+      <text class="contorno" x="800" y="610" text-anchor="middle" font-size="440" font-family="Archivo" font-weight="700">H.M.</text>
+    </svg>
+    <p class="homenagem">O nome da empresa é uma homenagem aos dois filhos do sócio-fundador, Henrique e Mateus, e ao nome de sua família.</p>
+    <div class="sombra"></div>
+    <div class="fecho">
+      <h3>Fale com quem roda a estrada.</h3>
+      <p>(31) 99658-8022</p>
+      <small>Celular · WhatsApp</small>
+    </div>
+  </div>
+</section>
+
+<section class="cartela">
+  <span class="de">Fim do laboratório</span>
+  <h2>Qual entra no site?</h2>
+  <p>Pode aprovar todas, escolher algumas ou pedir ajuste em uma. Cada uma que você aprovar entra no site sozinha, com medição, sem mexer no que já funciona.</p>
+</section>
+
+<div class="hud" aria-live="off"><b id="hud-p">—</b> <span id="hud-v"></span></div>
+
+<script>
+/* O JS só escreve números. Cada pista recebe --p (progresso linear) e --e (suavizado). */
+(function () {
+  var marcas = [
+    ["ntn-snr","NTN-SNR","Rolamentos"],["filtros-brasil","Filtros Brasil","Filtros de ar, óleo, combustível e cabine"],
+    ["nidec","Nidec","Bombas d'água e de óleo"],["cofran","Cofran","Lanternas e retrovisores"],["pysko","Pysko","Kits de suspensão"],
+    ["hexlub","Hexlub","Óleo lubrificante"],["meca-brazil","Meca Brazil","Bicos injetores, sensores e cabo de vela"],
+    ["auto-america","Auto América","Química automotiva"],["mundial-prime","Mundial Prime","Desengripante e sprays"],
+    ["sintech","Sintech","Peças para motor"],["vp","VP","Peças plásticas automotivas"]
+  ];
+  var grade = document.getElementById("grade2");
+  marcas.forEach(function (m, i) {
+    var el = document.createElement("div");
+    el.className = "cartao";
+    el.style.setProperty("--i", i);
+    el.innerHTML = '<div class="logo"><img src="img/marcas/' + m[0] + '.png" alt="" /></div><div><strong>' + m[1] + "</strong><small>" + m[2] + "</small></div>";
+    grade.appendChild(el);
+  });
+
+  var pistas = Array.prototype.slice.call(document.querySelectorAll(".pista"));
+  var reduz = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  var liso = function (t) { return t * t * (3 - 2 * t); };
+  var cl = function (v) { return Math.min(1, Math.max(0, v)); };
+
+  /* 2 · onde está a pasta, e quanto cada carta precisa andar para voltar a ela */
+  function mediuPasta() {
+    var cena = document.querySelector(".d2 .cena").getBoundingClientRect();
+    var celular = innerWidth < 768;
+    var px = celular ? cena.width * 0.5 : cena.width * 0.7;
+    var py = celular ? cena.height * 0.62 : cena.height * 0.56;
+    var pasta = document.querySelector(".d2 .pasta");
+    pasta.style.setProperty("--px", px + "px");
+    pasta.style.setProperty("--py", py + "px");
+    Array.prototype.forEach.call(grade.children, function (c, i) {
+      c.style.transform = "none";
+      var r = c.getBoundingClientRect();
+      c.style.transform = "";
+      var cx = r.left - cena.left + r.width / 2, cy = r.top - cena.top + r.height / 2;
+      c.style.setProperty("--dx", (px - cx) + "px");
+      c.style.setProperty("--dy", (py - cy - 6 + i * 1.2) + "px");
+      c.style.setProperty("--r", ((i % 2 ? -1 : 1) * (1.5 + (i % 4) * 1.4)) + "deg");
+    });
+  }
+
+  /* 3 · a câmera entra pelo centro do cartão-alvo */
+  function mediuAlvo() {
+    var fila = document.getElementById("fila3");
+    fila.style.transform = "none";
+    var f = fila.getBoundingClientRect(), a = fila.querySelector(".alvo").getBoundingClientRect();
+    fila.style.transform = "";
+    fila.style.setProperty("--ox", (a.left - f.left + a.width / 2) + "px");
+    fila.style.setProperty("--oy", (a.top - f.top + a.height * 0.55) + "px");
+  }
+
+  var nomes = { 1: "cápsula", 2: "pasta", 3: "entrar na marca", 5: "estrada → nome", 6: "nome → homem" };
+  var hudP = document.getElementById("hud-p"), hudV = document.getElementById("hud-v");
+  var pedido = 0;
+  function quadro() {
+    pedido = 0;
+    var vh = innerHeight, atual = null;
+    pistas.forEach(function (p) {
+      var r = p.getBoundingClientRect();
+      var curso = Math.max(1, r.height - vh);
+      var t = reduz ? 1 : cl(-r.top / curso);
+      var e = liso(t);
+      p.style.setProperty("--p", t.toFixed(4));
+      p.style.setProperty("--e", e.toFixed(4));
+      var d = p.getAttribute("data-demo");
+      if (d === "3") {
+        var a3 = cl((e - 0.1) / 0.55);
+        p.querySelector(".fila").style.setProperty("--z", Math.pow(30, a3).toFixed(4));
+      }
+      if (d === "6") {
+        var a6 = cl((e - 0.14) / 0.62);
+        p.style.setProperty("--z", Math.pow(46, a6).toFixed(4));
+      }
+      if (r.top <= 1 && r.bottom >= vh - 1) atual = { d: d, t: t };
+    });
+    if (atual) { hudP.textContent = nomes[atual.d]; hudV.textContent = Math.round(atual.t * 100) + "%"; }
+    else { hudP.textContent = "—"; hudV.textContent = ""; }
+  }
+  function pede() { if (!pedido) pedido = requestAnimationFrame(quadro); }
+  /* celular: a composição vira vertical — o nome nasce abaixo do mapa, e a janela
+     H.M. cabe inteira na largura do telefone */
+  function geometria() {
+    var cel = innerWidth < 768;
+    var s5 = document.getElementById("svg5");
+    s5.setAttribute("viewBox", cel ? "0 0 100 230" : "0 0 200 100");
+    document.getElementById("mapa5").setAttribute("transform", cel ? "translate(0 8)" : "translate(6 4)");
+    document.getElementById("lig5").setAttribute("d", cel
+      ? "M 27.8,57.2 C 18,90 4,120 12,168"
+      : "M 33.8,53.2 C 30,74 52,92 84,90 C 104,89 112,84 116,76");
+    var letras = cel
+      ? "M 12,168 L 12,122 M 12,145 L 34,145 M 34,122 L 34,168 M 39.5,165.5 L 42.5,165.5 M 50,168 L 50,122 L 63,150 L 76,122 L 76,168 M 81.5,165.5 L 84.5,165.5"
+      : "M 116,76 L 116,34 M 116,55 L 137,55 M 137,34 L 137,76 M 143.5,73 L 146.5,73 M 153,76 L 153,34 L 165,58 L 177,34 L 177,76 M 183.5,73 L 186.5,73";
+    document.getElementById("let5a").setAttribute("d", letras);
+    document.getElementById("let5b").setAttribute("d", letras);
+    var s6 = document.getElementById("svg6");
+    s6.setAttribute("viewBox", cel ? "320 250 960 450" : "0 0 1600 1000");
+    s6.setAttribute("preserveAspectRatio", cel ? "xMidYMid meet" : "xMidYMid slice");
+    Array.prototype.forEach.call(s6.querySelectorAll("image"), function (im) {
+      im.setAttribute("y", cel ? "-700" : "-160");
+      im.setAttribute("height", cel ? "2600" : "1920");
+    });
+  }
+  function mede() { geometria(); mediuPasta(); mediuAlvo(); quadro(); }
+  addEventListener("scroll", pede, { passive: true });
+  addEventListener("resize", mede);
+  if (document.fonts && document.fonts.ready) document.fonts.ready.then(mede);
+  addEventListener("load", mede);
+  mede();
+})();
+</script>
+</body>
+</html>
