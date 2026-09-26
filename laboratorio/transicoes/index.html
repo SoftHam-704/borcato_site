@@ -177,7 +177,7 @@ img { max-width: 100%; display: block; }
 .d9 .linha { fill: none; stroke: #5d7fa3; stroke-width: 1.6; stroke-linecap: round; stroke-linejoin: round; stroke-dasharray: 1; stroke-dashoffset: calc(1 - var(--c)); }
 .d9 .linha.viva { stroke: var(--luz); stroke-width: 2; opacity: var(--fim); filter: drop-shadow(0 0 6px rgba(160, 208, 240, 0.55)); }
 .d9 .vidro, .d9 .linha, .d9 .interno, .d9 .chao { display: none; }
-.d9 .foto { mix-blend-mode: screen; opacity: calc(var(--c) * (1 - var(--X, 0) * 1.4)); filter: brightness(calc(0.5 + var(--mont, 0) * 0.25 + var(--fim) * 0.35)) saturate(calc(0.8 + var(--fim) * 0.3)); }
+.d9 .foto { opacity: calc(var(--c) * (1 - var(--X, 0) * 1.4)); filter: brightness(calc(0.5 + var(--mont, 0) * 0.25 + var(--fim) * 0.35)) saturate(calc(0.8 + var(--fim) * 0.3)); }
 .d9 .ponto { stroke: #0a1422; stroke-width: 2.5; paint-order: stroke; }
 .d9 .guia { stroke-width: 1.4; }
 .d9 .interno { fill: none; stroke: #7fb3d9; stroke-width: 1.1; stroke-linecap: round; stroke-linejoin: round; stroke-dasharray: 1; stroke-dashoffset: calc(1 - var(--mont, 0)); opacity: calc(0.25 + var(--mont, 0) * 0.6); }
@@ -324,7 +324,7 @@ img { max-width: 100%; display: block; }
     <svg class="carro" id="carro9" viewBox="0 0 1000 660" preserveAspectRatio="xMidYMid meet" aria-label="Um carro desenhado em linha, montado pelas peças das onze indústrias">
       <defs><clipPath id="circ9" clipPathUnits="objectBoundingBox"><circle cx="0.5" cy="0.5" r="0.5" /></clipPath><radialGradient id="borda9" cx="0.5" cy="0.52" r="0.56"><stop offset="0.72" stop-color="#fff" /><stop offset="1" stop-color="#000" /></radialGradient><mask id="fade9" maskContentUnits="objectBoundingBox"><rect width="1" height="1" fill="url(#borda9)" /></mask><linearGradient id="vidro9" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#a0d0f0" stop-opacity="0.16" /><stop offset="0.55" stop-color="#1c7fc2" stop-opacity="0.07" /><stop offset="1" stop-color="#1c7fc2" stop-opacity="0.02" /></linearGradient></defs>
       <g class="carroG">
-        <image class="foto" href="img/carro-raiox.png" x="99.6" y="177.5" width="814.8" height="450.8" mask="url(#fade9)" preserveAspectRatio="xMidYMid meet" />
+        <image class="foto" id="foto9" href="img/carro-raiox.webp" x="58.7" y="83.4" width="893.8" height="498.7" mask="url(#fade9)" preserveAspectRatio="xMidYMid meet" />
         <g transform="translate(0 150)">
           <path class="chao" d="M 30,362 L 970,362" />
           <path class="vidro" d="M 72,302 L 62,258 Q 60,222 96,208 L 182,170 Q 205,158 232,150 L 330,126 Q 360,120 400,119 L 560,119 Q 600,120 628,134 L 712,184 Q 725,190 742,192 L 870,210 Q 915,217 932,240 L 942,272 Q 944,296 924,302 L 858,302 A 66 66 0 0 0 726,302 L 282,302 A 66 66 0 0 0 150,302 Z" />
@@ -575,17 +575,17 @@ img { max-width: 100%; display: block; }
     var REG = [["Central / RMBH", 62.0, 58.5], ["Centro-Oeste", 54.6, 60.5], ["Sul de Minas", 46.3, 73.5], ["Zona da Mata", 66.6, 75.5],
                ["Vale do Aço", 73.0, 54.3], ["Norte", 62.6, 29.0], ["Alto Paranaíba", 41.7, 46.1], ["Triângulo", 27.8, 49.2]];
     var P = [
-      ["rolamento", "Rolamentos", "NTN-SNR", 722.6, 328.5, "b", 780],
-      ["suspensao", "Suspensão", "Pysko", 288.6, 234.0, "b", 400],
-      ["filtro", "Filtros", "Filtros Brasil", 598.0, 279.5, "t", 418],
-      ["oleo", "Óleo lubrificante", "Hexlub", 631.6, 307.5, "b", 600],
-      ["injetor", "Bicos injetores", "Meca Brazil", 635.1, 228.4, "t", 746],
-      ["bomba", "Bombas d\u2019água", "Nidec", 668.0, 284.4, "t", 910],
-      ["motor", "Peças de motor", "Sintech", 635.1, 258.5, "t", 582],
-      ["lanterna", "Lanternas", "Cofran", 176.6, 211.6, "t", 90],
-      ["plastico", "Peças plásticas", "VP", 845.1, 307.5, "b", 930],
-      ["quimica", "Química automotiva", "Auto América", 407.6, 300.5, "t", 254],
-      ["spray", "Sprays", "Mundial Prime", 274.6, 318.0, "b", 170]
+      ["rolamento", "Rolamentos", "NTN-SNR", 753.6, 277.5, "b", 780],
+      ["suspensao", "Suspensão", "Pysko", 241.9, 201.5, "b", 400],
+      ["filtro", "Filtros", "Filtros Brasil", 715.6, 197.1, "t", 418],
+      ["oleo", "Óleo lubrificante", "Hexlub", 653.1, 251.6, "b", 600],
+      ["injetor", "Bicos injetores", "Meca Brazil", 755.9, 152.4, "t", 746],
+      ["bomba", "Bombas d\u2019água", "Nidec", 802.8, 206.0, "t", 910],
+      ["motor", "Peças de motor", "Sintech", 738.0, 174.7, "t", 582],
+      ["lanterna", "Lanternas", "Cofran", 130.2, 143.4, "t", 90],
+      ["plastico", "Peças plásticas", "VP", 898.9, 246.2, "b", 930],
+      ["quimica", "Química automotiva", "Auto América", 369.3, 223.9, "t", 254],
+      ["spray", "Sprays", "Mundial Prime", 212.9, 266.3, "b", 170]
     ];
     var gG = document.getElementById("guias9"), gP = document.getElementById("pontos9"), gC = document.getElementById("pecas9"), lista = document.getElementById("lista9");
     var gR = document.getElementById("regs9"), sil = document.getElementById("mgsil9");
@@ -624,8 +624,9 @@ img { max-width: 100%; display: block; }
 
     /* onde o mapa mora dentro do desenho, e para onde cada peça voa */
     window.__carroGeo9 = function () {
+      document.getElementById("foto9").setAttribute("href", innerWidth < 768 ? "img/carro-raiox-800.webp" : "img/carro-raiox.webp");
       var cel = innerWidth < 768;
-      document.getElementById("carro9").setAttribute("viewBox", cel ? "90 262 830 270" : "0 0 1000 660");
+      document.getElementById("carro9").setAttribute("viewBox", cel ? "70 160 860 340" : "0 0 1000 660");
       var s = cel ? 2.5 : 4.6, tx = 500 - 50 * s, ty = cel ? 278 : 118;
       sil.setAttribute("transform", "translate(" + tx + " " + ty + ") scale(" + s + ")");
       regEls.forEach(function (r) {

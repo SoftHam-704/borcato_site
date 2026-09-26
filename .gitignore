@@ -15,3 +15,6 @@ Thumbs.db
 # Saida do portao de vistoria (capturas) e memoria de ferramenta de terceiro
 ferramentas/vistoria/
 .workbuddy-ai/
+
+# originais pesados das imagens geradas (a versao otimizada e que vai para o site)
+laboratorio/**/_fonte/
