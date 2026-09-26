@@ -176,6 +176,11 @@ img { max-width: 100%; display: block; }
 .d9 svg.carro { width: 100%; height: 100%; min-height: 0; overflow: visible; }
 .d9 .linha { fill: none; stroke: #5d7fa3; stroke-width: 1.6; stroke-linecap: round; stroke-linejoin: round; stroke-dasharray: 1; stroke-dashoffset: calc(1 - var(--c)); }
 .d9 .linha.viva { stroke: var(--luz); stroke-width: 2; opacity: var(--fim); filter: drop-shadow(0 0 6px rgba(160, 208, 240, 0.55)); }
+.d9 .vidro { fill: url(#vidro9); opacity: var(--c); }
+.d9 .interno { fill: none; stroke: #7fb3d9; stroke-width: 1.1; stroke-linecap: round; stroke-linejoin: round; stroke-dasharray: 1; stroke-dashoffset: calc(1 - var(--mont, 0)); opacity: calc(0.25 + var(--mont, 0) * 0.6); }
+.d9 .interno.metal { stroke: #a9c6de; }
+.d9 .interno.cheio { fill: rgba(127, 179, 217, 0.08); }
+.d9 .dentro-vivo { opacity: var(--fim); filter: drop-shadow(0 0 4px rgba(160, 208, 240, 0.6)); }
 .d9 .chao { stroke: rgba(160, 208, 240, 0.18); stroke-width: 1; stroke-dasharray: 6 8; opacity: var(--c); }
 .d9 .peca { opacity: calc(clamp(0, calc(var(--k) * 3), 1) * (1 - clamp(0, calc((var(--x) - 0.86) / 0.14), 1))); transform: translate(calc((var(--dx) * (1 - var(--k)) + var(--mx, 0) * var(--x)) * 1px), calc((var(--dy) * (1 - var(--k)) + var(--my, 0) * var(--x)) * 1px)) scale(calc((1 + (1 - var(--k)) * 1.2) * (1 - var(--x) * 0.86))); transform-box: fill-box; transform-origin: center; }
 .d9 .aro { fill: none; stroke: rgba(160, 208, 240, calc(0.2 + var(--k2) * 0.5)); stroke-width: 1.2; }
@@ -303,7 +308,7 @@ img { max-width: 100%; display: block; }
 <section class="cartela" id="p9">
   <span class="de">Cena-assinatura · As Marcas</span>
   <h2>O carro que as onze montam</h2>
-  <p>O Fábio não vende uma peça: ele representa <b>onze indústrias que, juntas, cobrem o carro inteiro</b>. Aqui isso vira imagem. O carro começa vazio, desenhado como projeto técnico. Conforme você rola, cada indústria traz a sua peça, que encaixa no lugar dela. Na última, o carro está completo e para um instante. Depois ele se abre, e <b>as peças seguem para as oito regiões de Minas</b>: da fábrica à estrada. Role de volta e o carro se remonta.</p>
+  <p>O Fábio não vende uma peça: ele representa <b>onze indústrias que, juntas, cobrem o carro inteiro</b>. Aqui isso vira imagem. O carro começa vazio, em raio-X, desenhado como projeto técnico, e o interior vai aparecendo conforme as peças chegam. Conforme você rola, cada indústria traz a sua peça, que encaixa no lugar dela. Na última, o carro está completo e para um instante. Depois ele se abre, e <b>as peças seguem para as oito regiões de Minas</b>: da fábrica à estrada. Role de volta e o carro se remonta.</p>
 </section>
 <section class="pista d9" data-demo="9">
   <div class="cena">
@@ -314,13 +319,16 @@ img { max-width: 100%; display: block; }
       <div class="conta"><span id="conta9">00</span> <small>/ 11</small></div>
     </div>
     <svg class="carro" id="carro9" viewBox="0 0 1000 660" preserveAspectRatio="xMidYMid meet" aria-label="Um carro desenhado em linha, montado pelas peças das onze indústrias">
-      <defs><clipPath id="circ9" clipPathUnits="objectBoundingBox"><circle cx="0.5" cy="0.5" r="0.5" /></clipPath></defs>
+      <defs><clipPath id="circ9" clipPathUnits="objectBoundingBox"><circle cx="0.5" cy="0.5" r="0.5" /></clipPath><linearGradient id="vidro9" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#a0d0f0" stop-opacity="0.16" /><stop offset="0.55" stop-color="#1c7fc2" stop-opacity="0.07" /><stop offset="1" stop-color="#1c7fc2" stop-opacity="0.02" /></linearGradient></defs>
       <g id="guias9" class="desk"></g>
       <g class="carroG">
         <g transform="translate(0 150)">
           <path class="chao" d="M 30,362 L 970,362" />
+          <path class="vidro" d="M 72,302 L 62,258 Q 60,222 96,208 L 182,170 Q 205,158 232,150 L 330,126 Q 360,120 400,119 L 560,119 Q 600,120 628,134 L 712,184 Q 725,190 742,192 L 870,210 Q 915,217 932,240 L 942,272 Q 944,296 924,302 L 858,302 A 66 66 0 0 0 726,302 L 282,302 A 66 66 0 0 0 150,302 Z" />
+          <g id="dentro9"></g>
           <g id="tracos9"></g>
           <g id="vivos9"></g>
+          <g id="dentroVivo9" class="dentro-vivo"></g>
         </g>
       </g>
       <g class="mapa9"><path class="mg-sil" id="mgsil9" d="M 42.6,6.0 L 61.5,8.4 L 67.8,13.9 L 78.0,15.8 L 85.9,21.8 L 91.4,26.9 L 94.0,34.7 L 88.3,42.6 L 82.0,47.2 L 80.4,55.5 L 85.1,62.4 L 79.6,67.5 L 73.3,71.2 L 67.0,78.1 L 59.9,81.8 L 54.4,82.8 L 46.5,86.0 L 39.5,83.2 L 33.9,79.5 L 28.4,72.1 L 18.2,61.1 L 11.9,55.5 L 6.0,52.7 L 7.2,46.3 L 12.7,41.7 L 18.2,39.8 L 26.1,37.0 L 33.9,32.4 L 38.7,25.0 L 44.2,18.6 L 46.5,12.1 Z" /><g id="regs9"></g></g>
@@ -522,6 +530,38 @@ img { max-width: 100%; display: block; }
       "M 740,306 A 52 52 0 1 0 844,306 A 52 52 0 1 0 740,306", "M 758,306 A 34 34 0 1 0 826,306 A 34 34 0 1 0 758,306",
       "M 164,306 A 52 52 0 1 0 268,306 A 52 52 0 1 0 164,306", "M 182,306 A 34 34 0 1 0 250,306 A 34 34 0 1 0 182,306"
     ];
+    /* O RAIO-X: o que existe dentro do carro, desenhado em linha. Cada peça das
+       onze indústrias aponta para um destes componentes. */
+    var mola = function (x, y1, y2, w) { var d = "M " + x + "," + y1, n = 7, h = (y2 - y1) / n; for (var i = 1; i <= n; i++) d += " L " + (x + (i % 2 ? w : -w)) + "," + (y1 + h * i).toFixed(1); return d; };
+    var raios = function (cx, cy) { var d = ""; for (var i = 0; i < 5; i++) { var a = i * 2 * Math.PI / 5 - Math.PI / 2; d += " M " + (cx + Math.cos(a) * 11).toFixed(1) + "," + (cy + Math.sin(a) * 11).toFixed(1) + " L " + (cx + Math.cos(a) * 32).toFixed(1) + "," + (cy + Math.sin(a) * 32).toFixed(1); } return d; };
+    var circ = function (cx, cy, r) { return "M " + (cx - r) + "," + cy + " A " + r + " " + r + " 0 1 0 " + (cx + r) + "," + cy + " A " + r + " " + r + " 0 1 0 " + (cx - r) + "," + cy; };
+    var INTERNOS = [
+      ["metal cheio", "M 738,204 L 852,204 L 852,246 L 738,246 Z"],                                   /* bloco do motor */
+      ["metal", "M 752,204 L 752,192 L 772,192 L 772,204 M 780,204 L 780,192 L 800,192 L 800,204 M 808,204 L 808,192 L 828,192 L 828,204"], /* cabeçote */
+      ["metal", "M 744,188 L 846,188 M 758,188 L 758,180 M 786,188 L 786,180 M 814,188 L 814,180 M 838,188 L 838,180"], /* flauta e bicos */
+      ["metal", "M 750,246 L 846,246 L 838,264 L 758,264 Z"],                                           /* cárter */
+      ["metal", circ(868, 222, 10) + " " + circ(872, 244, 7) + " M 868,212 L 872,237 M 878,222 L 879,244"], /* polias e correia */
+      ["metal cheio", "M 716,212 L 732,212 L 732,244 L 716,244 Z M 716,220 L 732,220 M 716,236 L 732,236"], /* filtro */
+      ["", "M 904,236 L 916,236 L 916,278 L 904,278 Z M 904,246 L 916,246 M 904,256 L 916,256 M 904,266 L 916,266"], /* radiador */
+      ["", "M 694,200 L 714,200 L 714,216 L 694,216 Z"],                                               /* bateria */
+      ["metal", circ(792, 306, 24) + " " + circ(792, 306, 8) + raios(792, 306)],                       /* disco e roda dianteira */
+      ["metal", circ(216, 306, 24) + " " + circ(216, 306, 8) + raios(216, 306)],                       /* disco e roda traseira */
+      ["metal", "M 776,286 Q 792,276 808,286"],                                                         /* pinça dianteira */
+      ["metal", "M 200,286 Q 216,276 232,286"],                                                         /* pinça traseira */
+      ["", mola(792, 212, 262, 7) + " M 788,206 L 796,206"],                                            /* suspensão dianteira */
+      ["", mola(216, 206, 256, 7) + " M 212,200 L 220,200"],                                            /* suspensão traseira */
+      ["", "M 760,266 Q 740,288 700,292 L 300,292 M 190,292 L 96,292 M 190,286 L 300,286 L 300,298 L 190,298 Z"], /* escapamento */
+      ["", "M 240,306 L 768,306"],                                                                       /* eixo cardã */
+      ["cheio", "M 292,262 L 392,262 Q 398,262 398,268 L 398,280 Q 398,286 392,286 L 292,286 Q 286,286 286,280 L 286,268 Q 286,262 292,262 Z"], /* tanque */
+      ["", "M 520,240 L 520,200 Q 520,176 544,172 L 556,172 M 520,240 L 588,240 L 592,226 L 530,226"],  /* banco dianteiro */
+      ["", "M 330,240 L 330,196 Q 330,176 352,172 L 362,172 M 330,240 L 404,240 L 408,226 L 340,226"],  /* banco traseiro */
+      ["", "M 636,196 Q 652,178 664,186 Q 668,200 650,208 Q 634,210 636,196 Z M 650,197 L 612,230"]   /* volante e coluna */
+    ];
+    var dt = document.getElementById("dentro9"), dv = document.getElementById("dentroVivo9");
+    INTERNOS.forEach(function (x) {
+      dt.appendChild(mk("path", { d: x[1], "class": "interno " + x[0], pathLength: 1 }));
+      dv.appendChild(mk("path", { d: x[1], "class": "interno " + x[0], pathLength: 1 }));
+    });
     var tr = document.getElementById("tracos9"), vv = document.getElementById("vivos9");
     TRACOS.forEach(function (d) {
       tr.appendChild(mk("path", { d: d, "class": "linha", pathLength: 1 }));
@@ -532,16 +572,16 @@ img { max-width: 100%; display: block; }
                ["Vale do Aço", 73.0, 54.3], ["Norte", 62.6, 29.0], ["Alto Paranaíba", 41.7, 46.1], ["Triângulo", 27.8, 49.2]];
     var P = [
       ["rolamento", "Rolamentos", "NTN-SNR", 792, 306, "b", 600],
-      ["suspensao", "Suspensão", "Pysko", 216, 244, "b", 170],
-      ["filtro", "Filtros", "Filtros Brasil", 805, 226, "t", 746],
-      ["oleo", "Óleo lubrificante", "Hexlub", 700, 250, "b", 400],
-      ["injetor", "Bicos injetores", "Meca Brazil", 760, 214, "t", 582],
-      ["bomba", "Bombas d\u2019água", "Nidec", 882, 262, "b", 780],
-      ["motor", "Peças de motor", "Sintech", 850, 232, "t", 910],
+      ["suspensao", "Suspensão", "Pysko", 216, 226, "b", 170],
+      ["filtro", "Filtros", "Filtros Brasil", 724, 228, "t", 418],
+      ["oleo", "Óleo lubrificante", "Hexlub", 798, 256, "b", 780],
+      ["injetor", "Bicos injetores", "Meca Brazil", 800, 182, "t", 746],
+      ["bomba", "Bombas d\u2019água", "Nidec", 868, 222, "t", 910],
+      ["motor", "Peças de motor", "Sintech", 790, 226, "t", 582],
       ["lanterna", "Lanternas", "Cofran", 80, 237, "t", 90],
       ["plastico", "Peças plásticas", "VP", 936, 284, "b", 930],
-      ["quimica", "Química automotiva", "Auto América", 330, 250, "t", 254],
-      ["spray", "Sprays", "Mundial Prime", 560, 250, "t", 418]
+      ["quimica", "Química automotiva", "Auto América", 342, 274, "t", 254],
+      ["spray", "Sprays", "Mundial Prime", 232, 322, "b", 400]
     ];
     var gG = document.getElementById("guias9"), gP = document.getElementById("pontos9"), gC = document.getElementById("pecas9"), lista = document.getElementById("lista9");
     var gR = document.getElementById("regs9"), sil = document.getElementById("mgsil9");
@@ -613,6 +653,7 @@ img { max-width: 100%; display: block; }
         lit[el.reg] = Math.max(lit[el.reg], cl((x - 0.8) / 0.2));
       });
       regEls.forEach(function (r, i) { r.g.style.setProperty("--lit", lit[i].toFixed(4)); });
+      cena.style.setProperty("--mont", cl((e - 0.08) / 0.5).toFixed(4));
       cena.style.setProperty("--X", cl((e - 0.68) / 0.12).toFixed(4));
       cena.style.setProperty("--mapa", cl((e - 0.7) / 0.14).toFixed(4));
       cena.style.setProperty("--rumo", cl((e - 0.8) / 0.08).toFixed(4));
