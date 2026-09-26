@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState, type ReactNode, type UIEvent } from "react";
 
 import { representadas } from "@/lib/dados";
+import { pecaDe } from "./PecaNoCursor";
 
 // A ESTEIRA DAS INDÚSTRIAS — a seção inteira anda de lado (ref. landonorris.com).
 //
@@ -47,6 +48,11 @@ export function EsteiraMarcas({ cabeca }: { cabeca?: ReactNode }) {
   const pranchaRef = useRef<HTMLDivElement>(null);
   const trilhoRef = useRef<HTMLUListElement>(null);
   const [movelAtiva, setMovelAtiva] = useState(0);
+  // QUAL CARTÃO ESTÁ VIRADO — o laboratório (item 6, `#p7`) provou o gesto:
+  // clicar vira o cartão e revela a peça que a marca fornece. Um índice só
+  // (não um Set) porque abrir o próximo fecha o anterior — ver o próprio
+  // `aria-expanded` do botão, que descreve um estado, não uma lista deles.
+  const [virada, setVirada] = useState<number | null>(null);
 
   const aoArrastar = (evento: UIEvent<HTMLDivElement>) => {
     const rolagem = evento.currentTarget;
@@ -165,30 +171,61 @@ export function EsteiraMarcas({ cabeca }: { cabeca?: ReactNode }) {
             <ul className="esteira__trilho" ref={trilhoRef} aria-label="As onze indústrias">
               {representadas.map((r, i) => {
                 const src = arquivoDe(r.id);
+                const peca = pecaDe(r.id);
+                const aberta = virada === i;
                 return (
                   <li
                     key={r.id}
-                    className={`esteira__item esteira__item--${RITMO[i % 3]} esteira__item--${ALTURA[(i * 2) % 3]}`}
+                    className={`esteira__item esteira__item--${RITMO[i % 3]} esteira__item--${ALTURA[(i * 2) % 3]}${aberta ? " is-aberta" : ""}`}
                   >
+                    {/* O CARTÃO VIRA (lab, item 6, `#p7`): um <button> gira 180°
+                        e revela, no verso, a peça que a marca fornece. O link do
+                        portal fica FORA do botão — link dentro de botão é
+                        inválido em HTML — e só aparece, visível e clicável, com
+                        o cartão aberto. */}
+                    <button
+                      type="button"
+                      className="esteira__girar"
+                      aria-expanded={aberta}
+                      aria-label={`${r.nome} — ${r.fornece}. ${aberta ? "Voltar para a marca." : "Ver a peça."}`}
+                      onClick={() =>
+                        setVirada((antes) => (antes === i ? null : i))
+                      }
+                    >
+                      <span className="esteira__face esteira__frente">
+                        <span className="esteira__num" aria-hidden>
+                          {String(i + 1).padStart(2, "0")}
+                        </span>
+                        <span className="esteira__logo">
+                          {src ? <img src={src} alt="" aria-hidden loading="lazy" /> : <b>{r.nome}</b>}
+                        </span>
+                        <span className="esteira__dizer">
+                          <b>{r.nome}</b>
+                          <span>{r.fornece}</span>
+                        </span>
+                        <span className="esteira__dica" aria-hidden>
+                          Ver peça
+                        </span>
+                      </span>
+                      <span className="esteira__face esteira__verso">
+                        {peca ? (
+                          <img src={peca} alt="" aria-hidden loading="lazy" />
+                        ) : null}
+                        <span className="esteira__versoRodape">
+                          <b>{r.fornece}</b>
+                          <span>fornecido por {r.nome}</span>
+                        </span>
+                      </span>
+                    </button>
                     <a
+                      className="esteira__portal"
                       href={r.site}
                       target="_blank"
                       rel="noopener noreferrer"
-                      aria-label={`${r.nome} — ${r.fornece}. Abrir o portal em nova aba.`}
+                      tabIndex={aberta ? 0 : -1}
+                      aria-hidden={!aberta}
                     >
-                      <span className="esteira__num" aria-hidden>
-                        {String(i + 1).padStart(2, "0")}
-                      </span>
-                      <span className="esteira__logo">
-                        {src ? <img src={src} alt="" aria-hidden loading="lazy" /> : <b>{r.nome}</b>}
-                      </span>
-                      <span className="esteira__dizer">
-                        <b>{r.nome}</b>
-                        <span>{r.fornece}</span>
-                      </span>
-                      <span className="esteira__portal" aria-hidden>
-                        Portal <i>↗</i>
-                      </span>
+                      Portal da {r.nome} <i aria-hidden>↗</i>
                     </a>
                   </li>
                 );

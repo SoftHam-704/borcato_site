@@ -3786,31 +3786,52 @@ body.is-abrindo {
 .esteira__item:nth-child(10) { left: 3370px; top: 330px; width: 250px; }
 .esteira__item:nth-child(11) { left: 3560px; top: 54px; width: 260px; }
 
-.esteira__item > a {
+/* ── O CARTÃO QUE VIRA (lab, item 6, `#p7`) ───────────────────────────────────
+   Antes cada cartão era um <a> inteiro para o portal. Agora um <button> vira
+   (rotateY 180°) e revela, no verso, a peça que a marca fornece — o mesmo
+   ativo que o palco (capítulo seguinte) usa, aqui em miniatura, dentro da
+   esteira. O link do portal é um <a> IRMÃO, fora do botão (um link dentro de
+   um botão não é HTML válido), visível e alcançável só com o cartão aberto. */
+.esteira__item {
+  perspective: 1400px;
+}
+.esteira__girar {
   position: relative;
+  display: block;
+  width: 100%;
+  height: clamp(220px, 34vh, 310px);
+  padding: 0;
+  background: none;
+  border: 0;
+  color: inherit;
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+  transform-style: preserve-3d;
+  transition: transform 0.7s cubic-bezier(0.2, 0.7, 0.2, 1);
+}
+.esteira__item.is-aberta .esteira__girar {
+  transform: rotateY(180deg);
+}
+.esteira__face {
+  position: absolute;
+  inset: 0;
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+  border-top: 1px solid color-mix(in srgb, var(--br-tinta) 26%, transparent);
+  overflow: hidden;
+}
+.esteira__frente {
   display: grid;
   grid-template-rows: auto 1fr auto;
   gap: clamp(10px, 1.4vh, 18px);
-  width: 100%;
-  height: clamp(220px, 34vh, 310px);
   padding: clamp(10px, 1.2vw, 18px) 0;
-  border-radius: 0;
-  background: transparent;
-  border: 0;
-  border-top: 1px solid color-mix(in srgb, var(--br-tinta) 26%, transparent);
-  color: var(--br-tinta);
-  text-decoration: none;
-  transition:
-    translate 0.5s cubic-bezier(0.16, 1, 0.3, 1),
-    border-color 0.35s ease,
-    background-color 0.35s ease;
+  transition: border-color 0.35s ease, background-color 0.35s ease;
 }
-.esteira__item > a:hover,
-.esteira__item > a:focus-visible {
-  translate: 0 -5px;
+.esteira__girar:hover .esteira__frente,
+.esteira__girar:focus-visible .esteira__frente {
   border-color: var(--br-marca);
   background: color-mix(in srgb, var(--br-marca) 5%, transparent);
-  outline: none;
 }
 .esteira__num {
   font-family: var(--font-display), sans-serif;
@@ -3833,8 +3854,8 @@ body.is-abrindo {
   opacity: 0.86;
   transition: opacity 0.35s ease, scale 0.5s cubic-bezier(0.16, 1, 0.3, 1);
 }
-.esteira__item > a:hover .esteira__logo img,
-.esteira__item > a:focus-visible .esteira__logo img {
+.esteira__girar:hover .esteira__logo img,
+.esteira__girar:focus-visible .esteira__logo img {
   opacity: 1;
   scale: 1.04;
 }
@@ -3854,7 +3875,8 @@ body.is-abrindo {
   color: var(--br-fraco);
   line-height: 1.4;
 }
-.esteira__portal {
+/* a dica que convida ao clique — só na frente, some ao virar */
+.esteira__dica {
   position: absolute;
   top: clamp(16px, 1.8vw, 26px);
   right: clamp(16px, 1.8vw, 26px);
@@ -3865,16 +3887,97 @@ body.is-abrindo {
   color: var(--br-fraco);
   transition: color 0.35s ease;
 }
+.esteira__girar:hover .esteira__dica,
+.esteira__girar:focus-visible .esteira__dica {
+  color: var(--br-marca);
+}
+/* o verso: a peça que a marca fornece, a mesma imagem do palco */
+.esteira__verso {
+  transform: rotateY(180deg);
+  background: color-mix(in srgb, var(--br-marca) 10%, var(--br-chao));
+  display: grid;
+  grid-template-rows: 1fr auto;
+  border-top-color: color-mix(in srgb, var(--br-marca) 45%, transparent);
+}
+.esteira__verso img {
+  width: auto;
+  height: 100%;
+  max-height: min(20vh, 190px);
+  margin-inline: auto;
+  align-self: center;
+  object-fit: contain;
+  -webkit-mask-image: radial-gradient(circle, #000 52%, transparent 74%);
+  mask-image: radial-gradient(circle, #000 52%, transparent 74%);
+}
+.esteira__versoRodape {
+  display: grid;
+  gap: 2px;
+  padding: 0 0 clamp(10px, 1.2vw, 18px);
+}
+.esteira__versoRodape b {
+  font-family: var(--font-display), sans-serif;
+  font-size: clamp(0.95rem, 1.6vmin, 1.2rem);
+  font-weight: 700;
+  text-transform: uppercase;
+}
+.esteira__versoRodape span {
+  font-size: clamp(0.76rem, 1.15vmin, 0.88rem);
+  color: var(--br-fraco);
+}
+.esteira__girar:focus-visible .esteira__face {
+  outline: 2px solid var(--br-luz);
+  outline-offset: 3px;
+}
+/* o portal: FORA do botão, alvo ≥ 44px, só visível com o cartão aberto */
+.esteira__portal {
+  display: none;
+  align-items: center;
+  min-height: 44px;
+  margin-top: 6px;
+  font-size: 0.7rem;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--br-marca);
+  text-decoration: none;
+  transition: color 0.35s ease;
+}
+.esteira__item.is-aberta .esteira__portal {
+  display: inline-flex;
+}
+.esteira__portal:hover,
+.esteira__portal:focus-visible {
+  color: var(--br-luz);
+}
 .esteira__portal i {
   font-style: normal;
   display: inline-block;
-  transition: translate 0.35s ease;
+  margin-left: 4px;
 }
-.esteira__item > a:hover .esteira__portal {
-  color: var(--br-marca);
-}
-.esteira__item > a:hover .esteira__portal i {
-  translate: 2px -2px;
+
+@media (prefers-reduced-motion: reduce) {
+  /* sem movimento: troca por opacidade, não por giro 3D */
+  .esteira__girar {
+    transition: none;
+    transform: none !important;
+  }
+  .esteira__face {
+    backface-visibility: visible;
+    -webkit-backface-visibility: visible;
+    transition: opacity 0.2s ease;
+  }
+  .esteira__verso {
+    transform: none;
+    opacity: 0;
+    pointer-events: none;
+  }
+  .esteira__item.is-aberta .esteira__verso {
+    opacity: 1;
+    pointer-events: auto;
+  }
+  .esteira__item.is-aberta .esteira__frente {
+    opacity: 0;
+  }
 }
 
 .esteira__gesto {
