@@ -78,6 +78,27 @@ const ATE: number[] = (() => {
 })();
 const COMPRIMENTO = ATE[ATE.length - 1]!;
 
+/**
+ * A ROTA NAO PARA NO TRIANGULO (passagem C, 27/09).
+ *
+ * Chegando na oitava parada, o traco segue: sai do estado pelo sudoeste e
+ * deixa o mapa. Dali em diante quem o desenha e `EstradaEscreve.tsx`, que
+ * leva a mesma linha ate as letras H.M. de O Nome. Este trecho e o elo: ele
+ * vive DENTRO do SVG do mapa porque, no desktop, o mapa ainda esta preso na
+ * pista sticky enquanto ele e desenhado.
+ *
+ * `SEGUE_FIM` e onde este trecho termina e para onde aponta — a outra ponta
+ * comeca exatamente ali, com a mesma direcao, e a emenda nao aparece.
+ */
+const SEGUE = "M 27.8,49.2 C 22,62 8,70 0,84";
+export const SEGUE_FIM = { x: 0, y: 84, dx: -8, dy: 14 };
+/**
+ * No celular nao ha pista: o elo e desenhado enquanto a ancora sobe de 58% a
+ * 48% da altura da tela, logo depois de a rota fechar. `EstradaEscreve` le a
+ * mesma fracao para saber onde comecar.
+ */
+export const CEL_SEGUE_FIM = 0.48;
+
 export function MapaMinas() {
   const svgRef = useRef<SVGSVGElement>(null);
   // No celular, esta âncora fornece uma janela de leitura sem palco sticky.
@@ -96,6 +117,7 @@ export function MapaMinas() {
     const semMovimento = window.matchMedia("(prefers-reduced-motion: reduce)");
     if (semMovimento.matches) {
       svg.style.setProperty("--rota", "1");
+      svg.style.setProperty("--segue", "1");
       svg.querySelectorAll<SVGGElement>("[data-regiao]").forEach((g) => {
         g.classList.add("is-acesa");
       });
@@ -121,6 +143,8 @@ export function MapaMinas() {
         const pista = svg.closest<HTMLElement>(".estrada");
         const desktop = window.matchMedia("(min-width: 901px)").matches;
         let t = 0;
+        // o elo que leva o traco para fora do mapa (passagem C)
+        let segue = 0;
 
         if (desktop && pista && entrega >= 0.98) {
           // D-25: o mapa recebe uma pista própria. Ao entrar, a composição
@@ -130,6 +154,10 @@ export function MapaMinas() {
           const curso = Math.max(1, pista.offsetHeight - vh);
           const cena = Math.min(1, Math.max(0, -rPista.top / curso));
           t = Math.min(1, cena / 0.75);
+          // os 25% finais seguravam o mapa parado; agora o resultado continua
+          // aceso E o traco sai do Triangulo. Termina no instante em que a
+          // pista solta a cena — e onde `EstradaEscreve` assume.
+          segue = Math.min(1, Math.max(0, (cena - 0.75) / 0.25));
         } else if (!desktop) {
           // No celular não há palco sticky: a âncora de layout preserva a rota
           // inteira dentro da janela visível, sem transformar o SVG.
@@ -140,8 +168,11 @@ export function MapaMinas() {
             1,
             Math.max(0, (inicioR - rMarco.top) / Math.max(1, inicioR - fimR)),
           );
+          const fimS = vh * CEL_SEGUE_FIM;
+          segue = Math.min(1, Math.max(0, (fimR - rMarco.top) / Math.max(1, fimR - fimS)));
         }
         svg.style.setProperty("--rota", t.toFixed(4));
+        svg.style.setProperty("--segue", segue.toFixed(4));
 
         // UMA SO MEDIDA GOVERNA TRACO, PONTO E LISTA.
         //
@@ -203,6 +234,8 @@ export function MapaMinas() {
 
       {/* a rota entre as paradas, esfregada pelo scroll */}
       <path className="mapa-mg__rota" d={rota} pathLength={1} />
+      {/* e a rota que nao para: sai do Triangulo e deixa o mapa (passagem C) */}
+      <path className="mapa-mg__segue" d={SEGUE} pathLength={1} />
 
       {PONTOS.map((p, i) => (
         <g key={p.nome} data-regiao={p.nome} style={{ "--i": i } as React.CSSProperties}>

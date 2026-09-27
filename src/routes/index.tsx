@@ -3,6 +3,7 @@ import { Abertura } from "@/components/site/Abertura";
 import { HeroTravessia } from "@/components/site/HeroTravessia";
 import { Capitulo, NavCapitulos } from "@/components/site/Capitulos";
 import { Estrada } from "@/components/site/Estrada";
+import { EstradaEscreve } from "@/components/site/EstradaEscreve";
 import { Palavras } from "@/components/site/Palavras";
 import { CarroOnze } from "@/components/site/CarroOnze";
 import { EsteiraMarcas } from "@/components/site/EsteiraMarcas";
@@ -58,6 +59,9 @@ function Index() {
 
       {/* a estrada atravessa a pagina inteira, por tras do conteudo */}
       <Estrada />
+      {/* a rota do mapa que continua e escreve H.M. (passagem 4, 27/09) —
+          fora dos capitulos pelo mesmo motivo da estrada: ela atravessa dois */}
+      <EstradaEscreve />
       {/* FORA dos capitulos: dentro deles o transform do gesto de revelacao
           vira bloco de contencao e quebra o `position: fixed` da peca. */}
 
