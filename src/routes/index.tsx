@@ -9,7 +9,6 @@ import { EsteiraMarcas } from "@/components/site/EsteiraMarcas";
 import { FechoFabio } from "@/components/site/FechoFabio";
 import { MapaMinas, PONTOS } from "@/components/site/MapaMinas";
 import { empresa, casa, representadas } from "@/lib/dados";
-import fabioCasa from "@/assets/site/fabio-casa.avif";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -104,7 +103,7 @@ function Index() {
             {/* OS MARCOS: a história em quatro paradas, não em parágrafo.
                 Nada aqui é invenção — fundação e trajetória vêm do material do
                 cliente, e a última linha é a bio dele, palavra por palavra. */}
-            <ol className="casa__marcos" data-revela>
+            <ol className="casa__marcos" data-revela data-estrada-corredor>
               {/* "14 ANOS", NAO "2004". A 3a auditoria pegou: 2004 nao aparece
                   em lugar nenhum no material do cliente — era deducao minha
                   (2018 menos 14), apresentada como fato. O que ele escreveu e
@@ -138,18 +137,9 @@ function Index() {
             </p>
           </div>
 
-          {/* O RETRATO — outro enquadramento do mesmo ensaio do hero: lá o
-              busto, aqui o close. Mesma pessoa, outra leitura. */}
-          <figure className="casa__retrato">
-            <img
-              src={fabioCasa}
-              alt="Fábio Borçato, sócio-fundador da H.M. Borçato."
-              loading="lazy"
-              decoding="async"
-              width={900}
-              height={1125}
-            />
-          </figure>
+          {/* O CLOSE SAIU (27/09): o Fábio não gostou da ênfase na imagem dele.
+              Regra: o rosto só no início (hero) e no fim (fecho). A Casa fala
+              da empresa — anos de estrada, Minas, as onze indústrias. */}
         </div>
       </Capitulo>
 

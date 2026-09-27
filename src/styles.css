@@ -4661,3 +4661,41 @@ html::-webkit-scrollbar,
 body::-webkit-scrollbar {
   display: none;
 }
+
+/* A CASA SEM O CLOSE (27/09 — o Fábio não gostou da ênfase na imagem dele; o
+   rosto fica só no hero e no fecho). Sem a coluna do retrato, a composição vira
+   editorial: a manchete corre a largura toda e, embaixo, o texto à esquerda e
+   os marcos à direita — em vez de uma coluna de texto com um vão ao lado. */
+.casa {
+  grid-template-columns: 1fr;
+}
+@media (min-width: 901px) {
+  .casa__dizer {
+    display: grid;
+    grid-template-columns: minmax(0, 1.05fr) minmax(0, 0.95fr);
+    column-gap: clamp(40px, 6vw, 110px);
+    align-items: start;
+  }
+  .casa__dizer > .cap__titulo {
+    grid-column: 1 / -1;
+    max-width: 22ch;
+  }
+  .casa__dizer > .cap__corpo {
+    grid-column: 1;
+    grid-row: 2 / span 2;
+  }
+  .casa__dizer > .casa__marcos {
+    grid-column: 2;
+    grid-row: 2;
+    margin-top: 0;
+    /* o vão entre as duas colunas de marcos é o CORREDOR por onde a estrada
+       passa (Estrada.tsx mede este vão) — largo o bastante para a curva */
+    column-gap: clamp(56px, 6vw, 96px);
+  }
+  .casa__dizer > .casa__bio {
+    grid-column: 2;
+    grid-row: 3;
+    /* fica na metade esquerda da coluna, antes do corredor da estrada */
+    max-width: calc(50% - clamp(28px, 3vw, 48px));
+  }
+}

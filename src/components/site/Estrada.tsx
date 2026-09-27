@@ -124,6 +124,20 @@ export function Estrada() {
             y: topo + r.height * g.y,
           }));
         }
+        // CORREDOR MEDIDO (27/09): sem o close do Fábio em A Casa, a coluna
+        // da direita virou texto (os marcos) e a estrada a 74% cortava as
+        // palavras. Onde o capítulo marca um `[data-estrada-corredor]`, a
+        // estrada passa pelo vão REAL entre os dois primeiros itens dele —
+        // medido, não fração fixa, porque o vão muda com a largura.
+        const corredor = el.querySelector<HTMLElement>("[data-estrada-corredor]");
+        const itens = corredor ? corredor.children : null;
+        if (itens && itens.length >= 2 && window.matchMedia("(min-width: 901px)").matches) {
+          const a = itens[0]!.getBoundingClientRect();
+          const b = itens[1]!.getBoundingClientRect();
+          if (b.left > a.right) {
+            return [{ x: (a.right + b.left) / 2, y: topo + r.height / 2 }];
+          }
+        }
         return [{ x: larg * (ROTA[el.id] ?? 0.5), y: topo + r.height / 2 }];
       });
 
