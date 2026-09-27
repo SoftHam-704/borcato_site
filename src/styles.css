@@ -601,6 +601,9 @@
   --br-luz: #a0d0f0;
   --br-tinta: #d8d8f0;
   --br-fraco: #8a8fa3;
+  /* a luz de A Casa: o azul que tinge o chao da capsula aberta e da secao 01
+     (antes solto no CSS como rgba(28, 127, 194, ...) em cinco lugares) */
+  --br-casa-luz: #1c7fc2;
 }
 
 .hero-tr {
@@ -701,7 +704,7 @@
 }
 .hero-tr__ufs li {
   padding: 6px 11px;
-  border: 1px solid rgba(216, 216, 240, 0.16);
+  border: 1px solid color-mix(in srgb, var(--br-tinta) 16%, transparent);
   border-radius: 2px;
   font-size: 11px;
   font-weight: 600;
@@ -927,7 +930,7 @@
     transform: none;
     background: color-mix(in srgb, var(--br-chao) 88%, transparent);
     backdrop-filter: blur(14px);
-    border-top: 1px solid rgba(216, 216, 240, 0.1);
+    border-top: 1px solid color-mix(in srgb, var(--br-tinta) 10%, transparent);
     /* barra do iPhone */
     padding-bottom: env(safe-area-inset-bottom, 0px);
   }
@@ -1019,8 +1022,8 @@
   margin: clamp(40px, 6vh, 72px) 0 0;
   padding: 0;
   list-style: none;
-  background: rgba(216, 216, 240, 0.1); /* o gap vira a linha da grade */
-  border: 1px solid rgba(216, 216, 240, 0.1);
+  background: color-mix(in srgb, var(--br-tinta) 10%, transparent); /* o gap vira a linha da grade */
+  border: 1px solid color-mix(in srgb, var(--br-tinta) 10%, transparent);
 }
 .marcas-lista li {
   display: grid;
@@ -1052,7 +1055,7 @@
   gap: 14px;
   margin: 0 0 clamp(20px, 3vh, 32px);
   padding: 0 0 clamp(20px, 3vh, 32px);
-  border-bottom: 1px solid rgba(216, 216, 240, 0.12);
+  border-bottom: 1px solid color-mix(in srgb, var(--br-tinta) 12%, transparent);
 }
 .estrada__casa b {
   font-family: var(--font-display), sans-serif;
@@ -1322,7 +1325,7 @@
   z-index: 2;
   padding: clamp(14px, 2vh, 22px) clamp(20px, 6vw, 104px) 0;
   padding-left: var(--br-goteira);
-  border-top: 1px solid rgba(216, 216, 240, 0.08);
+  border-top: 1px solid color-mix(in srgb, var(--br-tinta) 8%, transparent);
 }
 .marcas__titulo {
   display: flex;
@@ -1362,7 +1365,7 @@
   height: 44px;
   padding: 0 8px;
   background: none;
-  border: 1px solid rgba(216, 216, 240, 0.2);
+  border: 1px solid color-mix(in srgb, var(--br-tinta) 20%, transparent);
   border-radius: 999px;
   cursor: pointer;
   transition:
@@ -1404,7 +1407,7 @@
   .marcas {
     position: static;
     padding: clamp(18px, 2.6vh, 26px) clamp(20px, 6vw, 104px);
-    border-bottom: 1px solid rgba(216, 216, 240, 0.08);
+    border-bottom: 1px solid color-mix(in srgb, var(--br-tinta) 8%, transparent);
   }
   .hero-tr {
     padding-bottom: calc(clamp(28px, 4vh, 44px) + 76px);
@@ -1767,7 +1770,7 @@
   gap: 8px clamp(10px, 1.2vw, 18px);
   margin: clamp(22px, 3vh, 36px) 0 0;
   padding: clamp(14px, 1.8vh, 20px) 0 0;
-  border-top: 1px solid rgba(216, 216, 240, 0.1);
+  border-top: 1px solid color-mix(in srgb, var(--br-tinta) 10%, transparent);
   list-style: none;
 }
 .trilho__rotulo {
@@ -4721,7 +4724,7 @@ body::-webkit-scrollbar {
   --abre: clamp(0, calc((var(--passa, 0) - 0.3) / 0.62), 1);
   /* o chão de A Casa: um azul da marca a 7% sobre o chão da página. O mesmo
      valor dentro da cápsula aberta e na seção seguinte é o que apaga a emenda */
-  --casa-chao: rgba(28, 127, 194, 0.07);
+  --casa-chao: color-mix(in srgb, var(--br-casa-luz) 7%, transparent);
 }
 
 /* A foto SAI, não cresce. `filter: opacity` e não `opacity`: a entrada da
@@ -4749,8 +4752,8 @@ body::-webkit-scrollbar {
   background:
     radial-gradient(
       ellipse 70% 60% at 72% 30%,
-      rgba(28, 127, 194, 0.16),
-      rgba(28, 127, 194, 0) 70%
+      color-mix(in srgb, var(--br-casa-luz) 16%, transparent),
+      color-mix(in srgb, var(--br-casa-luz) 0%, transparent) 70%
     ),
     var(--casa-chao);
   /* o fio de luz na borda: desenha a forma enquanto ela ainda é cápsula e
@@ -4792,7 +4795,7 @@ body::-webkit-scrollbar {
      onde as duas se encostam, o valor é idêntico, e rolando de volta ele
      recua junto. Sem JS, --passa cai no 1 e o chão fica pronto. */
   --some: clamp(0, calc((var(--passa, 1) - 0.22) / 0.2), 1);
-  background: rgba(28, 127, 194, calc(0.07 * var(--some)));
+  background: color-mix(in srgb, var(--br-casa-luz) calc(7% * var(--some)), transparent);
   clip-path: none;
   transform: none;
 }
@@ -4812,8 +4815,8 @@ body::-webkit-scrollbar {
   .passagem-casa-marcas > .cap--casa {
     background: linear-gradient(
       to bottom,
-      rgba(28, 127, 194, 0),
-      rgba(28, 127, 194, 0.07) clamp(96px, 16vh, 200px)
+      color-mix(in srgb, var(--br-casa-luz) 0%, transparent),
+      color-mix(in srgb, var(--br-casa-luz) 7%, transparent) clamp(96px, 16vh, 200px)
     );
   }
 }
