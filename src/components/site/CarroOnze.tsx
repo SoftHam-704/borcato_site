@@ -350,7 +350,7 @@ export function CarroOnze() {
   }, []);
 
   return (
-    <div className="carro-onze" ref={pistaRef}>
+    <div className="carro-onze" id="carro-onze" ref={pistaRef}>
       <div className="carro-onze__cena" ref={cenaRef}>
         <div className="carro-onze__topo">
           <h3>

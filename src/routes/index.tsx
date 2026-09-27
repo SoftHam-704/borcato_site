@@ -183,7 +183,7 @@ function Index() {
                   intencional. E o atalho para quem ja entendeu. */}
               <p className="esteira__guia" data-revela>
                 Primeiro as indústrias. Depois, cinco categorias que chegam à estrada.
-                <a href="#palco-pecas" className="esteira__atalho">
+                <a href="#carro-onze" className="esteira__atalho">
                   Ver as peças <i aria-hidden>↓</i>
                 </a>
               </p>
