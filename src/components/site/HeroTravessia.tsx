@@ -86,6 +86,28 @@ export function HeroTravessia() {
     // `t` deixa de ser "fração de uma viewport rolada" e passa a ser a fração DA
     // PISTA — que é o que faz o gesto durar o quanto a palavra precisa.
     const palco = el.closest<HTMLElement>(".hero-palco");
+    const secaoHero = el.closest<HTMLElement>(".hero-tr");
+    const casaCap = document.getElementById("cap-casa");
+
+    // A CÁPSULA SE ABRE (passagem B, 27/09). A moldura nasce EXATAMENTE onde a
+    // cápsula está — medida, não copiada do CSS, porque a caixa depende do
+    // max-height e do alinhamento da grade. Ela escreve as quatro distâncias até
+    // as bordas do hero; o CSS as encolhe até zero conforme a passagem corre.
+    // preso ou solto muda com a largura: lido no resize, nao a cada quadro
+    // (ler estilo depois de escrever variavel forcaria recalculo por quadro)
+    let preso = false;
+    const medirCapsula = () => {
+      if (!secaoHero) return;
+      preso = getComputedStyle(secaoHero).position === "sticky";
+      const w = secaoHero.clientWidth;
+      const h = secaoHero.clientHeight;
+      const l = el.offsetLeft;
+      const tp = el.offsetTop;
+      secaoHero.style.setProperty("--cap-l", `${l}px`);
+      secaoHero.style.setProperty("--cap-t", `${tp}px`);
+      secaoHero.style.setProperty("--cap-r", `${w - l - el.offsetWidth}px`);
+      secaoHero.style.setProperty("--cap-b", `${h - tp - el.offsetHeight}px`);
+    };
 
     let pedido = 0;
     const aoRolar = () => {
@@ -118,13 +140,32 @@ export function HeroTravessia() {
           // o progresso do pino, cru, para o CSS compor a SAIDA da capsula
           // (a passagem hero -> 01: ela recua e esmaece no ultimo quarto)
           secao.style.setProperty("--hero-t", t.toFixed(4));
+          // O progresso DA PASSAGEM. Com o hero preso (desktop) e o proprio
+          // pino; sem pino (celular) o hero rola inteiro, entao o curso vai ate
+          // a base dele passar do meio da tela — e ali que A Casa assume.
+          const curso = preso
+            ? Math.max(1, (palco?.offsetHeight ?? 0) - window.innerHeight)
+            : Math.max(1, secao.offsetHeight - window.innerHeight * 0.45);
+          const passa = Math.min(1, Math.max(0, window.scrollY / curso)).toFixed(4);
+          secao.style.setProperty("--passa", passa);
+          // A Casa recebe o MESMO numero: o chao dela e o de dentro da capsula
+          casaCap?.style.setProperty("--passa", passa);
         }
       });
     };
+    const aoRedimensionar = () => {
+      medirCapsula();
+      aoRolar();
+    };
+    medirCapsula();
     aoRolar();
     window.addEventListener("scroll", aoRolar, { passive: true });
+    window.addEventListener("resize", aoRedimensionar);
+    // as fontes mudam a altura do texto, e com ela o centro da grade
+    document.fonts?.ready.then(aoRedimensionar);
     return () => {
       window.removeEventListener("scroll", aoRolar);
+      window.removeEventListener("resize", aoRedimensionar);
       if (pedido) cancelAnimationFrame(pedido);
     };
   }, []);
@@ -148,6 +189,13 @@ export function HeroTravessia() {
           laterais e pela cápsula. Se aparecer inteira em alguma largura, vira o
           clichê da palavra gigante de fundo. */}
       <span className="hero-tr__fantasma" aria-hidden>Borçato</span>
+
+      {/* A MOLDURA — a cápsula como FORMA, sem o Fábio dentro (27/09).
+          O cliente não quer ênfase no rosto: na passagem para A Casa a foto
+          esmaece dentro da cápsula e o que cresce é a moldura, até virar o
+          chão do capítulo seguinte. Fica ATRÁS do texto e da foto; à frente
+          da palavra-fantasma, que continua lida através dela. */}
+      <span className="hero-tr__moldura" aria-hidden />
 
       <div className="hero-tr__texto">
         <p className="hero-tr__eb">
