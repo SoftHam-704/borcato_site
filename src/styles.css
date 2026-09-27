@@ -3019,8 +3019,14 @@ body.is-abrindo {
      0,94 (o valor que não regride o desktop); o quadro mobile residual
      fica documentado, é pontual (1 de 86) e não é um corte de conteúdo —
      é um vão de baixo contraste, dentro da margem que a spec aceita. */
-  /* 27/09: esmaece com `--ponte` (depois do clímax), não mais com `--mapa` */
-  opacity: calc(1 - var(--ponte, 0) * 0.94);
+  /* 27/09: esmaece com `--ponte` (depois do clímax), não mais com `--mapa`.
+     27/09 (auditoria): nem com `--ponte` — com `--cede`, que só sobe quando a
+     borda do capítulo Estrada já passou por cima do mapa (ver `aplicarPonte`
+     em `CarroOnze.tsx`). Esmaecer antes disso abria o vão de ~600px. */
+  opacity: calc(1 - var(--cede, 0) * 0.94);
+  /* parada no quadro depois do fim da pista até o painel da Estrada cobrir
+     a tela (ver `--passou` em `CarroOnze.tsx`) */
+  translate: 0 calc(var(--passou, 0) * 1px);
   display: grid;
   grid-template-rows: auto 1fr;
   /* GOTEIRA PRÓPRIA, MENOR (achado da revisão): com `var(--br-goteira)` de
@@ -3040,6 +3046,9 @@ body.is-abrindo {
   align-items: baseline;
   gap: 20px;
   position: relative;
+  /* 27/09 (auditoria, 17 quadros): as peças que chegam de fora passavam POR
+     CIMA do título — o título fica à frente, as peças por trás */
+  z-index: 2;
   min-height: 64px;
 }
 .carro-onze__topo h3 {
@@ -3058,7 +3067,10 @@ body.is-abrindo {
   letter-spacing: 0.04em;
   white-space: nowrap;
   color: var(--br-tinta);
-  opacity: calc(var(--c, 0) * (1 - var(--fim, 0)));
+  /* O PICO EM SEQUÊNCIA (auditoria 27/09): sai por inteiro na 1ª metade de
+     `--fim`; o título final só entra na 2ª. Antes os dois cruzavam no mesmo
+     lugar e ~130px de rolagem mostravam texto dobrado. */
+  opacity: calc(var(--c, 0) * clamp(0, 1 - var(--fim, 0) * 2, 1));
 }
 .carro-onze__topo h3 b {
   font-weight: 700;
@@ -3074,13 +3086,16 @@ body.is-abrindo {
   margin: 0;
   white-space: nowrap;
   font-family: var(--font-display), sans-serif;
-  font-size: clamp(22px, 3vw, 44px);
+  /* teto 52px (auditoria 27/09): com 44px, em 1920 o título do PICO ficava
+     menor que o título comum (46px) — a hierarquia invertida */
+  font-size: clamp(22px, 3vw, 52px);
   line-height: 1;
   font-weight: 700;
   font-stretch: 108%;
   text-transform: uppercase;
   color: var(--br-tinta);
-  opacity: calc(var(--fim, 0) * (1 - var(--X, 0) * 2.5));
+  /* entra só na 2ª metade de `--fim` (ver o h3 acima) */
+  opacity: calc(clamp(0, var(--fim, 0) * 2 - 1, 1) * (1 - var(--X, 0) * 2.5));
   translate: 0 calc((1 - var(--fim, 0)) * 1.5vh);
 }
 .carro-onze__final span {
@@ -3093,7 +3108,7 @@ body.is-abrindo {
   top: 0;
   margin: 0;
   font-family: var(--font-display), sans-serif;
-  font-size: clamp(22px, 3vw, 44px);
+  font-size: clamp(22px, 3vw, 52px);
   line-height: 1;
   font-weight: 700;
   font-stretch: 108%;
@@ -3114,6 +3129,8 @@ body.is-abrindo {
   font-weight: 700;
   color: var(--br-marca-texto);
   font-variant-numeric: tabular-nums;
+  /* "/ 11" nunca desce para baixo do número (375, auditoria 27/09) */
+  white-space: nowrap;
   opacity: calc(var(--c, 0) * (1 - var(--X, 0) * 3));
 }
 .carro-onze__conta small {
@@ -3168,8 +3185,12 @@ body.is-abrindo {
   stroke: var(--br-luz);
   stroke-width: 1.1;
   stroke-dasharray: 1;
-  stroke-dashoffset: calc(1 - var(--k, 0));
-  opacity: calc(0.85 * (1 - var(--x, 0) * 3));
+  /* 27/09 (auditoria): a guia se desenha com `--k2` (a peça pousando) e some
+     com `--X` (a explosão). Com `--k` ela chegava à vaga com a peça ainda
+     no ar, e com `--x` — que nem é escrito na guia — sobrava apontando para
+     o nada depois da explosão. */
+  stroke-dashoffset: calc(1 - var(--k2, 0));
+  opacity: calc(0.85 * clamp(0, 1 - var(--X, 0) * 4, 1));
 }
 .carro-onze__ponto {
   fill: var(--br-luz);
@@ -3231,10 +3252,12 @@ body.is-abrindo {
   /* O ELEMENTO-PONTE: `--ponte-dx/dy` (em unidades do viewBox) e
      `--ponte-escala` são calculados em `CarroOnze.tsx` a cada quadro,
      medindo o retângulo real de `.mapa-mg-ref` (o mapa do capítulo
-     Estrada). Interpolados por `--mapa` (0→1): a ponte é zero no início
+     Estrada). Interpolados por `--ponte` (0→1): a ponte é zero no início
      (o mapa nasce onde sempre nasceu) e assume 100% do deslocamento
-     quando `--mapa` chega a 1 — o instante em que o mapa real assume,
-     tornando a troca invisível. `transform-box: view-box` porque o `<g>`
+     quando `--ponte` chega a 1 — o instante em que o mapa real assume,
+     tornando a troca invisível. 27/09: o alvo é o retângulo onde o mapa
+     real está DESENHADO (não o `.mapa-mg-ref`), e o encaixe é silhueta
+     sobre silhueta — ver `aplicarPonte`. `transform-box: view-box` porque o `<g>`
      não tem geometria própria fora dos filhos. */
   transform-box: view-box;
   transform-origin: 0 0;
@@ -3245,14 +3268,17 @@ body.is-abrindo {
     scale(calc(1 + (var(--ponte-escala, 1) - 1) * var(--ponte, 0)));
 }
 .carro-onze__mgSil {
-  fill: color-mix(in srgb, var(--br-marca) 55%, var(--br-chao));
-  stroke: color-mix(in srgb, var(--br-luz) 40%, transparent);
+  /* `--funde` (27/09): ao pousar, a silhueta vai para o tom do mapa real
+     (`.mapa-mg__chao`/`__borda`, bem mais quietos) — a borda do painel que
+     varre os dois mapas deixa de cortar "aceso em cima, apagado embaixo" */
+  fill: color-mix(in srgb, var(--br-marca) calc(55% - var(--funde, 0) * 45%), var(--br-chao));
+  stroke: color-mix(in srgb, var(--br-luz) calc(40% - var(--funde, 0) * 22%), transparent);
   stroke-width: 1.3;
   vector-effect: non-scaling-stroke;
 }
 .carro-onze__reg-ponto {
   fill: var(--br-luz);
-  opacity: var(--lit, 0);
+  opacity: calc(var(--lit, 0) * (1 - var(--funde, 0) * 0.6));
 }
 .carro-onze__reg-halo {
   fill: none;
@@ -3268,13 +3294,20 @@ body.is-abrindo {
   font-size: 13px;
   fill: var(--br-fraco);
   letter-spacing: 0.04em;
-  opacity: calc(var(--lit, 0) * var(--nomes, 0));
+  /* o mapa real não tem nomes (tem números): eles saem no pouso */
+  opacity: calc(var(--lit, 0) * var(--nomes, 0) * (1 - var(--funde, 0)));
 }
 
 @media (max-width: 767px) {
   .carro-onze {
     height: 450vh;
   }
+}
+/* O MODO LISTA vai até 900px (auditoria 27/09): entre 768 e 900 o SVG do
+   desktop encolhia os rótulos a 7–9px. 900 é o corte do resto do site (o
+   sticky da Estrada é `min-width: 901px`); a altura da pista continua no
+   corte de 767 acima — ela é intocável. */
+@media (max-width: 900px) {
   /* TENTATIVA 1 (encolher a cena via --X, técnica opção A do D-13) foi
      REVERTIDA: MEDIDO que ela abre um vazio visual pior — o mapa do carro
      desaparece do vão que se abre antes do mapa real da Estrada assumir o
@@ -3286,8 +3319,9 @@ body.is-abrindo {
      mesmo ponto (y≈5300, quando --entrega≈0,92, a cena já a caminho de
      ceder). Documentado, não escondido: não travar aqui uma 3a tentativa
      (a spec pede parar após 2). */
+  /* sem `font-size` fixo aqui (27/09): a base já dá 22px até 733px, e o 22px
+     fixo ENCOLHERIA a fonte entre 768 e 900 */
   .carro-onze__rumo {
-    font-size: 22px;
     white-space: normal;
   }
   .carro-onze__reg-nome {
@@ -3302,13 +3336,14 @@ body.is-abrindo {
   }
   .carro-onze__topo h3 {
     font-size: 24px;
-    padding-right: 64px;
     /* no mobile o titulo PODE quebrar linha — nowrap era so para o
-       desktop nao empurrar a altura do `.topo` (achado da revisao) */
+       desktop nao empurrar a altura do `.topo` (achado da revisao).
+       27/09: sem o `padding-right: 64px` — o contador ja e item do flex e
+       ja tem o espaco dele; a reserva dobrada deixava ~190px de linha a
+       375 e o titulo caia em 5 linhas com "SO." sozinho */
     white-space: normal;
   }
   .carro-onze__final {
-    font-size: 22px;
     white-space: normal;
     right: 64px;
   }

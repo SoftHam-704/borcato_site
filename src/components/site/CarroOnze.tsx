@@ -110,11 +110,20 @@ export function CarroOnze() {
     if (!pista || !cena) return;
 
     const reduzido = window.matchMedia("(prefers-reduced-motion: reduce)");
+    // 27/09 (auditoria, rótulos de 7–8px em 768/1024): o modo LISTA vai até
+    // 900px, o MESMO corte do resto do site (o sticky da Estrada também é
+    // `min-width: 901px`) — um só "celular" para a cena e para a passagem.
+    const telaEstreita = window.matchMedia("(max-width: 900px)");
+    // a escala do mapa do carro na silhueta (ver `medirGeometria`): o pouso
+    // precisa dela para casar a silhueta com a do mapa real, ponto a ponto
+    let escalaSil = 4.6;
+    let txSil = 270;
+    let tySil = 118;
 
     /** onde o mapa mora dentro do desenho, e para onde cada peça voa —
      *  recalculado no resize porque a geometria muda com o breakpoint. */
     const medirGeometria = () => {
-      const celular = window.innerWidth < 768;
+      const celular = telaEstreita.matches;
       if (fotoRef.current) {
         fotoRef.current.setAttribute("href", celular ? carroRaioX800 : carroRaioX);
       }
@@ -124,6 +133,9 @@ export function CarroOnze() {
       const s = celular ? 2.5 : 4.6;
       const tx = 500 - 50 * s;
       const ty = celular ? 278 : 118;
+      escalaSil = s;
+      txSil = tx;
+      tySil = ty;
       silRef.current?.setAttribute("transform", `translate(${tx} ${ty}) scale(${s})`);
 
       const ladoEsquerdo = new Set(["Centro-Oeste", "Sul de Minas", "Triângulo"]);
@@ -186,7 +198,13 @@ export function CarroOnze() {
     const PROP_EXPLOSAO = 0.14 / 0.42;
     const PROP_MAPA = 0.18 / 0.42;
 
-    const aplicarQuadro = (e: number) => {
+    // A PONTE, EM PX (27/09): o voo do mapa do carro até o mapa real e a
+    // abertura da Estrada deixaram de caber no fim da pista — ver `aplicarPonte`
+    const META_PX_VOO = 140;
+    const META_PX_ABRE = 60;
+
+    const aplicarQuadro = (eBruto: number) => {
+      const e = cl(eBruto);
       const restante = fracaoRestante();
       const fDesenho = restante * PROP_DESENHO;
       const fChegada = fracaoChegada();
@@ -201,8 +219,8 @@ export function CarroOnze() {
       const inicioExplosao = fimPausa;
       const fimExplosao = inicioExplosao + fExplosao;
       const inicioMapa = fimExplosao;
-      // o mapa: nomes sobem no 1º terço de fMapa, depois o CLÍMAX parado,
-      // depois a ponte (resto de fMapa) até e=1
+      // o mapa: nomes sobem no 1º terço de fMapa, depois o CLÍMAX parado;
+      // a ponte começa em `inicioPonte` e é medida em px (ver `aplicarPonte`)
       const fimNomes = inicioMapa + fMapa * 0.35;
       const inicioPonte = fimNomes + fracaoClimax();
 
@@ -222,7 +240,9 @@ export function CarroOnze() {
         g?.style.setProperty("--k", k.toFixed(4));
         g?.style.setProperty("--k2", k2.toFixed(4));
         g?.style.setProperty("--x", x.toFixed(4));
-        guiaRefs.current[i]?.style.setProperty("--k", k.toFixed(4));
+        // a guia se desenha com --k2 (a peça já pousando), não com --k: com
+        // --k ela chegava à vaga enquanto a peça ainda voava (auditoria 27/09)
+        guiaRefs.current[i]?.style.setProperty("--k2", k2.toFixed(4));
         const li = listaRefs.current[i];
         li?.style.setProperty("--k2", k2.toFixed(4));
         li?.style.setProperty("--x", x.toFixed(4));
@@ -237,97 +257,195 @@ export function CarroOnze() {
       cena.style.setProperty("--mapa", cl((e - (inicioExplosao + fExplosao * 0.15)) / (fExplosao * 0.85)).toFixed(4));
       cena.style.setProperty("--rumo", cl((e - (inicioExplosao + fExplosao * 0.6)) / (fExplosao * 0.4 + fMapa * 0.2)).toFixed(4));
       cena.style.setProperty("--nomes", cl((e - inicioMapa) / (fimNomes - inicioMapa)).toFixed(4));
-      // `--ponte`: SÓ depois do clímax — move o mapa até o `.mapa-mg-ref` e
-      // esmaece a cena (antes os dois liam `--mapa`)
-      cena.style.setProperty("--ponte", cl((e - inicioPonte) / Math.max(1e-4, 1 - inicioPonte)).toFixed(4));
       cena.style.setProperty("--c", cl(e / fDesenho).toFixed(4));
-      cena.style.setProperty("--fim", cl((e - inicioPausa) / (fPausa * 0.55)).toFixed(4));
+      // O PICO (auditoria 27/09): os dois títulos trocavam por cross-fade no
+      // mesmo lugar e ficavam ~130px dobrados. `--fim` agora sobe em 25% da
+      // pausa (era 55%) e o CSS faz a troca EM SEQUÊNCIA na primeira e na
+      // segunda metade dele — o título final fica cheio o resto da pausa.
+      cena.style.setProperty("--fim", cl((e - inicioPausa) / (fPausa * 0.25)).toFixed(4));
       if (contaRef.current) contaRef.current.textContent = String(acesas).padStart(2, "0");
 
-      // O CONTRATO: `--entrega` fica em 0 durante toda a cena e sobe de 0 a 1
-      // SÓ na ponte (mesma janela de `--ponte`, depois do clímax), chegando a
-      // 1 quando a cena termina — é o relógio que `Capitulos.tsx` e
-      // `MapaMinas.tsx` leem na raiz para abrir o capítulo A Estrada. 27/09:
-      // antes subia desde a explosão, e o wipe da Estrada cortava o clímax.
-      const entrega = cl((e - inicioPonte) / Math.max(1e-4, 1 - inicioPonte));
-      document.documentElement.style.setProperty("--entrega", entrega.toFixed(4));
+      aplicarPonte((eBruto - inicioPonte) * curso(), e);
+    };
 
-      // O ELEMENTO-PONTE (achado da revisão): sem isto, a passagem para A
-      // Estrada cortava a tela ao meio — metade mapa da cena do carro,
-      // metade capítulo Estrada, com uma linha dura entre os dois. Em vez
-      // de deixar os dois mapas em posições independentes, o mapa da cena
-      // do carro é ANIMADO até terminar EXATAMENTE no retângulo em que o
-      // `.mapa-mg-ref` (o mapa real do capítulo Estrada, que nunca recebe
-      // transform) vai aparecer — medido em tempo de execução a cada
-      // quadro. Quando os dois coincidem, a troca não tem corte: o mapa da
-      // cena esmaece exatamente onde o real assume.
+    /* A PONTE CARRO → ESTRADA (reescrita na auditoria de 27/09).
+       O DEFEITO: `--ponte`/`--entrega` iam de 0 a 1 nos últimos ~200px da
+       pista, amarrados só a `e`. Nesse trecho o `.mapa-mg-ref` ainda estava
+       ABAIXO da dobra (top ≈ 1028→790 em tela de 900); a cena esmaecia, a
+       Estrada abria, e o mapa real só assentava ~600px depois — ~600px de
+       tela quase vazia (dois auditores; medido: 12% das linhas com conteúdo).
+       E o voo mirava o retângulo desse `.mapa-mg-ref` fora da tela.
+
+       A GEOMETRIA QUE MANDA (medida, não suposta):
+       · `R` — o `.mapa-mg-ref`, que nunca recebe transform;
+       · `C` — o topo de `#cap-estrada`. O capítulo tem `clip-path`, então
+         nada dele aparece ACIMA de `C`: é a borda do painel que sobe;
+       · `.mapa-mg` (o desenho real) é levantado pelo próprio CSS em
+         `(entra − sai) × 74vh` enquanto `--entrega` corre, e `--sai` vai de
+         0 a 1 entre `--entrega` 0,9 e 1. Ou seja: com `--entrega` entre 0,9
+         e 1, o mapa real pode ser desenhado em QUALQUER altura V entre
+         `R − 74vh` e `R`. É isso que esta função usa — sem tocar no CSS da
+         Estrada nem em `Capitulos.tsx`/`MapaMinas.tsx`.
+       O POUSO `P`: no desktop, onde o mapa real assenta quando o sticky de
+       `.estrada__cena` trava (medido: R − topo da `.estrada__cena`); no
+       celular (sem sticky), a ~⅔ da sobra da tela, o lugar do mapa do carro.
+       O mapa real fica em V = max(P, R − 74vh): sobe até P e ESPERA ali
+       enquanto o capítulo chega por baixo — `--entrega` = 1 − 0,1·(R−V)/74vh.
+       O mapa do carro voa para ESSE retângulo (não para o `.mapa-mg-ref`),
+       então os dois coincidem e a borda `C` do painel passa por cima deles:
+       acima dela ainda é o do carro, abaixo já é o real.
+       ORDEM: clímax parado → voo (140px) → a Estrada abre (60px, o wipe de
+       `Capitulos.tsx`) → a borda varre o mapa → só então a cena cede.
+       No CELULAR o mapa levantado fica quase inteiro acima de `C` (a folga
+       entre o ref e o topo do capítulo, ~308px, é menor que 74vh): abrir a
+       Estrada com ele assim mostraria um painel vazio. Lá o mapa do carro já
+       nasce no pouso (`--ponte` 1) e a Estrada abre enquanto o painel ainda é
+       uma faixa ABAIXO do mapa — a borda sobe e varre o mapa no clímax. */
+    const aplicarPonte = (pxDesdePonte: number, e: number) => {
+      const raiz = document.documentElement;
       const mapaReal = document.querySelector<HTMLElement>(".cap--estrada .mapa-mg-ref");
+      const capEstrada = mapaReal?.closest<HTMLElement>(".cap--estrada");
+      const cenaEstrada = mapaReal?.closest<HTMLElement>(".estrada__cena");
+      const svg = carroSvgRef.current;
       const grupoMapa = mapaGrupoRef.current;
-      if (mapaReal && grupoMapa) {
-        const alvo = mapaReal.getBoundingClientRect();
-        // o retângulo ATUAL do grupo do mapa dentro do SVG do carro, sem a
-        // ponte ainda aplicada (zera a transform pontual pra medir o pouso
-        // "neutro" antes de mover) — como o grupo só tem opacity/translate
-        // por CSS var, o rect nativo já reflete a posição não-transladada
-        // do SVG (viewBox), então convertemos via matriz do próprio SVG.
-        const svg = carroSvgRef.current;
-        if (svg && alvo.width > 0 && alvo.height > 0) {
-          const pt = svg.createSVGPoint();
-          const ctm = grupoMapa.getScreenCTM();
-          if (ctm) {
-            // o retângulo do <g> no espaço de TELA (considera viewBox e
-            // qualquer transform herdado, mas NÃO a translate/scale da
-            // ponte — aplicados via CSS custom properties, que não entram
-            // no CTM do SVG)
-            const bbox = grupoMapa.getBBox();
-            pt.x = bbox.x;
-            pt.y = bbox.y;
-            const p1 = pt.matrixTransform(ctm);
-            pt.x = bbox.x + bbox.width;
-            pt.y = bbox.y + bbox.height;
-            const p2 = pt.matrixTransform(ctm);
-            const atualLeft = Math.min(p1.x, p2.x);
-            const atualTop = Math.min(p1.y, p2.y);
-            const atualWidth = Math.abs(p2.x - p1.x) || 1;
-            const atualHeight = Math.abs(p2.y - p1.y) || 1;
+      const voo = cl(pxDesdePonte / META_PX_VOO);
+      if (!mapaReal || !capEstrada || !svg || !grupoMapa) {
+        // sem o capítulo seguinte (não deveria acontecer): o relógio antigo
+        cena.style.setProperty("--ponte", voo.toFixed(4));
+        cena.style.setProperty("--cede", voo.toFixed(4));
+        cena.style.setProperty("--funde", voo.toFixed(4));
+        raiz.style.setProperty("--entrega", e >= 1 ? "1" : voo.toFixed(4));
+        return;
+      }
+      const vh = window.innerHeight;
+      const celular = telaEstreita.matches;
+      const R = mapaReal.getBoundingClientRect();
+      const C = capEstrada.getBoundingClientRect().top;
+      const L = vh * 0.74; // o levante do CSS de `.cap--estrada .mapa-mg`
+      const P = celular
+        ? Math.max(vh * 0.2, (vh - R.height) * 0.68)
+        : R.top - Math.max(0, cenaEstrada?.getBoundingClientRect().top ?? 0);
+      const V = R.top <= P ? R.top : Math.max(P, R.top - L);
+      const entregaAlvo = V >= R.top ? 1 : 0.9 + 0.1 * cl(1 - (R.top - V) / L);
 
-            const escala = Math.min(alvo.width / atualWidth, alvo.height / atualHeight);
-            const alvoCx = alvo.left + alvo.width / 2;
-            const alvoCy = alvo.top + alvo.height / 2;
-            const atualCx = atualLeft + atualWidth / 2;
-            const atualCy = atualTop + atualHeight / 2;
-            // translate em PIXELS DE TELA — mas o <g> vive dentro do SVG,
-            // então convertemos o deslocamento de tela para unidades do
-            // viewBox dividindo pela escala do CTM (a mesma em x e y aqui,
-            // porque não há distorção não-uniforme entre os dois SVGs)
-            const escalaCtm = Math.hypot(ctm.a, ctm.b) || 1;
-            const dxViewbox = (alvoCx - atualCx) / escalaCtm;
-            const dyViewbox = (alvoCy - atualCy) / escalaCtm;
+      // a abertura da Estrada (o wipe do `clip-path`, 0,38→0,72 de --entrega)
+      const abre = celular
+        ? cl((P + R.height + 70 - C) / META_PX_ABRE)
+        : cl((pxDesdePonte - META_PX_VOO + 20) / META_PX_ABRE);
+      const entrega = abre >= 1 ? entregaAlvo : abre * entregaAlvo;
+      raiz.style.setProperty("--entrega", entrega.toFixed(4));
 
-            grupoMapa.style.setProperty("--ponte-dx", dxViewbox.toFixed(2));
-            grupoMapa.style.setProperty("--ponte-dy", dyViewbox.toFixed(2));
-            grupoMapa.style.setProperty("--ponte-escala", escala.toFixed(4));
-          }
-        }
+      // o voo: o mapa do carro vai ao retângulo em que o real está (V)
+      cena.style.setProperty("--ponte", (celular ? 1 : voo).toFixed(4));
+      // `--funde`: o mapa do carro assume o tom quieto do mapa real (e solta
+      // os nomes) enquanto pousa — sem isto a borda do painel cortava um mapa
+      // aceso em cima e um apagado embaixo. No desktop, junto com a abertura
+      // da Estrada (o voo é em brilho total); no celular, na 2ª metade da
+      // varredura da borda, para o clímax começar aceso.
+      const funde = celular ? cl((P + R.height * 0.5 - C) / (R.height * 0.5)) : abre;
+      cena.style.setProperty("--funde", (abre < 1 && celular ? 0 : funde).toFixed(4));
+      // a cena só cede DEPOIS que a borda do painel passou do topo do mapa
+      // (antes disso a parte de cima do mapa ainda é a do carro), e só na
+      // metade de cima da tela: o título esmaece enquanto a borda o alcança
+      const cede = abre < 1 ? 0 : cl((V * 0.5 - C) / Math.max(1, V * 0.5));
+      cena.style.setProperty("--cede", cede.toFixed(4));
+      // `--passou`: depois do fim da pista a cena seguiria a rolagem e o
+      // título sairia pelo topo ANTES de a borda do painel chegar a ele (no
+      // celular, medido: 26% das linhas com conteúdo em y≈5900). A cena fica
+      // parada no quadro, deslocada em px, até o painel cobrir a tela toda
+      // (C ≤ 0); aí volta ao lugar, já inteiramente por baixo dele. Não mexe
+      // na altura da pista nem no fluxo — é só `translate`.
+      const passou = C > 0 ? Math.max(0, vh - pista.getBoundingClientRect().bottom) : 0;
+      cena.style.setProperty("--passou", passou.toFixed(1));
+
+      // O POUSO, PONTO A PONTO. A silhueta do carro e a do mapa real são o
+      // MESMO desenho (viewBox 100×92 de `MapaMinas.tsx`), então o encaixe é
+      // exato: ponto (u,v) da silhueta → tela do mapa real = (x0 + k·u,
+      // y0 + k·v), com y0 medido a partir de V. No carro, (u,v) → viewBox
+      // (tx + s·u, ty + s·v) → tela pela CTM do <svg> PAI. ATENÇÃO: a CTM do
+      // próprio `<g>` inclui o `transform` CSS dele (medido no Chrome), e a
+      // versão anterior media por ela — o voo realimentava a si mesmo e o
+      // mapa do carro terminava FORA da tela (medido: top −412 a 1440, −1575
+      // a 375). Com o `transform-origin` no canto do viewBox: p' = S·p + T.
+      const ctm = svg.getScreenCTM();
+      if (ctm && R.width > 0 && R.height > 0) {
+        const k = Math.min(R.width / 100, R.height / 92);
+        const x0 = R.left + (R.width - 100 * k) / 2;
+        // no celular o mapa do carro ESPERA em P enquanto o real ainda não
+        // pode estar lá (medido a 768: V abaixo da dobra no clímax inteiro —
+        // mirar V jogava o mapa do carro para fora da tela); depois segue V
+        const alvoTopo = celular ? Math.min(V, P) : V;
+        const y0 = alvoTopo + (R.height - 92 * k) / 2;
+        const S = k / (ctm.a * escalaSil);
+        const tX = (x0 - ctm.e) / ctm.a - S * txSil;
+        const tY = (y0 - ctm.f) / ctm.d - S * tySil;
+        grupoMapa.style.setProperty("--ponte-dx", tX.toFixed(2));
+        grupoMapa.style.setProperty("--ponte-dy", tY.toFixed(2));
+        grupoMapa.style.setProperty("--ponte-escala", S.toFixed(4));
       }
     };
 
     if (reduzido.matches) {
-      // sem movimento: a cena mostra o estado final (carro montado, peças nas
-      // regiões) e entrega o capítulo seguinte já revelado — mesmo padrão do
-      // PalcoPecas em `prefers-reduced-motion`.
+      // sem movimento (auditoria 27/09): com `.carro-onze{height:auto}` o
+      // curso vira 1 e `aplicarQuadro(1)` caía no MEIO da pausa — os dois
+      // títulos sobrepostos (0,39/0,61) e `--entrega` em 0 (a nav presa no
+      // "02"). O estado final é escrito DIRETO: o carro montado com as 11
+      // peças no lugar, "Onze indústrias. Um carro inteiro.", sem explosão,
+      // e a Estrada entregue.
       medirGeometria();
-      aplicarQuadro(1);
+      PECAS.forEach((_p, i) => {
+        const g = pecaRefs.current[i];
+        g?.style.setProperty("--k", "1");
+        g?.style.setProperty("--k2", "1");
+        g?.style.setProperty("--x", "0");
+        guiaRefs.current[i]?.style.setProperty("--k2", "1");
+        listaRefs.current[i]?.style.setProperty("--k2", "1");
+        listaRefs.current[i]?.style.setProperty("--x", "0");
+      });
+      const finais: [string, string][] = [
+        ["--c", "1"],
+        ["--mont", "1"],
+        ["--fim", "1"],
+        ["--X", "0"],
+        ["--mapa", "0"],
+        ["--rumo", "0"],
+        ["--nomes", "0"],
+        ["--ponte", "0"],
+        ["--cede", "0"],
+        ["--funde", "0"],
+        ["--passou", "0"],
+      ];
+      finais.forEach(([v, n]) => cena.style.setProperty(v, n));
+      if (contaRef.current) contaRef.current.textContent = String(PECAS.length);
       pista.style.height = "auto";
-      return;
+      // `--entrega` neste modo só serve à nav de capítulos (`Capitulo` fixa
+      // `--cap-entra` em 1 e o CSS da Estrada ignora a variável). Fixo em 1,
+      // a nav marcaria "03" desde o topo da página; fixo em 0 (o defeito),
+      // nunca. Então é um DEGRAU geométrico: 1 quando o topo de A Estrada
+      // passa da mesma linha de troca da nav (55% da tela, `Capitulos.tsx`).
+      const capEstrada = document.getElementById("cap-estrada");
+      const entregaSemMovimento = () => {
+        const topo = capEstrada ? capEstrada.getBoundingClientRect().top : 0;
+        document.documentElement.style.setProperty(
+          "--entrega",
+          topo <= window.innerHeight * 0.55 ? "1" : "0",
+        );
+      };
+      entregaSemMovimento();
+      window.addEventListener("scroll", entregaSemMovimento, { passive: true });
+      window.addEventListener("resize", entregaSemMovimento);
+      return () => {
+        window.removeEventListener("scroll", entregaSemMovimento);
+        window.removeEventListener("resize", entregaSemMovimento);
+      };
     }
 
     let pedido = 0;
     const quadro = () => {
       pedido = 0;
       const r = pista.getBoundingClientRect();
-      const e = cl(-r.top / curso());
-      aplicarQuadro(e);
+      // SEM clamp: depois do fim da pista a ponte continua medindo em px
+      aplicarQuadro(-r.top / curso());
     };
     const pedir = () => {
       if (!pedido) pedido = window.requestAnimationFrame(quadro);
@@ -353,8 +471,12 @@ export function CarroOnze() {
     <div className="carro-onze" id="carro-onze" ref={pistaRef}>
       <div className="carro-onze__cena" ref={cenaRef}>
         <div className="carro-onze__topo">
+          {/* "estrada só." inseparáveis (auditoria 27/09): a 375 a coluna do
+              título tem ~221px e nenhuma das duas metades cabe numa linha
+              (241/252px medidos) — sem o espaço fixo o "SÓ." caía sozinho na
+              última linha. Fonte intocada. */}
           <h3>
-            Onze indústrias. <b>Uma estrada só.</b>
+            Onze indústrias. <b>Uma estrada{" "}só.</b>
           </h3>
           <p className="carro-onze__final">
             Onze indústrias. <span>Um carro inteiro.</span>
