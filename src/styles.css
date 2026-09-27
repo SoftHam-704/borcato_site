@@ -2913,7 +2913,7 @@ body.is-abrindo {
 
 .carro-onze {
   position: relative;
-  height: 450vh;
+  height: 480vh;
 }
 .carro-onze__cena {
   position: sticky;
@@ -2951,7 +2951,8 @@ body.is-abrindo {
      0,94 (o valor que não regride o desktop); o quadro mobile residual
      fica documentado, é pontual (1 de 86) e não é um corte de conteúdo —
      é um vão de baixo contraste, dentro da margem que a spec aceita. */
-  opacity: calc(1 - var(--mapa, 0) * 0.94);
+  /* 27/09: esmaece com `--ponte` (depois do clímax), não mais com `--mapa` */
+  opacity: calc(1 - var(--ponte, 0) * 0.94);
   display: grid;
   grid-template-rows: auto 1fr;
   /* GOTEIRA PRÓPRIA, MENOR (achado da revisão): com `var(--br-goteira)` de
@@ -3029,10 +3030,12 @@ body.is-abrindo {
   font-weight: 700;
   font-stretch: 108%;
   text-transform: uppercase;
-  white-space: nowrap;
   color: var(--br-tinta);
   opacity: var(--rumo, 0);
   translate: 0 calc((1 - var(--rumo, 0)) * 1.5vh);
+  /* cabe em duas linhas em vez de ser cortada na borda (1440: 1 linha não cabia) */
+  white-space: normal;
+  text-wrap: balance;
 }
 .carro-onze__rumo span {
   color: var(--br-luz);
@@ -3168,10 +3171,10 @@ body.is-abrindo {
   transform-box: view-box;
   transform-origin: 0 0;
   transform: translate(
-      calc(var(--ponte-dx, 0) * var(--mapa, 0) * 1px),
-      calc(var(--ponte-dy, 0) * var(--mapa, 0) * 1px)
+      calc(var(--ponte-dx, 0) * var(--ponte, 0) * 1px),
+      calc(var(--ponte-dy, 0) * var(--ponte, 0) * 1px)
     )
-    scale(calc(1 + (var(--ponte-escala, 1) - 1) * var(--mapa, 0)));
+    scale(calc(1 + (var(--ponte-escala, 1) - 1) * var(--ponte, 0)));
 }
 .carro-onze__mgSil {
   fill: color-mix(in srgb, var(--br-marca) 55%, var(--br-chao));
@@ -3202,7 +3205,7 @@ body.is-abrindo {
 
 @media (max-width: 767px) {
   .carro-onze {
-    height: 420vh;
+    height: 450vh;
   }
   /* TENTATIVA 1 (encolher a cena via --X, técnica opção A do D-13) foi
      REVERTIDA: MEDIDO que ela abre um vazio visual pior — o mapa do carro
@@ -3256,7 +3259,9 @@ body.is-abrindo {
        exatamente do tamanho de `.carro-onze__lista` (achado via
        elementFromPoint, y=5957: sem nenhum background nela, mas visível
        mesmo assim — só podia ser a composição de camadas atrás). */
-    opacity: calc(1 - var(--X, 0) * 1.4);
+    /* 27/09: volta com o mapa — antes sumia inteiro e o clímax no celular
+       era só texto sobre fundo vazio */
+    opacity: max(calc(1 - var(--X, 0) * 1.4), var(--mapa, 0));
   }
   .carro-onze__lista {
     display: grid;

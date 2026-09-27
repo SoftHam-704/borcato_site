@@ -83,7 +83,7 @@ const PECAS: {
   { id: "motor", categoria: "Peças de motor", marca: "Sintech", ax: 694.2, ay: 311.7, topo: true, sx: 582 },
   { id: "lanterna", categoria: "Lanternas", marca: "Cofran", ax: 123.5, ay: 281.9, topo: true, sx: 90 },
   { id: "plastico", categoria: "Peças plásticas", marca: "VP", ax: 907.5, ay: 353.8, topo: false, sx: 930 },
-  { id: "quimica", categoria: "Química automotiva", marca: "Auto América", ax: 652.0, ay: 386.1, topo: true, sx: 254 },
+  { id: "quimica", categoria: "Química automotiva", marca: "Auto América", ax: 376.3, ay: 373.7, topo: true, sx: 254 },
   { id: "spray", categoria: "Sprays", marca: "Mundial Prime", ax: 212.8, ay: 388.6, topo: false, sx: 170 },
 ];
 
@@ -169,16 +169,22 @@ export function CarroOnze() {
     const curso = () => Math.max(1, pista.offsetHeight - window.innerHeight);
     const META_PX_POR_PECA = 200;
     const META_PX_PAUSA = 250;
+    const META_PX_CLIMAX = 260;
     // as frações de desenho/explosão/mapa mantêm a MESMA PROPORÇÃO relativa
     // do lab entre si (10% desenho, 22% explosão, 10% mapa, de um total de
     // 42% "não-chegada") — só a fatia de CHEGADA (as 11 peças) e a de PAUSA
     // passam a ser dimensionadas em px reais, não em fração fixa do lab.
     const fracaoChegada = () => Math.min(0.9, (META_PX_POR_PECA * PECAS.length) / curso());
     const fracaoPausa = () => Math.min(0.3, META_PX_PAUSA / curso());
-    const fracaoRestante = () => Math.max(0, 1 - fracaoChegada() - fracaoPausa());
+    // CLÍMAX (revisão 27/09): o mapa com as 8 regiões acesas e "Da fábrica à
+    // estrada" ficava apagado — a cena inteira esmaecia com `--mapa`, no mesmo
+    // instante em que o mapa surgia (um anulava o outro). Agora há um quadro
+    // PARADO em brilho total, dimensionado em px, antes da ponte começar.
+    const fracaoClimax = () => Math.min(0.15, META_PX_CLIMAX / curso());
+    const fracaoRestante = () => Math.max(0, 1 - fracaoChegada() - fracaoPausa() - fracaoClimax());
     const PROP_DESENHO = 0.1 / 0.42;
-    const PROP_EXPLOSAO = 0.22 / 0.42;
-    const PROP_MAPA = 0.1 / 0.42;
+    const PROP_EXPLOSAO = 0.14 / 0.42;
+    const PROP_MAPA = 0.18 / 0.42;
 
     const aplicarQuadro = (e: number) => {
       const restante = fracaoRestante();
@@ -195,6 +201,10 @@ export function CarroOnze() {
       const inicioExplosao = fimPausa;
       const fimExplosao = inicioExplosao + fExplosao;
       const inicioMapa = fimExplosao;
+      // o mapa: nomes sobem no 1º terço de fMapa, depois o CLÍMAX parado,
+      // depois a ponte (resto de fMapa) até e=1
+      const fimNomes = inicioMapa + fMapa * 0.35;
+      const inicioPonte = fimNomes + fracaoClimax();
 
       const porPeca = fChegada / PECAS.length;
       // a janela de transição de CADA peça é mais larga que o passo entre
@@ -224,18 +234,22 @@ export function CarroOnze() {
 
       cena.style.setProperty("--mont", cl((e - fDesenho * 0.8) / (fChegada + fPausa * 0.5)).toFixed(4));
       cena.style.setProperty("--X", cl((e - inicioExplosao) / fExplosao).toFixed(4));
-      cena.style.setProperty("--mapa", cl((e - (inicioExplosao + fExplosao * 0.15)) / (fExplosao * 0.85 + fMapa * 0.3)).toFixed(4));
-      cena.style.setProperty("--rumo", cl((e - (inicioExplosao + fExplosao * 0.7)) / (fExplosao * 0.3 + fMapa * 0.2)).toFixed(4));
-      cena.style.setProperty("--nomes", cl((e - inicioMapa) / fMapa).toFixed(4));
+      cena.style.setProperty("--mapa", cl((e - (inicioExplosao + fExplosao * 0.15)) / (fExplosao * 0.85)).toFixed(4));
+      cena.style.setProperty("--rumo", cl((e - (inicioExplosao + fExplosao * 0.6)) / (fExplosao * 0.4 + fMapa * 0.2)).toFixed(4));
+      cena.style.setProperty("--nomes", cl((e - inicioMapa) / (fimNomes - inicioMapa)).toFixed(4));
+      // `--ponte`: SÓ depois do clímax — move o mapa até o `.mapa-mg-ref` e
+      // esmaece a cena (antes os dois liam `--mapa`)
+      cena.style.setProperty("--ponte", cl((e - inicioPonte) / Math.max(1e-4, 1 - inicioPonte)).toFixed(4));
       cena.style.setProperty("--c", cl(e / fDesenho).toFixed(4));
       cena.style.setProperty("--fim", cl((e - inicioPausa) / (fPausa * 0.55)).toFixed(4));
       if (contaRef.current) contaRef.current.textContent = String(acesas).padStart(2, "0");
 
       // O CONTRATO: `--entrega` fica em 0 durante toda a cena e sobe de 0 a 1
-      // SÓ na explosão para o mapa (mesma janela de `--X`), chegando a 1
-      // quando a cena termina — é o relógio que `Capitulos.tsx` e
-      // `MapaMinas.tsx` leem na raiz para abrir o capítulo A Estrada.
-      const entrega = cl((e - inicioExplosao) / (fExplosao + fMapa));
+      // SÓ na ponte (mesma janela de `--ponte`, depois do clímax), chegando a
+      // 1 quando a cena termina — é o relógio que `Capitulos.tsx` e
+      // `MapaMinas.tsx` leem na raiz para abrir o capítulo A Estrada. 27/09:
+      // antes subia desde a explosão, e o wipe da Estrada cortava o clímax.
+      const entrega = cl((e - inicioPonte) / Math.max(1e-4, 1 - inicioPonte));
       document.documentElement.style.setProperty("--entrega", entrega.toFixed(4));
 
       // O ELEMENTO-PONTE (achado da revisão): sem isto, a passagem para A
