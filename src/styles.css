@@ -4815,5 +4815,112 @@ body::-webkit-scrollbar {
       rgba(28, 127, 194, 0),
       rgba(28, 127, 194, 0.07) clamp(96px, 16vh, 200px)
     );
+/* ═══ PASSAGEM C — a estrada escreve o nome (27/09) ═══ */
+/* A rota pelas oito regiões termina no Triângulo e NÃO para: sai do mapa,
+   desce pela página e escreve H.M.; o traço engrossa e cruza para as letras
+   sólidas de O Nome. Protótipo aprovado: laboratorio/transicoes, `#p5`.
+   Um traço só, em três trechos emendados ponta com ponta (ver
+   EstradaEscreve.tsx). O JS escreve só progresso (--segue, --liga, --h, --m,
+   --ponto, --vira — NÃO `--p`, registrada sem herança lá em cima, que
+   deixava o ponto final sempre desenhado); a geometria nasce das posições
+   reais e é daqui que sai o gesto. Linear: nenhum trecho tem ease. */
+
+/* 1 · o elo, dentro do mapa: o mesmo traço da rota, continuando */
+.mapa-mg__segue {
+  fill: none;
+  stroke: var(--br-luz);
+  stroke-width: 0.6;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-dasharray: 1;
+  stroke-dashoffset: calc(1 - var(--segue, 0));
+  /* a ponta redonda de um traço de comprimento zero ainda pinta um ponto:
+     antes de andar, o elo não existe */
+  opacity: calc(0.85 * clamp(0, calc(var(--segue, 0) * 400), 1));
+}
+
+/* 2 e 3 · a ligação e as letras: uma camada sobre a página, acima do painel
+   de O Nome (z 2) e abaixo da nav (z 40). Não captura nada. */
+.estrada-escreve {
+  position: absolute;
+  z-index: 3;
+  left: 0;
+  top: 0;
+  width: 0;
+  height: 0;
+  overflow: visible;
+  pointer-events: none;
+}
+.estrada-escreve path {
+  fill: none;
+  stroke: var(--br-luz);
+  stroke-dasharray: 1;
+}
+.estrada-escreve__liga {
+  stroke-width: var(--traco, 2px);
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-dashoffset: calc(1 - var(--liga, 0));
+  /* depois que o nome assenta a estrada fica, mais baixa: é o caminho que
+     trouxe até ele, não um fio solto */
+  opacity: calc(
+    clamp(0, calc(var(--liga, 0) * 400), 1) * (0.85 - var(--vira, 0) * 0.4)
+  );
+}
+.estrada-escreve__letra {
+  /* ENGROSSA do traço da rota até a haste da fonte, e só então cede */
+  --engrossa: clamp(0, calc(var(--vira, 0) / 0.6), 1);
+  stroke-width: calc(
+    var(--traco, 2px) + (var(--haste, 40px) - var(--traco, 2px)) * var(--engrossa)
+  );
+  /* pés e topos retos, como os da letra; o bisel evita o espeto do V */
+  stroke-linecap: butt;
+  stroke-linejoin: bevel;
+  opacity: calc(0.9 * (1 - clamp(0, calc((var(--vira, 0) - 0.45) / 0.55), 1)));
+}
+.estrada-escreve__letra--h {
+  stroke-dashoffset: calc(1 - var(--h, 0));
+}
+.estrada-escreve__letra--m,
+.estrada-escreve__letra--p {
+  /* o M é o plano da frente, cheio: o traço dele vai tomando a cor da marca */
+  stroke: color-mix(in srgb, var(--br-marca) calc(var(--engrossa) * 100%), var(--br-luz));
+}
+.estrada-escreve__letra--m {
+  stroke-dashoffset: calc(1 - var(--m, 0));
+}
+.estrada-escreve__letra--p {
+  stroke-dashoffset: calc(1 - var(--ponto, 0));
+}
+
+/* AS LETRAS SÓLIDAS NASCEM DO TRAÇO. Antes elas chegavam deslizando (o
+   `--cap-entra` do capítulo); agora o traço as escreve no lugar final, e o
+   deslize faria a letra sólida não cair em cima da de traço. Elas ficam nos
+   planos de sempre (±26%) e aparecem enquanto o traço engrossa.
+   Sem JS (`--vira` ausente) vale 1: as letras existem inteiras. */
+.cap--nome .nome__letra--h {
+  translate: -26% 0;
+  opacity: clamp(0, calc((var(--vira, 1) - 0.3) / 0.55), 1);
+}
+.cap--nome .nome__letra--m {
+  translate: 26% 0;
+  opacity: clamp(0, calc((var(--vira, 1) - 0.3) / 0.55), 1);
+}
+/* primeiro o H.M., depois o porquê: a homenagem chega quando o nome assenta */
+.cap--nome .nome__homenagem {
+  --t: clamp(0, calc((var(--vira, 1) - 0.55) / 0.45), 1);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  /* sem movimento o estado final existe direto: o elo desenhado, as letras
+     sólidas, a homenagem cheia (o JS escreve 1 em tudo; isto é a rede) */
+  .mapa-mg__segue {
+    stroke-dashoffset: 0;
+    opacity: 0.85;
+  }
+  .cap--nome .nome__letra--h,
+  .cap--nome .nome__letra--m,
+  .cap--nome .nome__homenagem {
+    opacity: 1;
   }
 }
