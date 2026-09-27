@@ -4699,3 +4699,121 @@ body::-webkit-scrollbar {
     max-width: calc(50% - clamp(28px, 3vw, 48px));
   }
 }
+
+/* ═══ PASSAGEM B — a cápsula se abre (27/09) ═══
+   Protótipo aprovado: laboratorio/transicoes/index.html, #p1. No laboratório
+   a FOTO crescia até ocupar a tela; o Fábio pediu menos ênfase na imagem dele
+   (rosto só no hero e no fecho). O gesto que fica é a FORMA: a cápsula se abre
+   e vira o chão de A Casa. O conteúdo dela deixa de ser o Fábio logo no começo.
+
+   Um número só, `--passa` (0→1), escrito pelo JS no hero E em A Casa
+   (HeroTravessia.tsx). Com o hero preso é o próprio pino; no celular, que não
+   prende, é o hero rolando até a base dele passar do meio da tela.
+   Nada aqui muda altura: a passagem acontece no trecho que já existia.
+
+     --some  0,22→0,42  a foto esmaece DENTRO da cápsula, sem crescer
+     --abre  0,30→0,92  a moldura cresce até as quatro bordas do hero
+   A foto termina de sair em 19% do crescimento — antes dos 25% que o cliente
+   admitiu. A moldura fecha em 0,92, não em 1: o último trecho do pino é a
+   cápsula já aberta, parada, antes de o hero soltar. Nenhum quadro mostra o rosto maior que no hero: ele nunca escala. */
+.hero-tr {
+  --some: clamp(0, calc((var(--passa, 0) - 0.22) / 0.2), 1);
+  --abre: clamp(0, calc((var(--passa, 0) - 0.3) / 0.62), 1);
+  /* o chão de A Casa: um azul da marca a 7% sobre o chão da página. O mesmo
+     valor dentro da cápsula aberta e na seção seguinte é o que apaga a emenda */
+  --casa-chao: rgba(28, 127, 194, 0.07);
+}
+
+/* A foto SAI, não cresce. `filter: opacity` e não `opacity`: a entrada da
+   cápsula (capsula-entra, fill `both`) prende a opacidade do elemento em 1. */
+.hero-tr__capsula {
+  filter: opacity(calc(1 - var(--some)));
+}
+
+.hero-tr__moldura {
+  position: absolute;
+  z-index: 1;                        /* igual ao texto; vem antes no DOM */
+  pointer-events: none;
+  /* nasce na caixa MEDIDA da cápsula e encolhe as quatro distâncias a zero */
+  top: calc(var(--cap-t, 0px) * (1 - var(--abre)));
+  right: calc(var(--cap-r, 0px) * (1 - var(--abre)));
+  bottom: calc(var(--cap-b, 0px) * (1 - var(--abre)));
+  left: calc(var(--cap-l, 100%) * (1 - var(--abre)));
+  /* a assinatura: raio grande só à esquerda, abrindo até zero */
+  border-radius: calc(clamp(120px, 18vw, 280px) * (1 - var(--abre))) 0 0
+    calc(clamp(120px, 18vw, 280px) * (1 - var(--abre)));
+  /* aparece no lugar da foto, no mesmo compasso em que ela sai */
+  opacity: var(--some);
+  /* a luz que entra pela janela, no alto; ela se apaga antes dos 72% da
+     altura, então a base da moldura é só o chão — igual ao topo de A Casa */
+  background:
+    radial-gradient(
+      ellipse 70% 60% at 72% 30%,
+      rgba(28, 127, 194, 0.16),
+      rgba(28, 127, 194, 0) 70%
+    ),
+    var(--casa-chao);
+  /* o fio de luz na borda: desenha a forma enquanto ela ainda é cápsula e
+     some antes de a moldura chegar às bordas da tela */
+  box-shadow: inset 0 0 0 1px
+    rgba(160, 208, 240, calc(0.3 * (1 - min(1, var(--abre) / 0.4))));
+}
+
+@media (max-width: 900px) {
+  /* NO CELULAR A BASE JÁ NASCE EM A CASA. Sem pino, a cápsula está no topo
+     do hero e o hero rola inteiro; se a base crescesse junto com o resto,
+     MEDIDO em 375: sobrava uma faixa do chão antigo entre a moldura e o topo
+     de A Casa, com duas bordas horizontais atravessando o texto. Aqui a
+     moldura desce até a base do hero desde o primeiro quadro em que aparece;
+     o que abre são o topo, as laterais e o raio. O canto de baixo não tem
+     raio: ele encosta em A Casa, e um canto curvo deixaria um dente de chão. */
+  .hero-tr__moldura {
+    bottom: 0;
+    border-radius: calc(clamp(80px, 22vw, 160px) * (1 - var(--abre))) 0 0 0;
+    /* o fio de luz SEM a borda de baixo: ali é a emenda com A Casa, e um fio
+       horizontal nela seria exatamente o corte que a passagem existe para
+       apagar (visto na tira de 375). Topo+esquerda num, direita no outro. */
+    --fio: rgba(160, 208, 240, calc(0.3 * (1 - min(1, var(--abre) / 0.4))));
+    box-shadow:
+      inset 1px 1px 0 0 var(--fio),
+      inset -1px 0 0 0 var(--fio);
+  }
+}
+
+/* A CASA É O QUE ESTAVA DENTRO. O chão dela tem o tom da cápsula aberta, e
+   por isso o fim do pino não tem corte: a moldura cobre o hero inteiro no
+   mesmo instante em que ele começa a subir, e embaixo dele vem o mesmo chão.
+   Translúcido de propósito: a estrada (Estrada.tsx) passa POR TRÁS da seção e
+   continua visível no corredor entre os marcos.
+   A cortina da direita e o degrau de 34px saem daqui — a passagem agora é a
+   cápsula; manter as duas era contar a mesma entrada duas vezes. */
+.passagem-casa-marcas > .cap--casa {
+  /* o tom acompanha a moldura NO MESMO compasso (--some é a opacidade dela):
+     onde as duas se encostam, o valor é idêntico, e rolando de volta ele
+     recua junto. Sem JS, --passa cai no 1 e o chão fica pronto. */
+  --some: clamp(0, calc((var(--passa, 1) - 0.22) / 0.2), 1);
+  background: rgba(28, 127, 194, calc(0.07 * var(--some)));
+  clip-path: none;
+  transform: none;
+}
+.passagem-casa-marcas > .cap--casa::before {
+  opacity: 0;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  /* sem movimento não há passagem: o hero fica inteiro, com a foto, e A Casa
+     nasce no chão dela — que entra por um degradê, sem degrau na emenda */
+  .hero-tr__moldura {
+    display: none;
+  }
+  .hero-tr__capsula {
+    filter: none;
+  }
+  .passagem-casa-marcas > .cap--casa {
+    background: linear-gradient(
+      to bottom,
+      rgba(28, 127, 194, 0),
+      rgba(28, 127, 194, 0.07) clamp(96px, 16vh, 200px)
+    );
+  }
+}
