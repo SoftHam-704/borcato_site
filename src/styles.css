@@ -4650,3 +4650,14 @@ body.is-abrindo {
     display: none;
   }
 }
+
+/* SEM BARRA DE ROLAGEM (dono, 27/09: "site com scrollbar é ruim"). A rolagem
+   continua inteira — roda do mouse, trackpad, toque, teclado —, só a barra
+   nativa some. Quem mostra onde se está é a nav de capítulos (01–04). */
+html {
+  scrollbar-width: none;
+}
+html::-webkit-scrollbar,
+body::-webkit-scrollbar {
+  display: none;
+}
