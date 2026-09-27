@@ -42,7 +42,50 @@ const RITMO = ["m", "g", "p"] as const;
 /** e três alturas, em ciclo deslocado do das larguras para não travarem juntas */
 const ALTURA = ["meio", "alto", "baixo"] as const;
 
-export function EsteiraMarcas({ cabeca }: { cabeca?: ReactNode }) {
+// A PASSAGEM PARA A CENA DO CARRO — "entrar na marca" (lab, item 3, `#p3`).
+//
+// Entre a esteira e o carro passava um quase-vazio: a prancha subia, o
+// parágrafo-ponte atravessava a tela sozinho e só então a cena do carro
+// grudava. Agora a câmera ENTRA num cartão: os vizinhos passam por ela e
+// esmaecem, o cartão vira uma moldura acesa que cresce (com o parágrafo lá
+// dentro) e, quando a cena do carro gruda, ela se abre EXATAMENTE nessa
+// moldura e cresce até a tela inteira — o carro se desenhando lá dentro.
+//
+// QUAL CARTÃO: o que está na tela quando a esteira acaba. No desktop é o
+// último da fila (VP) — a esteira termina com ele na borda direita, e a câmera
+// não salta para um cartão que já saiu de quadro. No celular, onde a esteira
+// é livre, é o que o dedo deixou no centro (de saída, o 01 — NTN-SNR, a peça
+// que chega primeiro ao carro).
+//
+// A ALTURA DA PÁGINA NÃO CRESCE: o trecho preso que a passagem usa é o mesmo
+// que já existia solto (a subida da prancha + o vão do parágrafo). A pista do
+// carro sobe `100vh + abertura` por cima do fim da pista da esteira (margem
+// negativa, `--entrar-recuo`) e a esteira ganha exatamente esse tanto.
+/** o vão que o parágrafo-ponte ocupava no fluxo, entre a esteira e o carro
+ *  (MEDIDO em 4daebac: 303px a 1440×900, 154px a 375×812) */
+const VAO_MESA = 300;
+const VAO_CELULAR = 150;
+/** a fração da pista do carro que corre DENTRO da moldura, antes de ela virar
+ *  a tela inteira: cobre o desenho do carro e o começo da 1ª peça (~325px a
+ *  1440×900, ~270px a 375×812). A linha do tempo do carro não é tocada — só
+ *  se escolhe quanto dela acontece com a janela ainda abrindo. */
+const ABERTURA = 0.095;
+/** da fase presa antes da abertura, a fatia em que a moldura cresce; o resto
+ *  é o respiro para ler o parágrafo, com a moldura ainda crescendo devagar */
+const CRESCE = 0.55;
+/** até aqui do crescimento os cartões ainda recebem clique e arrasto */
+const TRAVA = 0.2;
+
+const cl = (v: number) => Math.min(1, Math.max(0, v));
+
+export function EsteiraMarcas({
+  cabeca,
+  passagem,
+}: {
+  cabeca?: ReactNode;
+  /** o que aparece dentro da moldura, antes do carro (o parágrafo-ponte) */
+  passagem?: ReactNode;
+}) {
   const pistaRef = useRef<HTMLDivElement>(null);
   const cenaRef = useRef<HTMLDivElement>(null);
   const pranchaRef = useRef<HTMLDivElement>(null);
@@ -53,6 +96,10 @@ export function EsteiraMarcas({ cabeca }: { cabeca?: ReactNode }) {
   // (não um Set) porque abrir o próximo fecha o anterior — ver o próprio
   // `aria-expanded` do botão, que descreve um estado, não uma lista deles.
   const [virada, setVirada] = useState<number | null>(null);
+  // O CARTÃO QUE A CÂMERA ATRAVESSA (passagem para o carro): o JS escolhe na
+  // hora de entrar e avisa aqui, para a moldura mostrar a peça DAQUELA marca.
+  // De saída, o último da fila — é o que o desktop tem na tela no fim da esteira.
+  const [alvoPassagem, setAlvoPassagem] = useState(representadas.length - 1);
 
   const aoArrastar = (evento: UIEvent<HTMLDivElement>) => {
     const rolagem = evento.currentTarget;
@@ -83,75 +130,218 @@ export function EsteiraMarcas({ cabeca }: { cabeca?: ReactNode }) {
     const livre = window.matchMedia(
       "(max-width: 900px), (prefers-reduced-motion: reduce)",
     );
+    const reduzido = window.matchMedia("(prefers-reduced-motion: reduce)");
+    // a pista da cena do carro: a passagem a puxa para cima (`--entrar-recuo`)
+    // e mede o topo dela para saber quando a cena grudou. Nada da linha do
+    // tempo do carro é lido ou escrito — só a posição da pista.
+    const carroPista = document.querySelector<HTMLElement>(".carro-onze");
+    const carroCena = carroPista?.querySelector<HTMLElement>(".carro-onze__cena") ?? null;
     let pedido = 0;
     let sobra = 0;
     let respiro = 0;
+    // a passagem (ver o comentário de VAO_MESA): onde começa a fase presa,
+    // quanto dura e quanto dela corre com a cena do carro já grudada
+    let passa = false;
+    let inicio = 0;
+    let fase = 0;
+    let abertura = 1;
+    // o cartão-alvo, medido SEM o empurrão da câmera (escala 1). Zerado sempre
+    // que a passagem volta ao início: no celular o alvo muda com o dedo.
+    let alvo: HTMLElement | null = null;
+    let base: { t: number; d: number; b: number; e: number; ox: number; oy: number } | null =
+      null;
+    // só escreve o que mudou — fora da passagem, nada é reescrito por quadro
+    const escrito = new Map<string, string>();
+    const por = (el: HTMLElement, nome: string, valor: string) => {
+      const chave = `${el === pista ? "p" : el === prancha ? "t" : "c"}${nome}`;
+      if (escrito.get(chave) === valor) return;
+      escrito.set(chave, valor);
+      el.style.setProperty(nome, valor);
+    };
 
     /** quanto o trilho excede a tela: é a distância que a rolagem percorre */
     const medir = () => {
+      const vh = window.innerHeight;
+      passa = !reduzido.matches && !!carroPista && !!carroCena;
+      escrito.clear();
+      base = null;
       if (livre.matches) {
         pista.classList.add("is-livre");
         pista.style.height = "";
         prancha.style.removeProperty("--esteira-x");
-        return;
+        sobra = 0;
+      } else {
+        pista.classList.remove("is-livre");
+        sobra = Math.max(0, prancha.scrollWidth - cena.clientWidth);
+        // A seção real primeiro termina de subir sobre A Casa. Só depois de
+        // 18vh de quadro assentado a composição começa a viajar lateralmente.
+        respiro = vh * 0.18;
+        // O PASSO É 0,55×, NÃO 1:1 (D-14, 06/09).
+        //
+        // O Norris move o trilho um pixel por pixel rolado, e eu copiei. MEDIDO:
+        // com 3542px de trilho isso dava 4,9 TELAS de pista — a esteira sozinha
+        // ficava maior que o hero, o capítulo 01, o 03 e o 04 SOMADOS, e a página
+        // inteira em 12,9 telas.
+        //
+        // Com 0,55 o dedo anda 55% do caminho e o trilho percorre 100%: a pista
+        // cai para 3,2 telas e a página para ~11,2. A leitura de cada cartão não
+        // muda — eles continuam do mesmo tamanho; só o percurso encurta.
+        //
+        // (No celular a esteira é livre e nunca teve esse custo: 0,9 tela.)
+        pista.style.height = `calc(100vh + ${Math.round(respiro + sobra * PASSO)}px)`;
+        prancha.style.setProperty("--esteira-ato", "0");
+        prancha.style.setProperty("--esteira-x", "0px");
+        pista.style.setProperty("--esteira-t", "0");
       }
-      pista.classList.remove("is-livre");
-      sobra = Math.max(0, prancha.scrollWidth - cena.clientWidth);
-      // A seção real primeiro termina de subir sobre A Casa. Só depois de
-      // 18vh de quadro assentado a composição começa a viajar lateralmente.
-      respiro = window.innerHeight * 0.18;
-      // O PASSO É 0,55×, NÃO 1:1 (D-14, 06/09).
-      //
-      // O Norris move o trilho um pixel por pixel rolado, e eu copiei. MEDIDO:
-      // com 3542px de trilho isso dava 4,9 TELAS de pista — a esteira sozinha
-      // ficava maior que o hero, o capítulo 01, o 03 e o 04 SOMADOS, e a página
-      // inteira em 12,9 telas.
-      //
-      // Com 0,55 o dedo anda 55% do caminho e o trilho percorre 100%: a pista
-      // cai para 3,2 telas e a página para ~11,2. A leitura de cada cartão não
-      // muda — eles continuam do mesmo tamanho; só o percurso encurta.
-      //
-      // (No celular a esteira é livre e nunca teve esse custo: 0,9 tela.)
-      pista.style.height = `calc(100vh + ${Math.round(respiro + sobra * PASSO)}px)`;
-      prancha.style.setProperty("--esteira-ato", "0");
-      prancha.style.setProperty("--esteira-x", "0px");
-      pista.style.setProperty("--esteira-t", "0");
+
+      if (passa && carroPista) {
+        pista.classList.add("is-passagem");
+        // no celular a cena da esteira é mais alta que a tela (MEDIDO: 834px
+        // em 812): ela gruda pelo pé, com o topo um pouco acima da tela
+        const altura = livre.matches ? cena.offsetHeight : vh;
+        const topo = Math.min(0, vh - altura);
+        inicio = livre.matches ? Math.max(0, altura - vh) : respiro + sobra * PASSO;
+        abertura = Math.max(1, Math.round((carroPista.offsetHeight - vh) * ABERTURA));
+        fase = vh + abertura + (livre.matches ? VAO_CELULAR : VAO_MESA);
+        pista.style.height = livre.matches
+          ? `${Math.round(altura + fase)}px`
+          : `calc(100vh + ${Math.round(respiro + sobra * PASSO + fase)}px)`;
+        pista.style.setProperty("--entrar-topo", `${topo}px`);
+        carroPista.style.setProperty("--entrar-recuo", `${vh + abertura}px`);
+      } else {
+        pista.classList.remove("is-passagem", "is-entrando");
+        carroPista?.style.removeProperty("--entrar-recuo");
+        alvo?.removeAttribute("data-alvo");
+        alvo = null;
+      }
       esfregar();
+    };
+
+    /** o cartão que a câmera vai atravessar, e onde ele está com escala 1 */
+    const medirAlvo = () => {
+      const itens = Array.from(trilho.querySelectorAll<HTMLElement>(".esteira__item"));
+      if (!itens.length) return;
+      let escolhido = itens[itens.length - 1]!;
+      if (livre.matches) {
+        // celular: o que o dedo deixou mais perto do centro da tela
+        const centro = window.innerWidth / 2;
+        let distancia = Number.POSITIVE_INFINITY;
+        itens.forEach((item) => {
+          const r = item.getBoundingClientRect();
+          const atual = Math.abs(r.left + r.width / 2 - centro);
+          if (atual < distancia) {
+            distancia = atual;
+            escolhido = item;
+          }
+        });
+      }
+      if (alvo !== escolhido) {
+        alvo?.removeAttribute("data-alvo");
+        escolhido.setAttribute("data-alvo", "");
+        alvo = escolhido;
+        setAlvoPassagem(itens.indexOf(escolhido));
+      }
+      // mede com a câmera parada: o empurrão (`scale`) sai por um instante
+      pista.style.setProperty("--entrar-a", "0");
+      escrito.delete("p--entrar-a");
+      const face = escolhido.querySelector<HTMLElement>(".esteira__girar") ?? escolhido;
+      const r = face.getBoundingClientRect();
+      const p = prancha.getBoundingClientRect();
+      base = {
+        t: r.top,
+        d: window.innerWidth - r.right,
+        b: window.innerHeight - r.bottom,
+        e: r.left,
+        // a origem do empurrão é o centro do cartão, em coordenadas da prancha
+        ox: r.left + r.width / 2 - p.left,
+        oy: r.top + r.height / 2 - p.top,
+      };
     };
 
     const esfregar = () => {
       if (pedido) return;
       pedido = window.requestAnimationFrame(() => {
         pedido = 0;
-        if (livre.matches || !sobra) return;
         const r = pista.getBoundingClientRect();
-        const t = Math.min(
-          1,
-          Math.max(0, (-r.top - respiro) / (sobra * PASSO)),
-        );
-        // A prancha inteira anda: manchete, vazios, logos e legendas preservam
-        // suas relações. O trilho sozinho criava um carrossel dentro de uma
-        // seção parada, que era justamente o defeito visto na referência.
-        const ato = t;
-        prancha.style.setProperty("--esteira-ato", ato.toFixed(4));
-        // A esteira só chega ao seu sticky depois do painel vertical ter
-        // assentado. Assim, há um gesto por vez: sobe a seção inteira; então a
-        // composição dela viaja de lado.
-        prancha.style.setProperty("--esteira-x", `${(-ato * sobra).toFixed(1)}px`);
-        // o indicador: quanto do trilho já passou (a auditoria pediu um
-        // progresso claro — sem ele o visitante não sabe onde está nas 11)
-        pista.style.setProperty("--esteira-t", t.toFixed(4));
+        if (!livre.matches && sobra) {
+          const t = Math.min(
+            1,
+            Math.max(0, (-r.top - respiro) / (sobra * PASSO)),
+          );
+          // A prancha inteira anda: manchete, vazios, logos e legendas preservam
+          // suas relações. O trilho sozinho criava um carrossel dentro de uma
+          // seção parada, que era justamente o defeito visto na referência.
+          const ato = t;
+          por(prancha, "--esteira-ato", ato.toFixed(4));
+          // A esteira só chega ao seu sticky depois do painel vertical ter
+          // assentado. Assim, há um gesto por vez: sobe a seção inteira; então a
+          // composição dela viaja de lado.
+          por(prancha, "--esteira-x", `${(-ato * sobra).toFixed(1)}px`);
+          // o indicador: quanto do trilho já passou (a auditoria pediu um
+          // progresso claro — sem ele o visitante não sabe onde está nas 11)
+          por(pista, "--esteira-t", t.toFixed(4));
+        }
+        if (!passa || !carroPista || !carroCena) return;
+
+        // A PASSAGEM. Três relógios, todos lineares no scroll:
+        //  a — a moldura cresce do cartão até o quadro do meio; vizinhos saem
+        //  h — o respiro: a moldura segue crescendo devagar, o parágrafo lê-se
+        //  b — a cena do carro grudou e se abre da moldura até a tela inteira
+        // `b` não é calculado pela esteira: vem do topo REAL da pista do carro.
+        const px = -r.top - inicio;
+        const antes = fase - abertura;
+        const a = cl(px / (antes * CRESCE));
+        const h = cl((px - antes * CRESCE) / (antes * (1 - CRESCE)));
+        const topoCarro = carroPista.getBoundingClientRect().top;
+        const b = cl(-topoCarro / abertura);
+        const grudou = topoCarro <= 0.5 ? 1 : 0;
+
+        if (px <= 0) {
+          base = null;
+        } else if (!base) {
+          medirAlvo();
+        }
+        // os cartões seguem clicáveis (e, no celular, arrastáveis) no começo
+        // da fase presa — ela começa justo quando a esteira inteira está na
+        // tela. Só travam quando os vizinhos já estão visivelmente saindo.
+        pista.classList.toggle("is-entrando", a >= TRAVA);
+        if (base) {
+          por(pista, "--r0-t", `${base.t.toFixed(1)}px`);
+          por(pista, "--r0-d", `${base.d.toFixed(1)}px`);
+          por(pista, "--r0-b", `${base.b.toFixed(1)}px`);
+          por(pista, "--r0-e", `${base.e.toFixed(1)}px`);
+          por(pista, "--entrar-ox", `${base.ox.toFixed(1)}px`);
+          por(pista, "--entrar-oy", `${base.oy.toFixed(1)}px`);
+        }
+        por(pista, "--entrar-a", a.toFixed(4));
+        por(pista, "--entrar-h", h.toFixed(4));
+        por(pista, "--entrar-b", b.toFixed(4));
+        por(carroCena, "--entrar-b", b.toFixed(4));
+        por(carroCena, "--entrar-v", String(grudou));
       });
     };
 
+    // celular: se o dedo troca o cartão do centro antes de a passagem travar,
+    // o alvo é escolhido de novo
+    const rolagem = trilho.parentElement;
+    const aoArrastarLivre = () => {
+      if (!passa) return;
+      base = null;
+      esfregar();
+    };
+
     medir();
+    rolagem?.addEventListener("scroll", aoArrastarLivre, { passive: true });
     window.addEventListener("scroll", esfregar, { passive: true });
     window.addEventListener("resize", medir);
     livre.addEventListener("change", medir);
+    reduzido.addEventListener("change", medir);
     return () => {
+      rolagem?.removeEventListener("scroll", aoArrastarLivre);
       window.removeEventListener("scroll", esfregar);
       window.removeEventListener("resize", medir);
       livre.removeEventListener("change", medir);
+      reduzido.removeEventListener("change", medir);
       if (pedido) cancelAnimationFrame(pedido);
     };
   }, []);
@@ -237,6 +427,35 @@ export function EsteiraMarcas({ cabeca }: { cabeca?: ReactNode }) {
         {/* O INDICADOR: uma régua fina que enche conforme a prancha anda. */}
         <div className="esteira__regua" aria-hidden>
           <span />
+        </div>
+
+        {/* A MOLDURA (passagem para a cena do carro): nasce sobre o cartão-alvo
+            e cresce até o quadro onde a cena do carro vai se abrir. A camada é
+            do tamanho da TELA, não da cena — no celular a cena é mais alta que
+            a tela e gruda pelo pé (`--entrar-topo`). */}
+        <div className="esteira__janela">
+          <div className="esteira__moldura">
+            {/* O QUE HÁ DENTRO DO CARTÃO (lab, `#p3`): a peça que a marca
+                fabrica — a mesma do verso dele — e, ao lado, o parágrafo-ponte.
+                É isto que ocupa o quadro enquanto a câmera entra, antes de o
+                carro se desenhar ali; sem isto o respiro era uma moldura vazia. */}
+            <div className="esteira__dentro">
+              {(() => {
+                const r = representadas[alvoPassagem];
+                const peca = r ? pecaDe(r.id) : undefined;
+                return r ? (
+                  <figure className="esteira__dentroPeca" aria-hidden>
+                    {peca ? <img src={peca} alt="" loading="lazy" /> : null}
+                    <figcaption>
+                      <b>{r.fornece}</b>
+                      <span>fornecido por {r.nome}</span>
+                    </figcaption>
+                  </figure>
+                ) : null;
+              })()}
+              {passagem}
+            </div>
+          </div>
         </div>
       </div>
     </div>

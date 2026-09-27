@@ -185,6 +185,18 @@ function Index() {
               </p>
             </>
           }
+          passagem={
+            /* O PARÁGRAFO-PONTE MORA NA MOLDURA (passagem D, 27/09): antes ele
+               atravessava sozinho o vão entre a esteira e o carro — o "quase
+               vazio" do flip-book. Agora é o que se lê dentro do cartão
+               enquanto a câmera entra nele, antes de o carro se desenhar ali.
+               Texto intacto; ver a história dele no comentário abaixo. */
+            <p className="carro-onze__abre">
+              Um distribuidor que compra rolamento da NTN-SNR resolve a bomba d&apos;água, o
+              filtro, a lanterna e o óleo na mesma conversa. É essa a diferença entre representar
+              uma marca e representar um catálogo.
+            </p>
+          }
         />
 
         {/* O PALCO DE PEÇAS FOI SUBSTITUÍDO PELA CENA DO CARRO (A2, 26/09):
@@ -197,13 +209,8 @@ function Index() {
             d'água...") não tinha lugar equivalente na cena do carro (que abre
             direto com o título "Onze indústrias. Uma estrada só.") — decisão
             conservadora: preservado aqui, como parágrafo de transição entre a
-            esteira e a cena do carro, em vez de descartado. */}
-        <p className="carro-onze__abre">
-          Um distribuidor que compra rolamento da NTN-SNR resolve a bomba d&apos;água, o
-          filtro, a lanterna e o óleo na mesma conversa. É essa a diferença entre representar
-          uma marca e representar um catálogo.
-        </p>
-
+            esteira e a cena do carro, em vez de descartado. (27/09: foi para
+            dentro da moldura da passagem — ver `passagem` acima.) */}
         <CarroOnze />
       </Capitulo>
       </div>
