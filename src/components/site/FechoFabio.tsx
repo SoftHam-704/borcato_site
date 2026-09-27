@@ -67,8 +67,10 @@ export function FechoFabio() {
             <span>E-mail</span>
           </li>
         </ul>
+        {/* duas linhas em bloco: em uma só, "MARKETING" descia sozinho */}
         <p className="fecho__assinatura">
-          {empresa.nome} — {empresa.descritor}
+          <span>{empresa.nome}</span>
+          <span>{empresa.descritor}</span>
         </p>
       </div>
     </div>

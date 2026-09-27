@@ -182,7 +182,7 @@ function Index() {
                   muda entre as duas passagens e o que faz a segunda parecer
                   intencional. E o atalho para quem ja entendeu. */}
               <p className="esteira__guia" data-revela>
-                Primeiro as indústrias. Depois, cinco categorias que chegam à estrada.
+                Primeiro as indústrias. Depois, as onze peças que chegam à estrada.
                 <a href="#carro-onze" className="esteira__atalho">
                   Ver as peças <i aria-hidden>↓</i>
                 </a>

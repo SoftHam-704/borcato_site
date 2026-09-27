@@ -1,11 +1,10 @@
 import { useEffect, useRef } from "react";
 import { regioes, casa, empresa } from "@/lib/dados";
-import { FotoViva } from "@/components/site/FotoViva";
 import { Palavras } from "@/components/site/Palavras";
 // Gerada com o Nano Banana a partir da original (marca/geracao/): luz lateral
 // dura e olhar fora de quadro. O passo do rastro de exposicao longa FALHOU —
 // o modelo criou uma segunda pessoa atras dele — entao o rastro fica no CSS.
-// O PISO da capsula e o QUADRO 0 da foto viva, nao um arquivo separado.
+// A FOTO DA CAPSULA E O QUADRO 0 da antiga foto viva, nao um arquivo separado.
 // Antes era `fabio-travessia.jpg` (619 KB) mostrando exatamente a mesma
 // imagem do quadro 0 (110 KB) — 619 KB baixados para nada, e 68% do peso
 // da pagina era o Fabio duas vezes. Era o achado no 8 do juri.
@@ -298,8 +297,15 @@ export function HeroTravessia() {
           prova visível da cor da marca. Nenhuma das 39 referências da biblioteca
           aplica glitch sobre rosto humano. */}
       <div className="hero-tr__capsula" ref={capsulaRef}>
-        {/* A foto PARADA e o piso: aparece na hora, e fica se o canvas nao
-            puder rodar (sem JS, reduced-motion, ou um quadro que falhou). */}
+        {/* A FOTO E PARADA (27/09). A FotoViva — o Fabio virando o rosto
+            conforme se rola — SAIU: ela misturava duas poses vizinhas com
+            alpha, e no meio da troca a capsula mostrava DOIS rostos (dois
+            pares de olhos, duas bocas; auditoria scroll-craft/d5). E a virada
+            durava ~765px de rolagem, mas a foto some aos ~340px na passagem
+            da capsula: os quadros 1-4 (~178 KB) eram baixados para quase
+            ninguem ver. O cliente pediu MENOS enfase na imagem dele; a
+            profundidade continua vindo da palavra-fantasma, do deslocamento
+            da capsula e da moldura da passagem, nao do rosto. */}
         <img
           src={fabioEscuro}
           width={780}
@@ -308,8 +314,6 @@ export function HeroTravessia() {
           fetchPriority="high"
           className="capsula__base"
         />
-        {/* A foto VIVA cobre a parada assim que os cinco quadros carregam. */}
-        <FotoViva />
         <span className="capsula__grao" aria-hidden />
         <span className="capsula__vinheta" aria-hidden />
       </div>
