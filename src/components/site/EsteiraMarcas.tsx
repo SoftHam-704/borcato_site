@@ -330,13 +330,56 @@ export function EsteiraMarcas({
       esfregar();
     };
 
+    // O TECLADO NA ESTEIRA PRESA (auditoria 27/09). No desktop a posição de
+    // lado é amarrada à rolagem vertical, então o Tab levava o foco a cartões
+    // FORA da tela (02, 03, 07, 11) — e pior: para mostrá-los, o navegador
+    // rolava a própria cena (overflow: hidden), deslocando a prancha inteira
+    // sem a página andar. Aqui o foco manda na rolagem: desfaz a rolagem da
+    // cena e leva a PÁGINA até o y em que aquele cartão fica no meio da tela,
+    // pela mesma conta de `esfregar` (t = (y - respiro) / (sobra × PASSO)).
+    const aoFocar = (evento: FocusEvent) => {
+      if (livre.matches || !sobra) return;
+      const foco = evento.target as HTMLElement | null;
+      if (!foco || !prancha.contains(foco)) return;
+      // depois do quadro: o navegador só rola até o foco DEPOIS do focusin
+      window.requestAnimationFrame(() => {
+        cena.scrollLeft = 0;
+        cena.scrollTop = 0;
+        const item = foco.closest<HTMLElement>(".esteira__item");
+        // onde ele está na prancha, sem o deslocamento lateral (offset* ignora
+        // translate e scale; a manchete, fora do trilho, mede pela caixa)
+        const x = item
+          ? item.offsetLeft + trilho.offsetLeft
+          : foco.getBoundingClientRect().left - prancha.getBoundingClientRect().left;
+        const largura = item ? item.offsetWidth : foco.getBoundingClientRect().width;
+        const vw = window.innerWidth;
+        // o topo da pista no documento, também sem o transform do capítulo
+        let topo = 0;
+        for (let n: HTMLElement | null = pista; n; n = n.offsetParent as HTMLElement | null) {
+          topo += n.offsetTop;
+        }
+        const percurso = sobra * PASSO;
+        const y = window.scrollY;
+        // já visível, com a esteira presa e fora da coluna da nav: não mexe
+        const nav = document.querySelector<HTMLElement>(".cap-nav")?.getBoundingClientRect().right ?? 0;
+        const esquerda = x - cl((y - topo - respiro) / percurso) * sobra;
+        if (y >= topo && y <= topo + respiro + percurso && esquerda >= nav && esquerda + largura <= vw) {
+          return;
+        }
+        const ato = cl((x + largura / 2 - vw / 2) / sobra);
+        window.scrollTo({ top: Math.round(topo + respiro + ato * percurso), behavior: "instant" });
+      });
+    };
+
     medir();
+    prancha.addEventListener("focusin", aoFocar);
     rolagem?.addEventListener("scroll", aoArrastarLivre, { passive: true });
     window.addEventListener("scroll", esfregar, { passive: true });
     window.addEventListener("resize", medir);
     livre.addEventListener("change", medir);
     reduzido.addEventListener("change", medir);
     return () => {
+      prancha.removeEventListener("focusin", aoFocar);
       rolagem?.removeEventListener("scroll", aoArrastarLivre);
       window.removeEventListener("scroll", esfregar);
       window.removeEventListener("resize", medir);
@@ -344,6 +387,25 @@ export function EsteiraMarcas({
       reduzido.removeEventListener("change", medir);
       if (pedido) cancelAnimationFrame(pedido);
     };
+  }, []);
+
+  // OS LOGOS POR ÁREA, NÃO PELO ARQUIVO (auditoria 27/09). Cada PNG chegou num
+  // tamanho: de 4 mil a 40 mil px² na tela (10×), e a NTN-SNR entre as menores.
+  // O CSS iguala a ÁREA ótica — largura = √(área-alvo × proporção) — e só
+  // precisa saber a proporção de cada arquivo, que vem daqui.
+  useEffect(() => {
+    const trilho = trilhoRef.current;
+    if (!trilho) return;
+    const imgs = Array.from(trilho.querySelectorAll<HTMLImageElement>(".esteira__logo img"));
+    const proporcao = (img: HTMLImageElement) => {
+      if (img.naturalWidth && img.naturalHeight) {
+        img.style.setProperty("--logo-prop", (img.naturalWidth / img.naturalHeight).toFixed(4));
+      }
+    };
+    imgs.forEach((img) => {
+      if (img.complete) proporcao(img);
+      else img.addEventListener("load", () => proporcao(img), { once: true });
+    });
   }, []);
 
   return (

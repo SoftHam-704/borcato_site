@@ -604,6 +604,12 @@
   /* a luz de A Casa: o azul que tinge o chao da capsula aberta e da secao 01
      (antes solto no CSS como rgba(28, 127, 194, ...) em cinco lugares) */
   --br-casa-luz: #1c7fc2;
+  /* O AZUL DA MARCA COMO LETRA. O --br-marca (#005f96) sustenta preenchimento,
+     fio e o quadrado do CTA, mas como COR DE TEXTO nao passa AA em fundo
+     nenhum do site (MEDIDO: 2,64 a 2,77:1). A paleta nao muda: o texto usa o
+     mesmo azul puxado para a --br-luz (~#4892be, >= 5:1 nos chaos do site).
+     Preenchimentos, fios, o quadrado do CTA e a letra M seguem no --br-marca. */
+  --br-marca-texto: color-mix(in srgb, var(--br-marca) 55%, var(--br-luz));
 }
 
 .hero-tr {
@@ -647,7 +653,13 @@
   /* vmin, nao vw: em tela larga e BAIXA (1440x900, 1280x720) o titulo
      com 6.4vw dava 438px de altura e estourava a coluna. Com vmin ele
      responde tambem a altura da janela. */
-  font-size: clamp(38px, 7.2vmin, 88px);
+  /* O HERO NUNCA FICA MENOR QUE O CAPITULO (auditoria 27/09). So com vmin,
+     em 1280x720, 1366x768 e 1536x864 ele saia ~8% MENOR que o .cap__titulo
+     (clamp(30px, 4.4vw, 66px)) — hierarquia invertida. O max() mantem o vmin
+     e acrescenta um piso de 1,05x o titulo de capitulo; nada encolhe.
+     MEDIDO: com o piso o hero continua cabendo em 100svh em 1280x720,
+     1366x768 e 1440x900, sem tocar a capsula nem o CTA. */
+  font-size: max(clamp(38px, 7.2vmin, 88px), calc(clamp(30px, 4.4vw, 66px) * 1.05));
   line-height: 0.95;
   text-transform: uppercase;
 }
@@ -810,6 +822,13 @@
   overflow-x: clip;
 }
 
+/* o chao sob o veu da nav, registrado como cor para poder transicionar */
+@property --nav-chao {
+  syntax: "<color>";
+  inherits: true;
+  initial-value: #0a0a0c;
+}
+
 /* ── A nav de capítulos ──────────────────────────────────────────────────────
    Fixa à esquerda no desktop, onde não disputa com a cápsula (que sangra à
    direita). Vira barra no rodapé no mobile, onde não há coluna sobrando. */
@@ -825,10 +844,18 @@
      ilegivel. Nenhuma medicao pegaria isso — nem overflow nem alvo tatil
      reprovam, porque geometricamente esta tudo no lugar.
      A veladura devolve a profundidade: a goteira e um plano a frente. */
+  /* O VEU TEM O CHAO DO CAPITULO EM QUE SE ESTA (auditoria 27/09). A nav mora
+     fora dos capitulos e herdava sempre o --br-chao da raiz (#0a0a0c): sobre o
+     azul de A Estrada e de O Nome o veu virava uma mancha preta. O JS
+     (NavCapitulos) escreve --nav-chao com o chao do capitulo ativo; a cor e
+     registrada (@property, abaixo) para a troca andar no mesmo 1,1s da jornada
+     tonal, em vez de saltar. */
+  --nav-chao: var(--br-chao);
+  transition: --nav-chao 1.1s ease;
   background: linear-gradient(
     to right,
-    var(--br-chao) 0%,
-    color-mix(in srgb, var(--br-chao) 88%, transparent) 58%,
+    var(--nav-chao) 0%,
+    color-mix(in srgb, var(--nav-chao) 88%, transparent) 58%,
     transparent 100%
   );
   /* A VELADURA NAO PODE TER BORDA PROPRIA. Primeira tentativa: so o gradiente
@@ -880,7 +907,12 @@
 .cap-nav b {
   font-variant-numeric: tabular-nums;
   font-weight: 600;
-  opacity: 0.55;
+  /* SEM ESMAECER (auditoria 27/09). 0,55 dava 2,59:1 — e o numero inativo e a
+     unica pista de onde se esta. 0,85 ainda reprovava sobre o veu azul de As
+     Marcas (4,49:1 medido) e mais ainda no de O Nome, o chao mais claro: o
+     --br-fraco puro e o que fica >= 4,5:1 nos quatro. O ativo continua se
+     distinguindo pela cor (--br-luz) e pelo rotulo aberto. */
+  opacity: 1;
 }
 /* o rótulo fica retraído e só se abre no capítulo ativo: a nav vira régua de
    progresso em vez de menu, que é o gesto do Ferrari */
@@ -897,6 +929,12 @@
 .cap-nav a:focus-visible,
 .cap-nav a.is-aqui {
   color: var(--br-tinta);
+}
+/* o anel de foco vai POR DENTRO do link: por fora ele era cortado pelo
+   overflow-x: hidden da nav (que existe para o rotulo nao furar a coluna) */
+.cap-nav a:focus-visible {
+  outline: 2px solid var(--br-luz);
+  outline-offset: -2px;
 }
 @media (min-width: 1181px) {
   .cap-nav a:hover span,
@@ -928,7 +966,7 @@
     width: auto;
     padding-left: 0;
     transform: none;
-    background: color-mix(in srgb, var(--br-chao) 88%, transparent);
+    background: color-mix(in srgb, var(--nav-chao) 88%, transparent);
     backdrop-filter: blur(14px);
     border-top: 1px solid color-mix(in srgb, var(--br-tinta) 10%, transparent);
     /* barra do iPhone */
@@ -1730,6 +1768,10 @@
 .btn-falar:hover {
   transform: translateY(-2px);
 }
+/* o aperto: o clique afunda 1px (o `translate` soma ao `transform` do hover) */
+.btn-falar:active {
+  translate: 0 1px;
+}
 .btn-falar:hover i {
   background: var(--br-luz);
   color: var(--br-chao);
@@ -1799,17 +1841,18 @@
   font-weight: 500;
   letter-spacing: 0.16em;
   color: var(--br-fraco);
-  opacity: 0.55;
+  /* as regioes ficam um passo atras do rotulo, mas legiveis: 0,55 dava
+     2,59:1; 0,85 passa de 4,5:1 sobre o chao do hero (medido) */
+  opacity: 0.85;
+}
+/* Minas é a casa: o rótulo é sólido. A regra das regiões acima também o
+   apagava (ele é um <li> do mesmo trilho) — a cor já era a da luz, mas a 55%. */
+.hero-tr__trilho li.trilho__rotulo {
+  opacity: 1;
 }
 .hero-tr__trilho abbr {
   text-decoration: none;
   cursor: default;
-}
-/* Minas é a casa: sólida, na cor da luz */
-.hero-tr__trilho li.is-casa {
-  color: var(--br-luz);
-  opacity: 1;
-  font-weight: 600;
 }
 
 
@@ -3047,7 +3090,7 @@ body.is-abrindo {
   font-family: var(--font-display), sans-serif;
   font-size: clamp(22px, 2.4vw, 34px);
   font-weight: 700;
-  color: var(--br-marca);
+  color: var(--br-marca-texto);
   font-variant-numeric: tabular-nums;
   opacity: calc(var(--c, 0) * (1 - var(--X, 0) * 3));
 }
@@ -3410,7 +3453,7 @@ body.is-abrindo {
   font-weight: 700;
   line-height: 1;
   letter-spacing: -0.01em;
-  color: var(--br-marca);
+  color: var(--br-marca-texto);
 }
 .casa__marcos span {
   font-size: clamp(0.82rem, 1.25vmin, 0.95rem);
@@ -4251,6 +4294,10 @@ body.is-abrindo {
 .esteira__item.is-aberta .esteira__girar {
   transform: rotateY(180deg);
 }
+/* o aperto do cartao, como o do CTA: 1px, sem mexer no giro */
+.esteira__girar:active {
+  translate: 0 1px;
+}
 .esteira__face {
   position: absolute;
   inset: 0;
@@ -4276,7 +4323,7 @@ body.is-abrindo {
   font-size: 0.72rem;
   font-weight: 700;
   letter-spacing: 0.14em;
-  color: var(--br-marca);
+  color: var(--br-marca-texto);
 }
 /* o logo grande — o que a barra do hero não conseguia ser */
 .esteira__logo {
@@ -4285,7 +4332,21 @@ body.is-abrindo {
   min-height: 0;
 }
 .esteira__logo img {
+  /* A MESMA AREA OTICA PARA AS ONZE (auditoria 27/09): largura =
+     sqrt(area-alvo x proporcao), com a proporcao do arquivo escrita pelo JS
+     (--logo-prop). Antes valia o tamanho do PNG: de 4k a 40k px2 na tela.
+     A caixa do cartao continua mandando — a largura nunca passa dela nem da
+     altura maxima vezes a proporcao. Sem JS vale o `width: auto` de sempre. */
+  --logo-area: 13000;
+  --logo-lado: 1px;
   width: auto;
+  width: min(
+    calc(sqrt(var(--logo-area) * var(--logo-prop)) * var(--logo-lado)),
+    100%,
+    320px,
+    calc(min(18vh, 150px) * var(--logo-prop))
+  );
+  height: auto;
   max-width: min(100%, 320px);
   max-height: min(18vh, 150px);
   object-fit: contain;
@@ -4327,7 +4388,7 @@ body.is-abrindo {
 }
 .esteira__girar:hover .esteira__dica,
 .esteira__girar:focus-visible .esteira__dica {
-  color: var(--br-marca);
+  color: var(--br-marca-texto);
 }
 /* o verso: a peça que a marca fornece, a mesma imagem do palco */
 .esteira__verso {
@@ -4376,7 +4437,7 @@ body.is-abrindo {
   font-weight: 600;
   letter-spacing: 0.14em;
   text-transform: uppercase;
-  color: var(--br-marca);
+  color: var(--br-marca-texto);
   text-decoration: none;
   transition: color 0.35s ease;
 }
@@ -4463,6 +4524,14 @@ body.is-abrindo {
   opacity: 1;
   translate: none;
   transition: none;
+}
+/* no trilho livre o cartao tem 78vw (nao px fixos): a area do logo acompanha
+   a largura do cartao, tomando 310px (o cartao medio do desktop) como 1:1.
+   O teto de 360px existe pelo tablet: em 768 o cartao tem 599px, e sem ele
+   os logos batiam nos limites da caixa em alturas diferentes (medido: 3,2x
+   de diferenca de area entre o menor e o maior). */
+.esteira.is-livre .esteira__logo img {
+  --logo-lado: calc(min(78vw, 360px) / 310);
 }
 .esteira.is-livre .esteira__item {
   position: relative;
@@ -4595,7 +4664,7 @@ body.is-abrindo {
   color: var(--br-fraco);
 }
 .esteira__atalho {
-  color: var(--br-marca);
+  color: var(--br-marca-texto);
   text-decoration: none;
   font-weight: 600;
   letter-spacing: 0.04em;

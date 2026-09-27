@@ -25,6 +25,7 @@ export const CAPITULOS = [
 export function NavCapitulos() {
   const [ativo, setAtivo] = useState<string>(CAPITULOS[0].id);
   const marcado = useRef<string>(CAPITULOS[0].id);
+  const navRef = useRef<HTMLElement>(null);
 
   useEffect(() => {
     const casa = document.getElementById("cap-casa");
@@ -33,11 +34,22 @@ export function NavCapitulos() {
     if (!casa || !marcas || !nome) return;
 
     let pedido = 0;
+    // O VÉU DA NAV TOMA O CHÃO DO CAPÍTULO ATIVO. Cada capítulo redefine o
+    // próprio --br-chao (jornada tonal), mas a nav mora fora deles e só via o
+    // da raiz — o véu escuro virava mancha sobre A Estrada e O Nome. O chão é
+    // LIDO da seção (não copiado aqui): se a paleta mudar no CSS, o véu segue.
+    const pintarChao = (id: string) => {
+      const secao = document.getElementById(id);
+      const chao = secao ? getComputedStyle(secao).getPropertyValue("--br-chao").trim() : "";
+      if (chao) navRef.current?.style.setProperty("--nav-chao", chao);
+    };
     const marcar = (id: string) => {
       if (id === marcado.current) return;
       marcado.current = id;
+      pintarChao(id);
       setAtivo(id);
     };
+    pintarChao(marcado.current);
     const medir = () => {
       if (pedido) return;
       pedido = window.requestAnimationFrame(() => {
@@ -73,7 +85,7 @@ export function NavCapitulos() {
   }, []);
 
   return (
-    <nav className="cap-nav" aria-label="Capítulos">
+    <nav className="cap-nav" aria-label="Capítulos" ref={navRef}>
       <ul>
         {CAPITULOS.map((c) => (
           <li key={c.id}>
