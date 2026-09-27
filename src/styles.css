@@ -4815,6 +4815,9 @@ body::-webkit-scrollbar {
       rgba(28, 127, 194, 0),
       rgba(28, 127, 194, 0.07) clamp(96px, 16vh, 200px)
     );
+  }
+}
+
 /* ═══ PASSAGEM C — a estrada escreve o nome (27/09) ═══ */
 /* A rota pelas oito regiões termina no Triângulo e NÃO para: sai do mapa,
    desce pela página e escreve H.M.; o traço engrossa e cruza para as letras
