@@ -4927,3 +4927,296 @@ body::-webkit-scrollbar {
     opacity: 1;
   }
 }
+
+
+/* ═══ PASSAGEM D — entrar na marca (27/09) ═══
+   Esteira → cena do carro (lab, item 3, `#p3`). Entre as duas passava um
+   quase-vazio: a prancha subia, o parágrafo-ponte atravessava a tela sozinho e
+   a cena do carro grudava depois. Agora a câmera ENTRA no cartão que está na
+   tela quando a esteira acaba (desktop: o último, VP; celular: o do centro):
+     a — os vizinhos passam pela câmera e esmaecem; o cartão acende e cresce
+         até o quadro do meio (a MOLDURA);
+     h — respiro: a moldura segue crescendo devagar e o parágrafo-ponte se lê
+         lá dentro;
+     b — a cena do carro grudou: ela se abre EXATAMENTE na moldura e cresce
+         até a tela inteira, com o carro se desenhando lá dentro.
+   O JS (`EsteiraMarcas.tsx`) só escreve os relógios (--entrar-a/h/b), onde o
+   cartão estava (--r0-*) e a origem do empurrão; tudo o que se vê é composto
+   aqui. Nada da linha do tempo do carro é tocado: `b` vem do topo real da
+   pista dele, e a abertura acontece durante o desenho (`--c`) que já existia.
+   A altura da página não cresce — a esteira ganha o trecho preso que a pista
+   do carro perde ao subir por cima dela (`--entrar-recuo`). */
+
+/* os dois quadros da moldura, em recuos a partir das bordas da TELA:
+   `--mid-*` ao fim do crescimento, `--mid2-*` ao fim do respiro (é onde a
+   janela do carro nasce). Moram no capítulo porque a esteira e o carro os leem. */
+.cap--marcas {
+  --mid-t: 13vh;
+  --mid-l: 12vw;
+  --mid2-t: 9vh;
+  --mid2-l: 8vw;
+  --entrar-raio: clamp(14px, 1.6vw, 24px);
+  /* quanto da abertura o de dentro leva para sair: acompanha o desenho do
+     carro, que no desktop dura ~meia abertura e no celular (≤767px, a
+     linha do tempo curta da cena do carro) é quase instantâneo */
+  --sai-dentro: 0.3;
+}
+@media (max-width: 767px) {
+  .cap--marcas {
+    --sai-dentro: 0.12;
+  }
+}
+@media (max-width: 900px) {
+  .cap--marcas {
+    --mid-t: 15vh;
+    --mid-l: 20px;
+    --mid2-t: 11vh;
+    --mid2-l: 12px;
+  }
+}
+
+/* ── o lado da esteira ─────────────────────────────────────────────────────── */
+.esteira {
+  --entrar-a: 0;
+  --entrar-h: 0;
+  --entrar-b: 0;
+}
+/* o empurrão da câmera: a prancha inteira cresce em torno do cartão-alvo, e os
+   vizinhos se afastam para as bordas enquanto somem (o gesto do lab, contido:
+   aqui quem vira o quadro é a moldura, não o cartão escalado 30×) */
+.esteira.is-passagem .esteira__prancha {
+  transform-origin: var(--entrar-ox, 50%) var(--entrar-oy, 50%);
+  scale: calc(1 + var(--entrar-a) * 0.6);
+}
+.esteira.is-passagem .esteira__item {
+  opacity: calc(1 - clamp(0, calc((var(--entrar-a) - 0.05) / 0.55), 1));
+}
+/* o próprio cartão fica por cima da moldura acesa até o de dentro chegar:
+   um some enquanto o outro entra, sem quadro de moldura vazia */
+.esteira.is-passagem .esteira__item[data-alvo] {
+  opacity: calc(1 - clamp(0, calc((var(--entrar-a) - 0.3) / 0.3), 1));
+}
+.esteira.is-passagem .esteira__cabeca,
+.esteira.is-passagem .esteira__gesto {
+  opacity: calc(1 - clamp(0, calc(var(--entrar-a) / 0.4), 1));
+}
+/* o filete no topo de cada cartão, escalado pelo empurrão, virava uma linha
+   de borda a borda no celular: sai antes de o cartão crescer */
+.esteira.is-passagem .esteira__face {
+  border-top-color: color-mix(
+    in srgb,
+    var(--br-tinta) calc(26% * (1 - clamp(0, calc(var(--entrar-a) / 0.2), 1))),
+    transparent
+  );
+}
+/* a régua é uma linha horizontal: sai antes de qualquer coisa crescer */
+.esteira.is-passagem .esteira__regua {
+  opacity: calc(1 - clamp(0, calc(var(--entrar-a) / 0.2), 1));
+}
+.esteira.is-passagem .esteira__cena::before {
+  opacity: calc(1 - var(--entrar-a) * 0.5);
+}
+/* durante a passagem os cartões não recebem clique nem arrasto */
+.esteira.is-entrando .esteira__prancha {
+  pointer-events: none;
+}
+.esteira.is-livre.is-entrando .esteira__rolagem {
+  overflow-x: hidden;
+}
+/* celular: a esteira livre também gruda, só durante a passagem — pelo pé,
+   quando a cena é mais alta que a tela. `overflow-x: clip` segura o empurrão
+   dentro da largura da tela sem virar contêiner de rolagem. */
+.esteira.is-livre.is-passagem .esteira__cena {
+  position: sticky;
+  top: var(--entrar-topo, 0px);
+  overflow-x: clip;
+  overflow-y: visible;
+}
+
+/* a camada da moldura: do tamanho da TELA enquanto a cena está presa. Fica
+   ATRÁS da prancha: o cartão e os vizinhos passam por cima dela enquanto
+   somem (o cartão ainda legível sobre o fundo aceso) */
+.esteira__janela {
+  position: absolute;
+  z-index: 0;
+  left: 0;
+  right: 0;
+  top: calc(-1 * var(--entrar-topo, 0px));
+  height: 100vh;
+  pointer-events: none;
+}
+.esteira__moldura {
+  /* crescimento com saída suave (quadrática) para não dar tranco ao chegar no
+     respiro; o scroll continua sendo o único relógio */
+  --ga: calc(var(--entrar-a) * (2 - var(--entrar-a)));
+  --alvo-t: calc(var(--mid-t) + (var(--mid2-t) - var(--mid-t)) * var(--entrar-h));
+  --alvo-l: calc(var(--mid-l) + (var(--mid2-l) - var(--mid-l)) * var(--entrar-h));
+  position: absolute;
+  top: calc(var(--r0-t, 0px) * (1 - var(--ga)) + var(--alvo-t) * var(--ga));
+  right: calc(var(--r0-d, 0px) * (1 - var(--ga)) + var(--alvo-l) * var(--ga));
+  bottom: calc(var(--r0-b, 0px) * (1 - var(--ga)) + var(--alvo-t) * var(--ga));
+  left: calc(var(--r0-e, 0px) * (1 - var(--ga)) + var(--alvo-l) * var(--ga));
+  display: grid;
+  place-items: center;
+  overflow: hidden;
+  border-radius: var(--entrar-raio);
+}
+/* o fundo aceso num pseudo, com opacidade própria — o de dentro não herda */
+.esteira__moldura::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  /* o MESMO chão da cena do carro — é ela que vai se abrir aqui dentro */
+  background: radial-gradient(
+    ellipse at 50% 58%,
+    color-mix(in srgb, var(--br-marca) 22%, var(--br-chao)) 0%,
+    var(--br-chao) 62%
+  );
+  /* contorno fino, sem linha dura: some no fim do respiro, antes da janela */
+  box-shadow: inset 0 0 0 1px
+    color-mix(in srgb, var(--br-luz) calc(18% * (1 - clamp(0, calc((var(--entrar-h) - 0.6) / 0.4), 1))), transparent);
+  opacity: clamp(0, calc(var(--entrar-a) / 0.4), 1);
+}
+/* O QUE HÁ DENTRO DO CARTÃO: a peça que a marca fabrica (a mesma do verso) e
+   o parágrafo-ponte. Largura FIXA — a do quadro final, não a da moldura — para
+   nada refluir enquanto ela cresce; a letra do parágrafo só aumenta. Entra
+   quando a moldura já quase chegou ao meio e sai nos primeiros quadros da
+   abertura, enquanto o carro começa a se desenhar por cima. */
+.esteira__dentro {
+  --entra-dentro: clamp(0, calc((var(--entrar-a) - 0.45) / 0.35), 1);
+  position: relative;
+  width: calc(100vw - 2 * var(--mid-l) - 2 * clamp(20px, 6vw, 96px));
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  grid-template-areas: "texto peca";
+  align-items: center;
+  gap: clamp(24px, 4vw, 72px);
+  opacity: calc(var(--entra-dentro) * (1 - clamp(0, calc(var(--entrar-b) / var(--sai-dentro)), 1)));
+}
+.esteira__dentroPeca {
+  grid-area: peca;
+  margin: 0;
+  display: grid;
+  justify-items: center;
+  gap: clamp(10px, 1.6vh, 18px);
+  /* a peça chega um pouco de longe e segue se aproximando no respiro */
+  scale: calc(0.86 + var(--entra-dentro) * 0.1 + var(--entrar-h) * 0.04);
+}
+.esteira__dentroPeca img {
+  width: min(100%, 44vh, 460px);
+  aspect-ratio: 1;
+  object-fit: contain;
+  -webkit-mask-image: radial-gradient(circle, #000 52%, transparent 71%);
+  mask-image: radial-gradient(circle, #000 52%, transparent 71%);
+}
+.esteira__dentroPeca figcaption {
+  display: grid;
+  gap: 2px;
+  text-align: center;
+}
+.esteira__dentroPeca b {
+  font-family: var(--font-display), sans-serif;
+  font-size: clamp(0.95rem, 1.6vmin, 1.2rem);
+  font-weight: 700;
+  text-transform: uppercase;
+}
+.esteira__dentroPeca span {
+  font-size: clamp(0.76rem, 1.15vmin, 0.88rem);
+  color: var(--br-fraco);
+}
+.esteira__moldura .carro-onze__abre {
+  grid-area: texto;
+  justify-self: start;
+  width: auto;
+  max-width: 34ch;
+  margin: 0;
+  padding: 0;
+  font-size: clamp(1.15rem, 2vw, 1.75rem);
+  line-height: 1.4;
+  color: var(--br-tinta);
+  text-wrap: pretty;
+  translate: 0 calc((1 - var(--entra-dentro)) * 16px);
+}
+@media (max-width: 900px) {
+  .esteira__dentro {
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-areas: "peca" "texto";
+    gap: clamp(16px, 3vh, 28px);
+  }
+  .esteira__dentroPeca img {
+    width: min(58vw, 30vh);
+  }
+  .esteira__moldura .carro-onze__abre {
+    max-width: none;
+  }
+}
+
+/* ── o lado do carro ───────────────────────────────────────────────────────── */
+/* a pista sobe por cima do fim da esteira; a caixa dela (transparente) não
+   pode roubar o clique dos cartões — só a cena, e só quando aparece */
+.carro-onze {
+  margin-top: calc(-1 * var(--entrar-recuo, 0px));
+  pointer-events: none;
+}
+.carro-onze__cena {
+  --entrar-fundo: clamp(0, calc(var(--entrar-b, 1) / 0.6), 1);
+  pointer-events: auto;
+  /* ANTES DE GRUDAR (`--entrar-v` 0) a cena não aparece: ela sobe por baixo
+     da esteira presa. Grudada, abre do quadro da moldura até a tela inteira. */
+  clip-path: inset(
+    max(calc(var(--mid2-t) * (1 - var(--entrar-b, 1))), calc((1 - var(--entrar-v, 1)) * 50%))
+      max(calc(var(--mid2-l) * (1 - var(--entrar-b, 1))), calc((1 - var(--entrar-v, 1)) * 50%))
+      round calc(var(--entrar-raio) * (1 - var(--entrar-b, 1)))
+  );
+  /* o chão da cena entra junto com a janela: nos primeiros quadros a moldura
+     (e o parágrafo saindo) ainda se vê por trás do carro que se desenha */
+  background: radial-gradient(
+    ellipse at 50% 58%,
+    color-mix(
+        in srgb,
+        color-mix(in srgb, var(--br-marca) 22%, var(--br-chao)) calc(var(--entrar-fundo) * 100%),
+        transparent
+      )
+      0%,
+    color-mix(in srgb, var(--br-chao) calc(var(--entrar-fundo) * 100%), transparent) 62%
+  );
+}
+
+/* sem movimento: nada de passagem — o parágrafo volta ao fluxo, sob os
+   cartões, e a cena do carro fica como sempre esteve */
+@media (prefers-reduced-motion: reduce) {
+  .esteira__janela {
+    position: static;
+    height: auto;
+    pointer-events: auto;
+  }
+  .esteira__moldura {
+    position: static;
+    display: block;
+    overflow: visible;
+    border-radius: 0;
+    padding: 0 clamp(20px, 6vw, 40px) clamp(24px, 4vh, 48px);
+  }
+  .esteira__moldura::before {
+    display: none;
+  }
+  .esteira__dentro {
+    display: block;
+    width: auto;
+    opacity: 1;
+  }
+  .esteira__dentroPeca {
+    display: none;
+  }
+  .esteira__moldura .carro-onze__abre {
+    max-width: 60ch;
+    translate: none;
+  }
+  .carro-onze {
+    margin-top: 0;
+  }
+  .carro-onze__cena {
+    clip-path: none;
+  }
+}
