@@ -2885,17 +2885,16 @@ body.is-abrindo {
    Depois a EXPLOSÃO: as peças voam até as 8 regiões de Minas — a mesma
    passagem que o PalcoPecas fazia para A Estrada, agora dentro desta cena.
 
-   CALIBRAÇÃO (26/09): a pista do palco antigo era 320vh ((5+1)*45vh+50vh) e
-   dava ~223px de leitura por peça (a proporção aprovada pós-D36). Com 11
-   peças na mesma proporção a pista pediria ~580vh — o dobro do orçamento de
-   altura (a página não pode crescer mais que 5%, medido a 1440×900). AQUI A
-   PISTA FICA EM 350vh: uma primeira tentativa em 380vh MEDIU 12.514px
-   (+7,2%, estourando o teto); 350vh entrega ~100px de leitura por peça —
-   MENOS DA METADE da calibração antiga. Decisão registrada, não escondida:
-   se o dono achar o ritmo apressado, o próximo ajuste é SÓ este número (a
-   fonte única de tempo é o `curso` calculado em `CarroOnze.tsx`, que lê a
-   altura real da pista — subir este valor sozinho já recalibra tudo, desde
-   que o orçamento de altura permita). */
+   CALIBRAÇÃO (26/09, revisão 2): a primeira versão usava 350vh e dava só
+   ~112px de leitura por peça (o teto de altura era 5%). O dono já tinha
+   reclamado desse ritmo apressado no palco antigo, e a calibração aprovada
+   era ~220px por peça. Com o teto agora em +15%, a pista sobe para 450vh —
+   dá ~200px por peça e ~250px de pausa com o carro inteiro aceso (as metas
+   em PIXELS ficam em `CarroOnze.tsx`, `META_PX_POR_PECA`/`META_PX_PAUSA`;
+   o JS lê a altura REAL da pista em tempo de execução e calcula as frações
+   sozinho — subir este número de vh recalibra tudo automaticamente, desde
+   que o orçamento de altura permita). MEDIDO com 450vh: 13.144px a
+   1440×900 (+12,6%), dentro do teto de +15%. */
 /* o parágrafo de transição herdado do PalcoPecas (ver `index.tsx`): fica no
    fluxo normal do capítulo, entre a esteira e a pista do carro */
 .carro-onze__abre {
@@ -2914,7 +2913,7 @@ body.is-abrindo {
 
 .carro-onze {
   position: relative;
-  height: 350vh;
+  height: 450vh;
 }
 .carro-onze__cena {
   position: sticky;
@@ -2922,9 +2921,49 @@ body.is-abrindo {
   height: 100vh;
   overflow: hidden;
   background: radial-gradient(ellipse at 50% 58%, color-mix(in srgb, var(--br-marca) 22%, var(--br-chao)) 0%, var(--br-chao) 62%);
+  /* A CENA INTEIRA ESMAECE NO FIM (achado da revisão): sem isto, o fundo
+     opaco desta `position: sticky` cobria a tela até o fim FÍSICO da
+     pista mesmo depois de todo o conteúdo interno (carro, guias) já ter
+     sumido — um platô de fundo sem nada, visto como "faixa preta" na
+     captura de revisão (q08 desktop). `--mapa` já mede exatamente esse
+     trecho final (a chegada do mapa real); reaproveitado aqui para que o
+     PRÓPRIO FUNDO ceda no mesmo ritmo em que o capítulo Estrada assume.
+     INVESTIGADO (revisão): no meio da transição aparece uma leve diferença
+     de tom onde `#cap-estrada` (fundo `#0f1f34`) já está fisicamente atrás
+     de `.cap--marcas` (`#0c1421`, onde esta cena mora) — CONFIRMADO com
+     `.carro-onze__cena` em `display:none`: a diferença de tom PERSISTE,
+     então não é esta cena que a cria. É a JORNADA TONAL entre capítulos
+     (ver `.cap--marcas`/`.cap--estrada`, "de quase-preto a azul profundo"),
+     um recurso do próprio sistema de capítulos, não um defeito desta cena.
+     Uma máscara de gradiente foi tentada e não mudou o resultado (a causa
+     está fora deste componente) — revertida para não somar complexidade
+     sem efeito.
+     TENTATIVAS DE FECHAR O ÚLTIMO QUADRO MOBILE (2 tentativas, sem
+     sucesso, spec manda parar aqui): no mobile sobra 1 quadro quase-vazio
+     na volta (y≈5947, legível ~0,16) bem no meio da explosão, onde o
+     carro já esmaeceu (`--X` alto) mas `--mapa` ainda não subiu o
+     bastante. Tentativa 1: reduzir o teto de queda desta opacidade de
+     0,94 para 0,80 — MEDIDO sem efeito no quadro (a opacity da CENA não
+     era a causa; o vão é de CONTEÚDO, não de fundo). Tentativa 2:
+     sincronizar `--mapa` para crescer na mesma janela de `--X` — MEDIDO
+     que isso corrigia o mobile mas introduzia 2 quadros vazios NOVOS no
+     desktop (que antes tinha zero) — reprovado e reverdito. Mantido em
+     0,94 (o valor que não regride o desktop); o quadro mobile residual
+     fica documentado, é pontual (1 de 86) e não é um corte de conteúdo —
+     é um vão de baixo contraste, dentro da margem que a spec aceita. */
+  opacity: calc(1 - var(--mapa, 0) * 0.94);
   display: grid;
   grid-template-rows: auto 1fr;
-  padding: clamp(18px, 4vh, 44px) var(--br-goteira) clamp(10px, 3vh, 30px);
+  /* GOTEIRA PRÓPRIA, MENOR (achado da revisão): com `var(--br-goteira)` de
+     até 210px de cada lado, a área que sobra para o SVG (viewBox 1000×660,
+     proporção 1,515) fica quase quadrada — MEDIDO a 1440×900: 792×734px
+     (proporção 1,08). Com `xMidYMid meet` o SVG encolhe pela largura, e o
+     carro sobra pequeno com faixas vazias em cima/embaixo. O lab não tinha
+     esse problema (cena isolada, sem a nav de capítulos concorrendo pela
+     goteira). Aqui a cena precisa da largura real da tela — a nav de
+     capítulos é `position: fixed` e não invade o conteúdo (`.cap-nav`), só
+     a goteira RESERVADA para ela é que sobrava demais. */
+  padding: clamp(18px, 4vh, 44px) clamp(20px, 4vw, 64px) clamp(10px, 3vh, 30px);
 }
 .carro-onze__topo {
   display: flex;
@@ -2937,11 +2976,18 @@ body.is-abrindo {
 .carro-onze__topo h3 {
   margin: 0;
   font-family: var(--font-display), sans-serif;
-  font-size: clamp(26px, 3.4vw, 46px);
+  /* NOWRAP (achado da revisão): sem isto o título quebra em 2 linhas no
+     desktop, o `.topo` cresce de altura e o primeiro círculo de peça
+     ("LANTERNAS", que fica bem no topo do SVG) vaza por cima do título —
+     o SVG tem `overflow: visible` de propósito (as guias/rótulos saem um
+     pouco da caixa), mas isso só funciona se o `.topo` tiver altura
+     estável. `clamp` mais estreito evita o texto forçar a quebra. */
+  font-size: clamp(20px, 2.6vw, 46px);
   line-height: 1;
   font-weight: 300;
   text-transform: uppercase;
   letter-spacing: 0.04em;
+  white-space: nowrap;
   color: var(--br-tinta);
   opacity: calc(var(--c, 0) * (1 - var(--fim, 0)));
 }
@@ -3011,21 +3057,13 @@ body.is-abrindo {
   min-height: 0;
   overflow: visible;
 }
-.carro-onze__linha {
-  fill: none;
-  stroke: color-mix(in srgb, var(--br-luz) 55%, var(--br-fraco));
-  stroke-width: 1.6;
-  stroke-linecap: round;
-  stroke-linejoin: round;
-  stroke-dasharray: 1;
-  stroke-dashoffset: calc(1 - var(--c, 0));
-}
-.carro-onze__linha--viva {
-  stroke: var(--br-luz);
-  stroke-width: 2;
-  opacity: var(--fim, 0);
-  filter: drop-shadow(0 0 6px color-mix(in srgb, var(--br-luz) 55%, transparent));
-}
+/* SÓ A FOTO (achado da revisão, 26/09): o desenho em linha manual
+   (.carro-onze__linha, .carro-onze__interno, .carro-onze__dentroVivo,
+   .carro-onze__chao) foi removido — ele duplicava, por cima da foto raio-X,
+   o sedã desenhado à mão que o lab mantém oculto
+   (`.d9 .vidro, .d9 .linha, .d9 .interno, .d9 .chao { display: none; }`).
+   `--c` e `--mont` continuam existindo (o relógio da cena), mas agora só
+   governam a própria foto. */
 .carro-onze__foto {
   opacity: calc(var(--c, 0) * (1 - var(--X, 0) * 1.4));
   filter: brightness(calc(0.5 + var(--mont, 0) * 0.25 + var(--fim, 0) * 0.35)) saturate(calc(0.8 + var(--fim, 0) * 0.3));
@@ -3038,32 +3076,6 @@ body.is-abrindo {
 }
 .carro-onze__guia {
   stroke-width: 1.4;
-}
-.carro-onze__interno {
-  fill: none;
-  stroke: color-mix(in srgb, var(--br-luz) 60%, var(--br-marca));
-  stroke-width: 1.1;
-  stroke-linecap: round;
-  stroke-linejoin: round;
-  stroke-dasharray: 1;
-  stroke-dashoffset: calc(1 - var(--mont, 0));
-  opacity: calc(0.25 + var(--mont, 0) * 0.6);
-}
-.carro-onze__interno.carro-onze__metal {
-  stroke: color-mix(in srgb, var(--br-luz) 80%, var(--br-tinta));
-}
-.carro-onze__interno.carro-onze__cheio {
-  fill: color-mix(in srgb, var(--br-luz) 8%, transparent);
-}
-.carro-onze__dentroVivo {
-  opacity: var(--fim, 0);
-  filter: drop-shadow(0 0 4px color-mix(in srgb, var(--br-luz) 60%, transparent));
-}
-.carro-onze__chao {
-  stroke: color-mix(in srgb, var(--br-luz) 18%, transparent);
-  stroke-width: 1;
-  stroke-dasharray: 6 8;
-  opacity: var(--c, 0);
 }
 .carro-onze__peca {
   opacity: calc(clamp(0, calc(var(--k, 0) * 3), 1) * (1 - clamp(0, calc((var(--x, 0) - 0.86) / 0.14), 1)));
@@ -3124,13 +3136,42 @@ body.is-abrindo {
 }
 .carro-onze__lista {
   display: none;
+  /* a lista (mobile) tambem esmaece com a explosao, como o SVG desktop —
+     sem isto (achado da revisao) ela ficava visivel inteira por cima do
+     mapa que se aproxima, e a area vazia dos itens ja apagados criava um
+     retangulo mais claro sobre o fundo (visto na captura, y5957 mobile). */
+  opacity: calc(1 - var(--X, 0) * 1.4);
 }
 /* a explosão: o carro se abre e as peças seguem para as regiões de Minas */
 .carro-onze__carroG {
   opacity: calc(1 - var(--X, 0) * 1.4);
 }
+/* GUIAS E VAGAS TAMBÉM SOMEM COM A EXPLOSÃO (achado da revisão): elas são
+   grupos IRMÃOS de `.carro-onze__carroG`, não filhos, então não herdavam
+   essa opacidade — sobravam riscos soltos na tela depois do carro já ter
+   sumido (visto na captura de revisão, q07/q08: linhas finas isoladas
+   sobre um fundo vazio, entre o fim da explosão e o mapa real assumir). */
+.carro-onze__guias,
+.carro-onze__pontos {
+  opacity: calc(1 - var(--X, 0) * 1.4);
+}
 .carro-onze__mapa {
   opacity: var(--mapa, 0);
+  /* O ELEMENTO-PONTE: `--ponte-dx/dy` (em unidades do viewBox) e
+     `--ponte-escala` são calculados em `CarroOnze.tsx` a cada quadro,
+     medindo o retângulo real de `.mapa-mg-ref` (o mapa do capítulo
+     Estrada). Interpolados por `--mapa` (0→1): a ponte é zero no início
+     (o mapa nasce onde sempre nasceu) e assume 100% do deslocamento
+     quando `--mapa` chega a 1 — o instante em que o mapa real assume,
+     tornando a troca invisível. `transform-box: view-box` porque o `<g>`
+     não tem geometria própria fora dos filhos. */
+  transform-box: view-box;
+  transform-origin: 0 0;
+  transform: translate(
+      calc(var(--ponte-dx, 0) * var(--mapa, 0) * 1px),
+      calc(var(--ponte-dy, 0) * var(--mapa, 0) * 1px)
+    )
+    scale(calc(1 + (var(--ponte-escala, 1) - 1) * var(--mapa, 0)));
 }
 .carro-onze__mgSil {
   fill: color-mix(in srgb, var(--br-marca) 55%, var(--br-chao));
@@ -3161,7 +3202,7 @@ body.is-abrindo {
 
 @media (max-width: 767px) {
   .carro-onze {
-    height: 340vh;
+    height: 420vh;
   }
   /* TENTATIVA 1 (encolher a cena via --X, técnica opção A do D-13) foi
      REVERTIDA: MEDIDO que ela abre um vazio visual pior — o mapa do carro
@@ -3191,6 +3232,9 @@ body.is-abrindo {
   .carro-onze__topo h3 {
     font-size: 24px;
     padding-right: 64px;
+    /* no mobile o titulo PODE quebrar linha — nowrap era so para o
+       desktop nao empurrar a altura do `.topo` (achado da revisao) */
+    white-space: normal;
   }
   .carro-onze__final {
     font-size: 22px;
@@ -3205,6 +3249,14 @@ body.is-abrindo {
     translate: 0 calc(var(--X, 0) * 14vh);
     scale: calc(1 + var(--X, 0) * 1.7);
     transform-origin: 50% 0;
+    /* O SVG TAMBÉM ESMAECE (achado da revisão): sem opacidade própria, ele
+       continuava ocupando espaço com `overflow: visible` sobre a área da
+       lista abaixo — a composição das duas camadas (SVG ainda "vivo" +
+       lista esmaecendo) criava um retângulo mais claro, com bordas retas,
+       exatamente do tamanho de `.carro-onze__lista` (achado via
+       elementFromPoint, y=5957: sem nenhum background nela, mas visível
+       mesmo assim — só podia ser a composição de camadas atrás). */
+    opacity: calc(1 - var(--X, 0) * 1.4);
   }
   .carro-onze__lista {
     display: grid;

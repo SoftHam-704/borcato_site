@@ -1,9 +1,24 @@
 import { useEffect, useRef } from "react";
 
 import { PONTOS as REGIOES } from "./MapaMinas";
-import { pecaDe } from "./PecaNoCursor";
 import carroRaioX from "@/assets/site/carro-raiox.webp";
 import carroRaioX800 from "@/assets/site/carro-raiox-800.webp";
+
+// AS 11 FOTOS DE PEÇA — direto pelo nome do arquivo (`rolamento.jpg`,
+// `suspensao.jpg`…), o mesmo glob de `PecaNoCursor.tsx`. NÃO uso `pecaDe()`
+// daquele componente: ele espera o ID da MARCA ("ntn-snr") e devolve o nome
+// do arquivo — aqui os `PECAS.id` abaixo JÁ SÃO o nome do arquivo. Passar
+// "rolamento" para `pecaDe()` (que procura em `DE_QUEM["rolamento"]`,
+// inexistente) sempre voltava `undefined` — as 11 miniaturas ficavam vazias
+// e nenhum portão pegava, porque `document.images` não lista `<image>` de
+// SVG (achado da revisão; corrigido também no portão, ver `portao.py`).
+const FOTOS_PECAS = import.meta.glob<{ default: string }>("../../assets/pecas/*.jpg", {
+  eager: true,
+});
+function fotoDaPeca(id: string): string | undefined {
+  const chave = Object.keys(FOTOS_PECAS).find((k) => k.endsWith(`/${id}.jpg`));
+  return chave ? FOTOS_PECAS[chave]?.default : undefined;
+}
 
 // A CENA-ASSINATURA — substitui o PalcoPecas (lab, item ★, âncora `#p9`).
 //
@@ -37,10 +52,19 @@ const SILHUETA_MINAS = (() => {
   return "M 42.6,6.0 L 61.5,8.4 L 67.8,13.9 L 78.0,15.8 L 85.9,21.8 L 91.4,26.9 L 94.0,34.7 L 88.3,42.6 L 82.0,47.2 L 80.4,55.5 L 85.1,62.4 L 79.6,67.5 L 73.3,71.2 L 67.0,78.1 L 59.9,81.8 L 54.4,82.8 L 46.5,86.0 L 39.5,83.2 L 33.9,79.5 L 28.4,72.1 L 18.2,61.1 L 11.9,55.5 L 6.0,52.7 L 7.2,46.3 L 12.7,41.7 L 18.2,39.8 L 26.1,37.0 L 33.9,32.4 L 38.7,25.0 L 44.2,18.6 L 46.5,12.1 Z";
 })();
 
-/** As 11 peças: id (bate com `pecaDe`), categoria, marca, vaga (ax,ay dentro
+/** As 11 peças: id (bate com o arquivo em `assets/pecas/`), categoria, marca, vaga (ax,ay dentro
  *  do carro), lado de onde a guia sai ("t" topo / "b" base) e a posição de
- *  partida (sx) na fileira externa. Dados portados do bloco `P` do lab
- *  (laboratorio/transicoes/index.html, bloco "O carro que as onze montam"). */
+ *  partida (sx) na fileira externa.
+ *
+ * `ax,ay` FORAM RECALIBRADAS (achado da revisão, 26/09): os valores do lab
+ * miravam o desenho em linha desenhado à mão (removido — ver comentário na
+ * `<image>` da foto), não a FOTO raio-X real. Sem o desenho por baixo, os
+ * pontos caíam "no ar". Recalibrado contra a foto (`carro-raiox.webp`,
+ * 1800×1005px) com uma grade de referência: medi em pixels da imagem onde
+ * cada componente aparece e converti para o viewBox 1000×660 pela mesma
+ * transformação de `<image x=58.7 y=83.4 width=893.8 height=498.7
+ * preserveAspectRatio="xMidYMid meet">` (escala ≈0,4962, sem letterbox
+ * vertical — a proporção da foto quase bate com a caixa). */
 const PECAS: {
   id: string;
   categoria: string;
@@ -50,72 +74,17 @@ const PECAS: {
   topo: boolean;
   sx: number;
 }[] = [
-  { id: "rolamento", categoria: "Rolamentos", marca: "NTN-SNR", ax: 753.6, ay: 277.5, topo: false, sx: 780 },
-  { id: "suspensao", categoria: "Suspensão", marca: "Pysko", ax: 241.9, ay: 201.5, topo: false, sx: 400 },
-  { id: "filtro", categoria: "Filtros", marca: "Filtros Brasil", ax: 715.6, ay: 197.1, topo: true, sx: 418 },
-  { id: "oleo", categoria: "Óleo lubrificante", marca: "Hexlub", ax: 653.1, ay: 251.6, topo: false, sx: 600 },
-  { id: "injetor", categoria: "Bicos injetores", marca: "Meca Brazil", ax: 755.9, ay: 152.4, topo: true, sx: 746 },
-  { id: "bomba", categoria: "Bombas d’água", marca: "Nidec", ax: 802.8, ay: 206.0, topo: true, sx: 910 },
-  { id: "motor", categoria: "Peças de motor", marca: "Sintech", ax: 738.0, ay: 174.7, topo: true, sx: 582 },
-  { id: "lanterna", categoria: "Lanternas", marca: "Cofran", ax: 130.2, ay: 143.4, topo: true, sx: 90 },
-  { id: "plastico", categoria: "Peças plásticas", marca: "VP", ax: 898.9, ay: 246.2, topo: false, sx: 930 },
-  { id: "quimica", categoria: "Química automotiva", marca: "Auto América", ax: 369.3, ay: 223.9, topo: true, sx: 254 },
-  { id: "spray", categoria: "Sprays", marca: "Mundial Prime", ax: 212.9, ay: 266.3, topo: false, sx: 170 },
-];
-
-/** O contorno externo do carro em raio-X, e o que existe dentro dele — os
- *  mesmos traços do lab (`TRACOS`, `INTERNOS`), aqui só a lista de `d`. Cada
- *  peça das onze indústrias aponta para um destes componentes. */
-const TRACOS = [
-  "M 72,302 L 62,258 Q 60,222 96,208 L 182,170 Q 205,158 232,150 L 330,126 Q 360,120 400,119 L 560,119 Q 600,120 628,134 L 712,184 Q 725,190 742,192 L 870,210 Q 915,217 932,240 L 942,272 Q 944,296 924,302 L 858,302 A 66 66 0 0 0 726,302 L 282,302 A 66 66 0 0 0 150,302 Z",
-  "M 238,184 L 272,154 Q 296,141 336,136 L 552,135 Q 590,136 612,149 L 672,184 Z",
-  "M 452,136 L 452,184", "M 238,192 L 690,192", "M 452,192 L 452,296", "M 672,192 L 688,294", "M 238,192 L 236,296",
-  "M 400,212 L 428,212", "M 610,212 L 638,212",
-  "M 900,222 Q 922,226 930,242 L 905,244 Q 896,236 900,222 Z", "M 66,236 L 92,222 L 96,244 L 68,252 Z",
-  "M 880,280 L 940,282", "M 64,282 L 120,284", "M 676,186 L 700,176 L 706,190 Z",
-  "M 740,306 A 52 52 0 1 0 844,306 A 52 52 0 1 0 740,306", "M 758,306 A 34 34 0 1 0 826,306 A 34 34 0 1 0 758,306",
-  "M 164,306 A 52 52 0 1 0 268,306 A 52 52 0 1 0 164,306", "M 182,306 A 34 34 0 1 0 250,306 A 34 34 0 1 0 182,306",
-];
-
-function mola(x: number, y1: number, y2: number, w: number) {
-  let d = `M ${x},${y1}`;
-  const n = 7;
-  const h = (y2 - y1) / n;
-  for (let i = 1; i <= n; i++) d += ` L ${(x + (i % 2 ? w : -w)).toFixed(1)},${(y1 + h * i).toFixed(1)}`;
-  return d;
-}
-function raios(cx: number, cy: number) {
-  let d = "";
-  for (let i = 0; i < 5; i++) {
-    const a = (i * 2 * Math.PI) / 5 - Math.PI / 2;
-    d += ` M ${(cx + Math.cos(a) * 11).toFixed(1)},${(cy + Math.sin(a) * 11).toFixed(1)} L ${(cx + Math.cos(a) * 32).toFixed(1)},${(cy + Math.sin(a) * 32).toFixed(1)}`;
-  }
-  return d;
-}
-function circ(cx: number, cy: number, r: number) {
-  return `M ${cx - r},${cy} A ${r} ${r} 0 1 0 ${cx + r},${cy} A ${r} ${r} 0 1 0 ${cx - r},${cy}`;
-}
-const INTERNOS: { classe: string; d: string }[] = [
-  { classe: "interno metal cheio", d: "M 738,204 L 852,204 L 852,246 L 738,246 Z" },
-  { classe: "interno metal", d: "M 752,204 L 752,192 L 772,192 L 772,204 M 780,204 L 780,192 L 800,192 L 800,204 M 808,204 L 808,192 L 828,192 L 828,204" },
-  { classe: "interno metal", d: "M 744,188 L 846,188 M 758,188 L 758,180 M 786,188 L 786,180 M 814,188 L 814,180 M 838,188 L 838,180" },
-  { classe: "interno metal", d: "M 750,246 L 846,246 L 838,264 L 758,264 Z" },
-  { classe: "interno metal", d: circ(868, 222, 10) + " " + circ(872, 244, 7) + " M 868,212 L 872,237 M 878,222 L 879,244" },
-  { classe: "interno metal cheio", d: "M 716,212 L 732,212 L 732,244 L 716,244 Z M 716,220 L 732,220 M 716,236 L 732,236" },
-  { classe: "interno", d: "M 904,236 L 916,236 L 916,278 L 904,278 Z M 904,246 L 916,246 M 904,256 L 916,256 M 904,266 L 916,266" },
-  { classe: "interno", d: "M 694,200 L 714,200 L 714,216 L 694,216 Z" },
-  { classe: "interno metal", d: circ(792, 306, 24) + " " + circ(792, 306, 8) + raios(792, 306) },
-  { classe: "interno metal", d: circ(216, 306, 24) + " " + circ(216, 306, 8) + raios(216, 306) },
-  { classe: "interno metal", d: "M 776,286 Q 792,276 808,286" },
-  { classe: "interno metal", d: "M 200,286 Q 216,276 232,286" },
-  { classe: "interno", d: mola(792, 212, 262, 7) + " M 788,206 L 796,206" },
-  { classe: "interno", d: mola(216, 206, 256, 7) + " M 212,200 L 220,200" },
-  { classe: "interno", d: "M 760,266 Q 740,288 700,292 L 300,292 M 190,292 L 96,292 M 190,286 L 300,286 L 300,298 L 190,298 Z" },
-  { classe: "interno", d: "M 240,306 L 768,306" },
-  { classe: "interno cheio", d: "M 292,262 L 392,262 Q 398,262 398,268 L 398,280 Q 398,286 392,286 L 292,286 Q 286,286 286,280 L 286,268 Q 286,262 292,262 Z" },
-  { classe: "interno", d: "M 520,240 L 520,200 Q 520,176 544,172 L 556,172 M 520,240 L 588,240 L 592,226 L 530,226" },
-  { classe: "interno", d: "M 330,240 L 330,196 Q 330,176 352,172 L 362,172 M 330,240 L 404,240 L 408,226 L 340,226" },
-  { classe: "interno", d: "M 636,196 Q 652,178 664,186 Q 668,200 650,208 Q 634,210 636,196 Z M 650,197 L 612,230" },
+  { id: "rolamento", categoria: "Rolamentos", marca: "NTN-SNR", ax: 748.7, ay: 420.8, topo: false, sx: 780 },
+  { id: "suspensao", categoria: "Suspensão", marca: "Pysko", ax: 240.1, ay: 353.8, topo: false, sx: 400 },
+  { id: "filtro", categoria: "Filtros", marca: "Filtros Brasil", ax: 649.5, ay: 296.8, topo: true, sx: 418 },
+  { id: "oleo", categoria: "Óleo lubrificante", marca: "Hexlub", ax: 709.0, ay: 321.6, topo: false, sx: 600 },
+  { id: "injetor", categoria: "Bicos injetores", marca: "Meca Brazil", ax: 719.0, ay: 289.3, topo: true, sx: 746 },
+  { id: "bomba", categoria: "Bombas d’água", marca: "Nidec", ax: 793.4, ay: 334.0, topo: true, sx: 910 },
+  { id: "motor", categoria: "Peças de motor", marca: "Sintech", ax: 694.2, ay: 311.7, topo: true, sx: 582 },
+  { id: "lanterna", categoria: "Lanternas", marca: "Cofran", ax: 123.5, ay: 281.9, topo: true, sx: 90 },
+  { id: "plastico", categoria: "Peças plásticas", marca: "VP", ax: 907.5, ay: 353.8, topo: false, sx: 930 },
+  { id: "quimica", categoria: "Química automotiva", marca: "Auto América", ax: 652.0, ay: 386.1, topo: true, sx: 254 },
+  { id: "spray", categoria: "Sprays", marca: "Mundial Prime", ax: 212.8, ay: 388.6, topo: false, sx: 170 },
 ];
 
 export function CarroOnze() {
@@ -125,6 +94,7 @@ export function CarroOnze() {
   const fotoRef = useRef<SVGImageElement>(null);
   const carroSvgRef = useRef<SVGSVGElement>(null);
   const silRef = useRef<SVGPathElement>(null);
+  const mapaGrupoRef = useRef<SVGGElement>(null);
   // um <g> por peça: guia, ponto+halo, a peça voadora e o rótulo
   const pecaRefs = useRef<(SVGGElement | null)[]>([]);
   const guiaRefs = useRef<(SVGPathElement | null)[]>([]);
@@ -184,17 +154,60 @@ export function CarroOnze() {
       });
     };
 
-    /* a linha do tempo da cena, amarrada à rolagem (mesma janela do lab):
-       0,00-0,10 o carro se desenha · 0,10-0,57 as onze peças chegam
-       0,57-0,68 PAUSA: o carro inteiro, aceso · 0,68-0,90 a explosão leva
-       as peças às regiões · 0,90-1,00 o mapa de Minas com as 8 acesas */
+    /* A LINHA DO TEMPO DA CENA — RECALIBRADA (achado da revisão, 26/09).
+       O dono já tinha reclamado do ritmo apressado do palco antigo, e a
+       calibração aprovada foi de UMA PEÇA POR GESTO (~220px de rolagem por
+       peça, ver `war-game/d36-recuperacao-final/outputs/fases/
+       f6-calibracao-palco.md`). A primeira versão desta cena dava só
+       ~112px/peça (00→11 entre y5642 e y6875, medido) — o teto de altura
+       era 5%. Com o teto agora em +15%, a pista pode crescer o bastante
+       para caber a calibração aprovada.
+       META: ~200px de leitura por peça e ~250px de pausa com o carro
+       inteiro aceso, ambos medidos contra a ALTURA REAL da pista (lida de
+       `pista.offsetHeight`, não um número fixo) — se a pista mudar de
+       altura no CSS, as frações abaixo se recalibram sozinhas. */
+    const curso = () => Math.max(1, pista.offsetHeight - window.innerHeight);
+    const META_PX_POR_PECA = 200;
+    const META_PX_PAUSA = 250;
+    // as frações de desenho/explosão/mapa mantêm a MESMA PROPORÇÃO relativa
+    // do lab entre si (10% desenho, 22% explosão, 10% mapa, de um total de
+    // 42% "não-chegada") — só a fatia de CHEGADA (as 11 peças) e a de PAUSA
+    // passam a ser dimensionadas em px reais, não em fração fixa do lab.
+    const fracaoChegada = () => Math.min(0.9, (META_PX_POR_PECA * PECAS.length) / curso());
+    const fracaoPausa = () => Math.min(0.3, META_PX_PAUSA / curso());
+    const fracaoRestante = () => Math.max(0, 1 - fracaoChegada() - fracaoPausa());
+    const PROP_DESENHO = 0.1 / 0.42;
+    const PROP_EXPLOSAO = 0.22 / 0.42;
+    const PROP_MAPA = 0.1 / 0.42;
+
     const aplicarQuadro = (e: number) => {
+      const restante = fracaoRestante();
+      const fDesenho = restante * PROP_DESENHO;
+      const fChegada = fracaoChegada();
+      const fPausa = fracaoPausa();
+      const fExplosao = restante * PROP_EXPLOSAO;
+      const fMapa = restante * PROP_MAPA;
+
+      const inicioChegada = fDesenho;
+      const fimChegada = inicioChegada + fChegada;
+      const inicioPausa = fimChegada;
+      const fimPausa = inicioPausa + fPausa;
+      const inicioExplosao = fimPausa;
+      const fimExplosao = inicioExplosao + fExplosao;
+      const inicioMapa = fimExplosao;
+
+      const porPeca = fChegada / PECAS.length;
+      // a janela de transição de CADA peça é mais larga que o passo entre
+      // elas (overlap parcial, mesma proporção do lab: 0,07 de janela para
+      // 0,0427 de passo — fator ≈1,64).
+      const janelaPeca = porPeca * 1.64;
+
       let acesas = 0;
       const litPorRegiao = [0, 0, 0, 0, 0, 0, 0, 0];
       PECAS.forEach((_p, i) => {
-        const k = cl((e - (0.1 + i * 0.042)) / 0.07);
+        const k = cl((e - (inicioChegada + i * porPeca)) / janelaPeca);
         const k2 = cl((k - 0.55) / 0.45);
-        const x = cl((e - (0.68 + i * 0.013)) / 0.15);
+        const x = cl((e - (inicioExplosao + i * (fExplosao / PECAS.length / 3))) / (fExplosao * 0.7));
         const g = pecaRefs.current[i];
         g?.style.setProperty("--k", k.toFixed(4));
         g?.style.setProperty("--k2", k2.toFixed(4));
@@ -209,21 +222,80 @@ export function CarroOnze() {
       });
       regRefs.current.forEach((g, i) => g?.style.setProperty("--lit", litPorRegiao[i]!.toFixed(4)));
 
-      cena.style.setProperty("--mont", cl((e - 0.08) / 0.5).toFixed(4));
-      cena.style.setProperty("--X", cl((e - 0.68) / 0.12).toFixed(4));
-      cena.style.setProperty("--mapa", cl((e - 0.7) / 0.14).toFixed(4));
-      cena.style.setProperty("--rumo", cl((e - 0.8) / 0.08).toFixed(4));
-      cena.style.setProperty("--nomes", cl((e - 0.88) / 0.08).toFixed(4));
-      cena.style.setProperty("--c", cl(e / 0.1).toFixed(4));
-      cena.style.setProperty("--fim", cl((e - 0.57) / 0.06).toFixed(4));
+      cena.style.setProperty("--mont", cl((e - fDesenho * 0.8) / (fChegada + fPausa * 0.5)).toFixed(4));
+      cena.style.setProperty("--X", cl((e - inicioExplosao) / fExplosao).toFixed(4));
+      cena.style.setProperty("--mapa", cl((e - (inicioExplosao + fExplosao * 0.15)) / (fExplosao * 0.85 + fMapa * 0.3)).toFixed(4));
+      cena.style.setProperty("--rumo", cl((e - (inicioExplosao + fExplosao * 0.7)) / (fExplosao * 0.3 + fMapa * 0.2)).toFixed(4));
+      cena.style.setProperty("--nomes", cl((e - inicioMapa) / fMapa).toFixed(4));
+      cena.style.setProperty("--c", cl(e / fDesenho).toFixed(4));
+      cena.style.setProperty("--fim", cl((e - inicioPausa) / (fPausa * 0.55)).toFixed(4));
       if (contaRef.current) contaRef.current.textContent = String(acesas).padStart(2, "0");
 
       // O CONTRATO: `--entrega` fica em 0 durante toda a cena e sobe de 0 a 1
-      // SÓ na explosão para o mapa (mesma janela de `--X`/`--mapa`: 0,68→1),
-      // chegando a 1 quando a cena termina — é o relógio que `Capitulos.tsx`
-      // e `MapaMinas.tsx` leem na raiz para abrir o capítulo A Estrada.
-      const entrega = cl((e - 0.68) / 0.32);
+      // SÓ na explosão para o mapa (mesma janela de `--X`), chegando a 1
+      // quando a cena termina — é o relógio que `Capitulos.tsx` e
+      // `MapaMinas.tsx` leem na raiz para abrir o capítulo A Estrada.
+      const entrega = cl((e - inicioExplosao) / (fExplosao + fMapa));
       document.documentElement.style.setProperty("--entrega", entrega.toFixed(4));
+
+      // O ELEMENTO-PONTE (achado da revisão): sem isto, a passagem para A
+      // Estrada cortava a tela ao meio — metade mapa da cena do carro,
+      // metade capítulo Estrada, com uma linha dura entre os dois. Em vez
+      // de deixar os dois mapas em posições independentes, o mapa da cena
+      // do carro é ANIMADO até terminar EXATAMENTE no retângulo em que o
+      // `.mapa-mg-ref` (o mapa real do capítulo Estrada, que nunca recebe
+      // transform) vai aparecer — medido em tempo de execução a cada
+      // quadro. Quando os dois coincidem, a troca não tem corte: o mapa da
+      // cena esmaece exatamente onde o real assume.
+      const mapaReal = document.querySelector<HTMLElement>(".cap--estrada .mapa-mg-ref");
+      const grupoMapa = mapaGrupoRef.current;
+      if (mapaReal && grupoMapa) {
+        const alvo = mapaReal.getBoundingClientRect();
+        // o retângulo ATUAL do grupo do mapa dentro do SVG do carro, sem a
+        // ponte ainda aplicada (zera a transform pontual pra medir o pouso
+        // "neutro" antes de mover) — como o grupo só tem opacity/translate
+        // por CSS var, o rect nativo já reflete a posição não-transladada
+        // do SVG (viewBox), então convertemos via matriz do próprio SVG.
+        const svg = carroSvgRef.current;
+        if (svg && alvo.width > 0 && alvo.height > 0) {
+          const pt = svg.createSVGPoint();
+          const ctm = grupoMapa.getScreenCTM();
+          if (ctm) {
+            // o retângulo do <g> no espaço de TELA (considera viewBox e
+            // qualquer transform herdado, mas NÃO a translate/scale da
+            // ponte — aplicados via CSS custom properties, que não entram
+            // no CTM do SVG)
+            const bbox = grupoMapa.getBBox();
+            pt.x = bbox.x;
+            pt.y = bbox.y;
+            const p1 = pt.matrixTransform(ctm);
+            pt.x = bbox.x + bbox.width;
+            pt.y = bbox.y + bbox.height;
+            const p2 = pt.matrixTransform(ctm);
+            const atualLeft = Math.min(p1.x, p2.x);
+            const atualTop = Math.min(p1.y, p2.y);
+            const atualWidth = Math.abs(p2.x - p1.x) || 1;
+            const atualHeight = Math.abs(p2.y - p1.y) || 1;
+
+            const escala = Math.min(alvo.width / atualWidth, alvo.height / atualHeight);
+            const alvoCx = alvo.left + alvo.width / 2;
+            const alvoCy = alvo.top + alvo.height / 2;
+            const atualCx = atualLeft + atualWidth / 2;
+            const atualCy = atualTop + atualHeight / 2;
+            // translate em PIXELS DE TELA — mas o <g> vive dentro do SVG,
+            // então convertemos o deslocamento de tela para unidades do
+            // viewBox dividindo pela escala do CTM (a mesma em x e y aqui,
+            // porque não há distorção não-uniforme entre os dois SVGs)
+            const escalaCtm = Math.hypot(ctm.a, ctm.b) || 1;
+            const dxViewbox = (alvoCx - atualCx) / escalaCtm;
+            const dyViewbox = (alvoCy - atualCy) / escalaCtm;
+
+            grupoMapa.style.setProperty("--ponte-dx", dxViewbox.toFixed(2));
+            grupoMapa.style.setProperty("--ponte-dy", dyViewbox.toFixed(2));
+            grupoMapa.style.setProperty("--ponte-escala", escala.toFixed(4));
+          }
+        }
+      }
     };
 
     if (reduzido.matches) {
@@ -239,9 +311,8 @@ export function CarroOnze() {
     let pedido = 0;
     const quadro = () => {
       pedido = 0;
-      const curso = Math.max(1, pista.offsetHeight - window.innerHeight);
       const r = pista.getBoundingClientRect();
-      const e = cl(-r.top / curso);
+      const e = cl(-r.top / curso());
       aplicarQuadro(e);
     };
     const pedir = () => {
@@ -302,6 +373,11 @@ export function CarroOnze() {
             </mask>
           </defs>
 
+          {/* SÓ A FOTO (achado da revisão): o desenho em linha à mão
+              (TRACOS/INTERNOS/vidro/chão) voltava por cima do raio-X real —
+              no lab esses traços ficam ocultos (`.d9 .vidro, .d9 .linha,
+              .d9 .interno, .d9 .chao { display: none; }`), porque a imagem
+              JÁ é o carro. Removidos daqui: nada de desenho manual duplicado. */}
           <g className="carro-onze__carroG">
             <image
               ref={fotoRef}
@@ -314,33 +390,15 @@ export function CarroOnze() {
               mask="url(#carro-onze-fade)"
               preserveAspectRatio="xMidYMid meet"
             />
-            <g transform="translate(0 150)">
-              <path className="carro-onze__chao" d="M 30,362 L 970,362" />
-              <g>
-                {TRACOS.map((d, i) => (
-                  <path key={i} className="carro-onze__linha" d={d} pathLength={1} />
-                ))}
-              </g>
-              <g>
-                {INTERNOS.map((it, i) => (
-                  <path key={i} className={`carro-onze__${it.classe.replace(/ /g, " carro-onze__")}`} d={it.d} pathLength={1} />
-                ))}
-              </g>
-              <g className="carro-onze__vivos">
-                {TRACOS.map((d, i) => (
-                  <path key={i} className="carro-onze__linha carro-onze__linha--viva" d={d} pathLength={1} />
-                ))}
-              </g>
-              <g className="carro-onze__dentroVivo">
-                {INTERNOS.map((it, i) => (
-                  <path key={i} className={`carro-onze__${it.classe.replace(/ /g, " carro-onze__")}`} d={it.d} pathLength={1} />
-                ))}
-              </g>
-            </g>
           </g>
 
-          {/* o mapa de Minas — mesma silhueta e regiões de MapaMinas.tsx */}
-          <g className="carro-onze__mapa">
+          {/* o mapa de Minas — mesma silhueta e regiões de MapaMinas.tsx.
+              `--ponte-dx/dy/escala` (calculadas em tempo real, ver
+              `aplicarQuadro`) movem este mapa até coincidir com o retângulo
+              onde `.mapa-mg-ref` (o mapa real do capítulo Estrada) vai
+              aparecer — o elemento-ponte que evita o corte seco entre as
+              duas cenas. */}
+          <g className="carro-onze__mapa" ref={mapaGrupoRef}>
             <path ref={silRef} className="carro-onze__mgSil" d={SILHUETA_MINAS} />
             <g>
               {REGIOES.map((r, i) => (
@@ -359,8 +417,13 @@ export function CarroOnze() {
             </g>
           </g>
 
-          {/* as guias, do lugar de partida até a vaga dentro do carro */}
-          <g className="carro-onze__guias">
+          {/* as guias, do lugar de partida até a vaga dentro do carro.
+              `carro-onze__desk`: SÓ DESKTOP (achado da revisão) — o
+              viewBox mobile é um RECORTE (70 160 860 340), e as posições de
+              partida (sx/sy, calculadas para o "varal" externo desktop)
+              ficam fora dele; sem esconder, viravam linhas soltas saindo da
+              tela no mobile (visto na captura de revisão). */}
+          <g className="carro-onze__guias carro-onze__desk">
             {PECAS.map((p, i) => {
               const sy = p.topo ? 92 : 566;
               const ey = p.topo ? sy + 44 : sy - 44;
@@ -379,7 +442,9 @@ export function CarroOnze() {
             })}
           </g>
 
-          {/* a vaga (ponto + halo) dentro do carro, onde a peça pousa */}
+          {/* a vaga (ponto + halo) dentro do carro, onde a peça pousa — esta
+              FICA no mobile (as vagas em si estão dentro do recorte, só as
+              guias e a fileira externa não). */}
           <g className="carro-onze__pontos">
             {PECAS.map((p) => (
               <g key={p.id}>
@@ -394,7 +459,7 @@ export function CarroOnze() {
             {PECAS.map((p, i) => {
               const sy = p.topo ? 92 : 566;
               const R = 44;
-              const src = pecaDe(p.id);
+              const src = fotoDaPeca(p.id);
               return (
                 <g
                   key={p.id}
@@ -434,7 +499,7 @@ export function CarroOnze() {
             (que não cabem em tela estreita) — ver `.carro-onze__lista`. */}
         <ul className="carro-onze__lista">
           {PECAS.map((p, i) => {
-            const src = pecaDe(p.id);
+            const src = fotoDaPeca(p.id);
             return (
               <li
                 key={p.id}
