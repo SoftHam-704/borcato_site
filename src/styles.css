@@ -1259,9 +1259,18 @@
   text-align: left;
 }
 .fecho__retrato {
+  /* A CAIXA TEM A LARGURA DA FOTO (27/09). Antes a caixa era de 680px e a
+     foto, presa em 67svh com `contain`, ficava mais estreita e centrada
+     dentro dela: o rótulo, posicionado pela CAIXA, saía da foto em 1440
+     (auditoria taste/d_17). Agora a largura é a que a foto realmente ocupa
+     — a menor entre a caixa antiga e 67svh na proporção dela (780×936) — e
+     a margem a centraliza onde ela já estava. Mesma foto, mesmo lugar. */
+  --caixa: min(100%, 680px);
+  --foto-l: min(var(--caixa), calc(67svh * 780 / 936));
   position: relative;
   align-self: end;
-  width: min(100%, 680px);
+  width: var(--foto-l);
+  margin-left: calc((var(--caixa) - var(--foto-l)) / 2);
   opacity: clamp(0, calc(var(--fecho-t) / 0.35), 1);
   transform: translateY(calc((1 - clamp(0, calc(var(--fecho-t) / 0.35), 1)) * 90px));
   clip-path: inset(0 0 calc((1 - clamp(0, calc(var(--fecho-t) / 0.35), 1)) * 12%) 0);
@@ -1270,15 +1279,16 @@
 .fecho__retrato img {
   display: block;
   width: 100%;
-  max-height: 67svh;
-  object-fit: contain;
-  object-position: center bottom;
+  height: auto;
   filter: saturate(0.88) contrast(1.04);
 }
+/* O RÓTULO NO ALTO À DIREITA, sobre o fundo preto do retrato. Embaixo à
+   esquerda ele encostava na camisa (em 375 caía em cima dela e sumia); no
+   alto à direita, em qualquer largura e em qualquer recorte, é fundo. */
 .fecho__retrato span {
   position: absolute;
-  left: 5%;
-  bottom: 3%;
+  top: 4%;
+  right: 5%;
   color: color-mix(in srgb, var(--br-luz) 75%, transparent);
   font-size: 10px;
   letter-spacing: 0.24em;
@@ -1307,6 +1317,12 @@
 .fecho__vias li {
   justify-items: start;
 }
+/* nome e descritor em duas linhas próprias: em uma só, "MARKETING" descia
+   sozinho (auditoria taste/d_17) */
+.fecho__assinatura span {
+  display: block;
+  text-wrap: balance;
+}
 .fecho__assinatura {
   opacity: clamp(0, calc((var(--fecho-t) - 0.82) / 0.18), 1);
   transform: translateY(calc((1 - clamp(0, calc((var(--fecho-t) - 0.82) / 0.18), 1)) * 18px));
@@ -1316,16 +1332,35 @@
   .fecho {
     grid-template-columns: 1fr;
     align-items: start;
+    /* com a foto menor o painel sobra dentro dos 100svh: a sobra vai para
+       CIMA da foto, não entre ela e a chamada — o bloco assenta na base e o
+       rosto desce para dentro da última tela */
+    align-content: end;
     gap: 18px;
     min-height: 100svh;
     padding-block: clamp(32px, 6vh, 64px);
   }
+  /* A ÚLTIMA TELA PRECISA DO ROSTO (27/09). Com 52svh e a foto inteira, em
+     375×812 o fim da página mostrava o Fábio cortado no pescoço — o rosto
+     ficava acima da tela, e embaixo sobravam camisa e contatos. A foto agora
+     recorta pelo alto (`cover` puxando o rosto) e fica em 30svh: MEDIDO, com
+     38svh o topo dela ainda ficava 82px acima da tela em 375×812, e o rosto
+     é justamente o topo. Rosto, chamada e contatos cabem juntos na última
+     tela. A página encolhe, não cresce. */
   .fecho__retrato {
-    width: min(100%, 440px);
+    --caixa: min(100%, 440px);
+    --foto-l: var(--caixa);
     margin-inline: auto;
   }
   .fecho__retrato img {
-    max-height: 52svh;
+    height: 30svh;
+    object-fit: cover;
+    object-position: 50% 10%;
+  }
+  /* o respiro antes da assinatura cai à metade: é ele que empurrava o rosto
+     para fora da última tela (o corpo da letra não muda) */
+  .fecho__assinatura {
+    margin-top: clamp(24px, 4vh, 40px);
   }
   .fecho__conteudo {
     width: min(100%, 390px);
@@ -2225,23 +2260,10 @@ body.is-abrindo {
   }
 }
 
-/* ── A FOTO VIVA ─────────────────────────────────────────────────────────────
-   O canvas cobre a foto parada assim que os cinco quadros carregam. A parada
-   continua embaixo como piso: sem JS, com reduced-motion ou se um quadro
-   falhar, o hero nao fica vazio. */
-.capsula__viva {
-  position: absolute;
-  z-index: 1;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-  display: block;
-  opacity: 0;
-  transition: opacity 0.5s ease;
-}
-.capsula__viva.is-pronta {
-  opacity: 1;
-}
+/* ── A FOTO VIVA SAIU (27/09) ────────────────────────────────────────────────
+   O canvas que virava o rosto do Fabio misturava duas poses e mostrava dois
+   rostos no meio da troca. A capsula ficou com a foto parada
+   (`.capsula__base`); as regras do canvas sairam junto com ele. */
 
 /* ═══════════════════════════════════════════════════════════════════════════
    O TEXTO QUE SE ESCREVE
@@ -3467,6 +3489,10 @@ body.is-abrindo {
   margin: clamp(22px, 2.8vw, 34px) 0 0;
   font-size: clamp(0.95rem, 1.4vmin, 1.1rem);
   color: var(--br-fraco);
+  /* em 1280 e 1440 a coluna quebrava em "…Do sell in ao / giro.", com o
+     "giro." sozinho (auditoria dna/02-casa). Equilibrar as linhas resolve
+     sem mexer no corpo da letra */
+  text-wrap: balance;
 }
 .casa__bio i {
   font-style: italic;
@@ -3734,19 +3760,36 @@ body.is-abrindo {
   letter-spacing: -0.05em;
 }
 
-/* O H fica ATRÁS e à esquerda: o plano de fundo, mais apagado */
+/* AS DUAS CORES DO NOME (27/09). H. e M. são Henrique e Mateus: nenhum dos
+   dois pode parecer apagado. MEDIDO sobre o chão do capítulo (#122a44): o H
+   era a marca a 26% (1,20:1, quase sumia) e o M a marca cheia (2,14:1) — as
+   letras sólidas terminavam MAIS FRACAS que o traço claro que as escreve.
+   Agora as duas são a marca clareada pela luz, as duas acima de 3:1, e os
+   planos continuam separados pela claridade: o H de trás mais baixo, o M da
+   frente mais alto. As mesmas duas cores são o destino do traço que as
+   escreve (PASSAGEM C, `.estrada-escreve__letra`): o traço engrossa tomando
+   a cor da letra, e a letra sólida nunca chega mais fraca que ele.
+     --nome-h  luz 40% + marca  →  3,9:1
+     --nome-m  luz 75% + marca  →  6,5:1 */
+.cap--nome,
+.estrada-escreve {
+  --nome-h: color-mix(in srgb, var(--br-luz) 40%, var(--br-marca));
+  --nome-m: color-mix(in srgb, var(--br-luz) 75%, var(--br-marca));
+}
+
+/* O H fica ATRÁS e à esquerda: o plano de fundo, mais baixo em claridade */
 .nome__letra--h {
   /* mais tarde (0,25) e de mais longe (18%): as letras ASSENTAM, nao chegam */
   --t: clamp(0, calc((var(--cap-entra, 1) - 0.35) / 0.55), 1);
   translate: calc(-26% - (1 - var(--t)) * 18%) 0;
-  color: color-mix(in srgb, var(--br-marca) 26%, transparent);
+  color: var(--nome-h);
   opacity: var(--t);
 }
 /* O M vem À FRENTE e à direita: o plano de cima, cheio */
 .nome__letra--m {
   --t: clamp(0, calc((var(--cap-entra, 1) - 0.42) / 0.58), 1);
   translate: calc(26% + (1 - var(--t)) * 18%) 0;
-  color: var(--br-marca);
+  color: var(--nome-m);
   opacity: var(--t);
 }
 
@@ -4945,6 +4988,10 @@ body::-webkit-scrollbar {
 .estrada-escreve__letra {
   /* ENGROSSA do traço da rota até a haste da fonte, e só então cede */
   --engrossa: clamp(0, calc(var(--vira, 0) / 0.6), 1);
+  /* e TOMA A COR da letra sólida na primeira metade do engrossar: quando a
+     letra sólida começa a aparecer (0,3), o traço já tem a cor dela — e,
+     com opacidade ≤ 0,9, nunca fica mais claro que o destino */
+  --tinge: clamp(0, calc(var(--vira, 0) / 0.3), 1);
   stroke-width: calc(
     var(--traco, 2px) + (var(--haste, 40px) - var(--traco, 2px)) * var(--engrossa)
   );
@@ -4956,10 +5003,20 @@ body::-webkit-scrollbar {
 .estrada-escreve__letra--h {
   stroke-dashoffset: calc(1 - var(--h, 0));
 }
-.estrada-escreve__letra--m,
-.estrada-escreve__letra--p {
-  /* o M é o plano da frente, cheio: o traço dele vai tomando a cor da marca */
-  stroke: color-mix(in srgb, var(--br-marca) calc(var(--engrossa) * 100%), var(--br-luz));
+/* A COR DO TRAÇO QUE VIRA LETRA. O seletor leva `.estrada-escreve` na frente
+   de propósito: MEDIDO, `.estrada-escreve path` (classe + elemento) vencia a
+   classe sozinha, e a mistura para a cor da marca que existia aqui para o M
+   NUNCA pintava — o traço cruzava sempre na luz cheia, e o H e o M sólidos
+   chegavam mais fracos que ele.
+   O H engrossa tomando a cor da letra sólida dele (`--nome-h`, em O Nome) */
+.estrada-escreve .estrada-escreve__letra--h {
+  stroke: color-mix(in srgb, var(--nome-h) calc(var(--tinge) * 100%), var(--br-luz));
+}
+/* o M é o plano da frente, cheio: o traço dele vai tomando a cor do M sólido
+   (a marca clareada, `--nome-m`), e não a marca pura, mais fraca */
+.estrada-escreve .estrada-escreve__letra--m,
+.estrada-escreve .estrada-escreve__letra--p {
+  stroke: color-mix(in srgb, var(--nome-m) calc(var(--tinge) * 100%), var(--br-luz));
 }
 .estrada-escreve__letra--m {
   stroke-dashoffset: calc(1 - var(--m, 0));
