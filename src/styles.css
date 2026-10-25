@@ -40,6 +40,11 @@
      eixos de largura e italico fazendo o trabalho que a segunda fazia. */
   --font-display: "Archivo", ui-sans-serif, system-ui, sans-serif;
   --font-sans: "Archivo", ui-sans-serif, system-ui, sans-serif;
+  /* Era usada em 3 lugares e nunca definida: caia na mono do SO (Consolas
+     no Windows, Menlo no macOS, DejaVu no Linux). As specs das 11 pecas,
+     as coordenadas do hero e os badges de rodovia mudavam de fonte
+     conforme a maquina. */
+  --font-mono: "Roboto Mono", ui-monospace, "SFMono-Regular", Consolas, monospace;
 }
 
 :root {
@@ -96,472 +101,7 @@
     font-family: var(--font-display);
   }
 
-  .hero-overlay {
-    background: linear-gradient(
-      to top,
-      var(--color-ink) 0%,
-      color-mix(in oklab, var(--color-ink) 55%, transparent) 45%,
-      color-mix(in oklab, var(--color-ink) 25%, transparent) 100%
-    );
-  }
-
-  .grid-lines {
-    background-image: linear-gradient(
-        to right,
-        color-mix(in oklab, var(--color-ink-foreground) 5%, transparent) 1px,
-        transparent 1px
-      ),
-      linear-gradient(
-        to bottom,
-        color-mix(in oklab, var(--color-ink-foreground) 5%, transparent) 1px,
-        transparent 1px
-      );
-    background-size: 56px 56px;
-  }
-
-  .grid-lines-light {
-    background-image: linear-gradient(
-        to right,
-        color-mix(in oklab, var(--color-primary) 6%, transparent) 1px,
-        transparent 1px
-      ),
-      linear-gradient(
-        to bottom,
-        color-mix(in oklab, var(--color-primary) 6%, transparent) 1px,
-        transparent 1px
-      );
-    background-size: 56px 56px;
-  }
-
-  .reveal {
-    opacity: 0;
-    transform: translateY(22px);
-    transition:
-      opacity 0.7s cubic-bezier(0.32, 0.72, 0, 1),
-      transform 0.7s cubic-bezier(0.32, 0.72, 0, 1);
-  }
-
-  .reveal.is-visible {
-    opacity: 1;
-    transform: none;
-  }
-
-  .glow-blue {
-    box-shadow: 0 12px 40px -12px color-mix(in oklab, var(--color-primary) 55%, transparent);
-  }
 }
-
-@layer utilities {
-  /* ---------- Preloader ---------- */
-  body.is-loading {
-    overflow: hidden;
-  }
-
-  .preloader {
-    position: fixed;
-    inset: 0;
-    z-index: 100;
-    display: grid;
-    place-items: center;
-  }
-
-  .preloader-panel {
-    position: absolute;
-    top: 0;
-    bottom: 0;
-    width: 25.2%;
-    background: var(--color-ink);
-    transform: translateY(0);
-    transition: transform 0.9s cubic-bezier(0.76, 0, 0.24, 1);
-  }
-  .preloader-panel:nth-child(1) { left: 0; }
-  .preloader-panel:nth-child(2) { left: 25%; transition-delay: 0.08s; }
-  .preloader-panel:nth-child(3) { left: 50%; transition-delay: 0.16s; }
-  .preloader-panel:nth-child(4) { left: 74.8%; transition-delay: 0.24s; }
-
-  .preloader.is-leaving .preloader-panel {
-    transform: translateY(-101%);
-  }
-
-  .preloader-content {
-    position: relative;
-    z-index: 1;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    transition:
-      opacity 0.4s ease,
-      transform 0.6s cubic-bezier(0.76, 0, 0.24, 1);
-  }
-
-  .preloader.is-leaving .preloader-content {
-    opacity: 0;
-    transform: translateY(-28px);
-  }
-
-  /* ---------- Hero ---------- */
-  .hero {
-    --mx: 0;
-    --my: 0;
-    --sy: 0;
-  }
-
-  .hero-media {
-    transform: translate3d(calc(var(--mx) * -18px), calc(var(--my) * -18px + var(--sy) * 60px), 0)
-      scale(1.06);
-    transition: transform 0.6s cubic-bezier(0.22, 1, 0.36, 1);
-    will-change: transform;
-  }
-
-  .hero-vignette {
-    background: radial-gradient(
-      120% 90% at 70% 20%,
-      color-mix(in oklab, var(--color-primary) 22%, transparent) 0%,
-      transparent 60%
-    );
-  }
-
-  .line-mask {
-    display: block;
-    overflow: hidden;
-    padding-top: 0.12em;
-    padding-bottom: 0.06em;
-    margin-top: -0.12em;
-    margin-bottom: -0.06em;
-  }
-
-  .line-in {
-    display: block;
-    padding-top: 0.02em;
-    transform: translateY(110%);
-    animation: line-up 1.05s cubic-bezier(0.16, 1, 0.3, 1) forwards;
-    animation-delay: var(--d, 0s);
-  }
-
-  @keyframes line-up {
-    to {
-      transform: translateY(0);
-    }
-  }
-
-  .hero-in {
-    opacity: 0;
-    transform: translateY(18px);
-    animation: hero-fade 0.9s cubic-bezier(0.16, 1, 0.3, 1) forwards;
-    animation-delay: var(--d, 0s);
-  }
-
-  @keyframes hero-fade {
-    to {
-      opacity: 1;
-      transform: none;
-    }
-  }
-
-  .hero-stroke {
-    color: transparent;
-    -webkit-text-stroke: 1.5px color-mix(in oklab, var(--color-ink-foreground) 55%, transparent);
-  }
-
-  /* ---------- Marquee ---------- */
-  .marquee {
-    overflow: hidden;
-  }
-
-  .marquee-track {
-    display: flex;
-    width: max-content;
-    animation: marquee-scroll 34s linear infinite;
-  }
-
-  .marquee-group {
-    display: flex;
-    gap: 1.5rem;
-    padding-right: 1.5rem;
-  }
-
-  @keyframes marquee-scroll {
-    to {
-      transform: translateX(-50%);
-    }
-  }
-
-  /* ---------- Stacked scroll sections ---------- */
-  .stack {
-    position: relative;
-    background: oklch(0.08 0.02 264);
-    perspective: 1400px;
-    perspective-origin: 50% 0%;
-  }
-
-  .stack-item {
-    position: relative;
-  }
-
-  .stack-inner {
-    --p: 0;
-    --e: 1;
-    position: sticky;
-    top: 0;
-    overflow: clip;
-    transform-style: preserve-3d;
-    border-radius: calc((1 - var(--e)) * 14rem + 1.75rem)
-      calc((1 - var(--e)) * 14rem + 1.75rem) 0 0;
-    transform: translateY(calc(var(--p) * -3.5rem)) scale(calc(1 - var(--p) * 0.09))
-      rotateX(calc(var(--p) * 7deg));
-    transform-origin: 50% 0%;
-    box-shadow:
-      0 -1px 0 0 color-mix(in oklab, var(--color-primary) 45%, transparent),
-      0 -50px 90px -40px oklch(0 0 0 / 0.7);
-    will-change: transform, border-radius;
-  }
-
-  /* content lags slightly behind the panel for depth */
-  .stack-content {
-    position: relative;
-    z-index: 1;
-    transform: translateY(calc((1 - var(--e)) * 3rem)) scale(calc(1 - (1 - var(--e)) * 0.02));
-    opacity: calc(0.25 + var(--e) * 0.75);
-  }
-
-  /* luminous leading edge that traces the curve on entry */
-  .stack-edge {
-    position: absolute;
-    inset: 0 0 auto 0;
-    height: 2px;
-    z-index: 2;
-    pointer-events: none;
-    opacity: calc(1 - var(--p));
-    background: linear-gradient(
-      90deg,
-      transparent 0%,
-      color-mix(in oklab, var(--color-primary) 90%, white 10%) 25%,
-      color-mix(in oklab, var(--color-primary) 60%, white 40%) 50%,
-      color-mix(in oklab, var(--color-primary) 90%, white 10%) 75%,
-      transparent 100%
-    );
-    filter: blur(0.3px);
-  }
-
-  .stack-shade {
-    position: absolute;
-    inset: 0;
-    z-index: 3;
-    pointer-events: none;
-    background: radial-gradient(
-        120% 80% at 50% 100%,
-        color-mix(in oklab, var(--color-primary) 26%, transparent),
-        transparent 65%
-      ),
-      oklch(0.06 0.02 264);
-    opacity: calc(var(--p) * 0.62);
-  }
-
-  @media (max-width: 640px) {
-    .stack-inner {
-      border-radius: calc((1 - var(--e)) * 6rem + 1.25rem) calc((1 - var(--e)) * 6rem + 1.25rem) 0 0;
-      transform: translateY(calc(var(--p) * -1.5rem)) scale(calc(1 - var(--p) * 0.05));
-    }
-  }
-
-  /* ---------- Scroll rail ---------- */
-  .scroll-rail {
-    position: fixed;
-    right: 1.5rem;
-    top: 50%;
-    z-index: 40;
-    display: none;
-    translate: 0 -50%;
-    flex-direction: column;
-    align-items: flex-end;
-    gap: 0.9rem;
-    mix-blend-mode: difference;
-    color: white;
-  }
-
-  @media (min-width: 1280px) {
-    .scroll-rail {
-      display: flex;
-    }
-  }
-
-  .scroll-rail-count {
-    font-family: var(--font-display), sans-serif;
-    font-size: 0.75rem;
-    letter-spacing: 0.18em;
-  }
-
-  .scroll-rail-count i {
-    font-style: normal;
-    opacity: 0.45;
-  }
-
-  .scroll-rail-track {
-    position: relative;
-    width: 1px;
-    height: 6rem;
-    background: oklch(1 0 0 / 0.25);
-    overflow: hidden;
-  }
-
-  .scroll-rail-bar {
-    position: absolute;
-    inset: 0;
-    background: white;
-    transform-origin: 50% 0%;
-    transform: scaleY(0);
-  }
-
-  .scroll-rail-list {
-    display: flex;
-    flex-direction: column;
-    align-items: flex-end;
-    gap: 0.5rem;
-    font-family: var(--font-display), sans-serif;
-    font-size: 0.62rem;
-    text-transform: uppercase;
-    letter-spacing: 0.2em;
-  }
-
-  .scroll-rail-list button {
-    opacity: 0.4;
-    transition:
-      opacity 0.3s ease,
-      letter-spacing 0.3s ease;
-  }
-
-  .scroll-rail-list li[data-active="true"] button {
-    opacity: 1;
-    letter-spacing: 0.3em;
-  }
-
-  /* ---------- Adaptive header ---------- */
-  .site-header {
-    transition:
-      transform 0.55s cubic-bezier(0.76, 0, 0.24, 1),
-      background-color 0.45s ease,
-      border-color 0.45s ease,
-      backdrop-filter 0.45s ease;
-    border-bottom: 1px solid transparent;
-  }
-
-  .site-header.is-scrolled {
-    background: color-mix(in oklab, var(--color-background) 88%, transparent);
-    backdrop-filter: blur(14px) saturate(1.4);
-    border-bottom-color: var(--color-border);
-  }
-
-  .site-header.is-hidden {
-    transform: translateY(-110%);
-  }
-
-  /* ---------- Nav roll links ---------- */
-  .nav-roll {
-    display: inline-block;
-    font-family: var(--font-display), sans-serif;
-    font-size: 0.72rem;
-    font-weight: 500;
-    text-transform: uppercase;
-    letter-spacing: 0.16em;
-  }
-
-  .nav-roll-box {
-    display: block;
-    overflow: hidden;
-    height: 1.05em;
-  }
-
-  .nav-roll-inner {
-    display: flex;
-    flex-direction: column;
-    transition: transform 0.45s cubic-bezier(0.76, 0, 0.24, 1);
-  }
-
-  .nav-roll-line {
-    display: block;
-    height: 1.05em;
-    line-height: 1.05em;
-  }
-
-  .nav-roll:hover .nav-roll-inner,
-  .nav-roll:focus-visible .nav-roll-inner {
-    transform: translateY(-1.05em);
-  }
-
-  /* ---------- Full-screen mobile menu ---------- */
-  .mobile-menu {
-    position: fixed;
-    inset: 0;
-    z-index: 45;
-    background: var(--color-ink);
-    clip-path: inset(0 0 100% 0);
-    visibility: hidden;
-    transition:
-      clip-path 0.7s cubic-bezier(0.76, 0, 0.24, 1),
-      visibility 0s 0.7s;
-  }
-
-  .mobile-menu.is-open {
-    clip-path: inset(0 0 0% 0);
-    visibility: visible;
-    transition: clip-path 0.7s cubic-bezier(0.76, 0, 0.24, 1);
-  }
-
-  .mobile-menu-item {
-    opacity: 0;
-    transform: translateY(26px);
-    transition:
-      opacity 0.5s ease,
-      transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
-    transition-delay: 0s;
-  }
-
-  .mobile-menu.is-open .mobile-menu-item {
-    opacity: 1;
-    transform: none;
-    transition-delay: calc(0.25s + var(--i) * 0.07s);
-  }
-
-  @media (min-width: 768px) {
-    .mobile-menu {
-      display: none;
-    }
-  }
-
-  @media (prefers-reduced-motion: reduce) {
-    .nav-roll-inner,
-    .site-header,
-    .mobile-menu,
-    .mobile-menu-item {
-      transition: none;
-    }
-  }
-
-  @media (prefers-reduced-motion: reduce) {
-    .line-in,
-    .hero-in {
-      animation: none;
-      opacity: 1;
-      transform: none;
-    }
-    .marquee-track {
-      animation: none;
-    }
-    .stack-inner {
-      position: static;
-      transform: none;
-      border-radius: 0;
-    }
-    .stack-content {
-      transform: none;
-      opacity: 1;
-    }
-    .stack-shade {
-      display: none;
-    }
-  }
-}
-
 
 /* ==========================================================================
    HERO "A DISTÂNCIA" — direção escolhida em 03/09/2026
@@ -851,7 +391,7 @@
      registrada (@property, abaixo) para a troca andar no mesmo 1,1s da jornada
      tonal, em vez de saltar. */
   --nav-chao: var(--br-chao);
-  transition: --nav-chao 1.1s ease;
+  transition: --nav-chao 0.28s ease;
   background: linear-gradient(
     to right,
     var(--nav-chao) 0%,
@@ -914,16 +454,18 @@
      distinguindo pela cor (--br-luz) e pelo rotulo aberto. */
   opacity: 1;
 }
-/* o rótulo fica retraído e só se abre no capítulo ativo: a nav vira régua de
-   progresso em vez de menu, que é o gesto do Ferrari */
+/* O RÓTULO APARECE SEMPRE (25/10). Antes ele tinha max-width: 0 e só abria
+   no capítulo ativo — fora dele a nav era uma coluna de 01/02/03/04 sem
+   significado, que se lê como componente quebrado. Pior: a regra que abria o
+   rótulo valia só a partir de 1181px, então entre 901 e 1180 ele NUNCA
+   aparecia, nem no hover. O véu da goteira (--nav-chao) resolveu o motivo
+   original de esconder. Agora é régua de progresso E menu. */
 .cap-nav span {
-  max-width: 0;
+  max-width: 14ch;
   overflow: hidden;
   white-space: nowrap;
-  opacity: 0;
-  transition:
-    max-width 0.5s cubic-bezier(0.2, 0.7, 0.2, 1),
-    opacity 0.4s ease;
+  opacity: 0.55;
+  transition: opacity 0.4s ease;
 }
 .cap-nav a:hover,
 .cap-nav a:focus-visible,
@@ -936,13 +478,10 @@
   outline: 2px solid var(--br-luz);
   outline-offset: -2px;
 }
-@media (min-width: 1181px) {
-  .cap-nav a:hover span,
-  .cap-nav a:focus-visible span,
-  .cap-nav a.is-aqui span {
-    max-width: 14ch;
-    opacity: 1;
-  }
+.cap-nav a:hover span,
+.cap-nav a:focus-visible span,
+.cap-nav a.is-aqui span {
+  opacity: 1;
 }
 /* trava final: o texto encolhe antes de furar a coluna */
 .cap-nav span {
@@ -1046,41 +585,6 @@
 }
 .cap__corpo p:last-child {
   margin-bottom: 0;
-}
-
-/* ── 02 · As marcas ────────────────────────────────────────────────────────── */
-.marcas-lista {
-  display: grid;
-  /* 11 nao fecha em 5 colunas (sobra fila de 1 com 4 buracos). Em ate 3 colunas
-     a ultima fila fica cheia ou quase, e a grade le como lista, nao como tabela
-     inacabada. O max-width segura as colunas largas em 1440. */
-  grid-template-columns: repeat(auto-fill, minmax(min(100%, 300px), 1fr));
-  max-width: 1040px;
-  gap: 1px;
-  margin: clamp(40px, 6vh, 72px) 0 0;
-  padding: 0;
-  list-style: none;
-  background: color-mix(in srgb, var(--br-tinta) 10%, transparent); /* o gap vira a linha da grade */
-  border: 1px solid color-mix(in srgb, var(--br-tinta) 10%, transparent);
-}
-.marcas-lista li {
-  display: grid;
-  gap: 6px;
-  padding: clamp(18px, 2.4vh, 26px) clamp(16px, 1.6vw, 22px);
-  background: var(--br-chao);
-}
-.marcas-lista b {
-  font-family: var(--font-display), sans-serif;
-  font-size: clamp(15px, 1.2vw, 19px);
-  font-weight: 600;
-  letter-spacing: -0.01em;
-  text-transform: uppercase;
-}
-.marcas-lista span {
-  font-size: 13px;
-  line-height: 1.5;
-  color: var(--br-fraco);
-  text-wrap: pretty;
 }
 
 /* ── 03 · A estrada ────────────────────────────────────────────────────────── */
@@ -1208,6 +712,7 @@
 }
 .fecho__vias a {
   /* 44px de alvo tátil, exigido pelo portão de responsividade */
+  position: relative;
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -1215,16 +720,37 @@
   font-size: clamp(15px, 1.3vw, 19px);
   color: var(--br-tinta);
   text-decoration: none;
-  border-bottom: 1px solid color-mix(in srgb, var(--br-luz) 45%, transparent);
-  transition: color 0.35s ease, border-color 0.35s ease;
+  border-bottom: 1px solid color-mix(in srgb, var(--br-luz) 25%, transparent);
+  transform: translate3d(var(--link-ima-x, 0px), var(--link-ima-y, 0px), 0);
+  transition:
+    color 0.3s ease,
+    border-color 0.3s ease,
+    transform 0.28s cubic-bezier(0.16, 1, 0.3, 1);
   /* e-mail é longo; sem isto ele estoura a coluna em 375px */
   overflow-wrap: anywhere;
   max-width: 100%;
 }
+.fecho__vias a::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  bottom: -1px;
+  width: 100%;
+  height: 2px;
+  background: var(--br-luz);
+  transform: scaleX(0);
+  transform-origin: right;
+  transition: transform 0.38s cubic-bezier(0.16, 1, 0.3, 1);
+}
 .fecho__vias a:hover,
 .fecho__vias a:focus-visible {
   color: var(--br-luz);
-  border-color: var(--br-luz);
+  border-bottom-color: transparent;
+}
+.fecho__vias a:hover::after,
+.fecho__vias a:focus-visible::after {
+  transform: scaleX(1);
+  transform-origin: left;
 }
 .fecho__vias span {
   font-size: 11px;
@@ -1282,11 +808,21 @@
   height: auto;
   filter: saturate(0.88) contrast(1.04);
 }
+/* Vinheta suave que funde as bordas do fundo de estúdio da foto com o chão Coda Noir (#07080c) */
+.fecho__retrato::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  box-shadow: inset 0 0 54px 24px var(--br-chao);
+}
 /* O RÓTULO NO ALTO À DIREITA, sobre o fundo preto do retrato. Embaixo à
    esquerda ele encostava na camisa (em 375 caía em cima dela e sumia); no
    alto à direita, em qualquer largura e em qualquer recorte, é fundo. */
 .fecho__retrato span {
   position: absolute;
+  z-index: 2;
   top: 4%;
   right: 5%;
   color: color-mix(in srgb, var(--br-luz) 75%, transparent);
@@ -1384,109 +920,6 @@
   }
 }
 
-/* ── A barra de marcas (base do hero) ───────────────────────────────────────── */
-/* Dentro do hero, a barra de marcas e a BASE da composicao — ancora, nao separa.
-   ABSOLUTA na base, com o hero reservando o espaco dela via --alt-marcas, que o
-   JS MEDE (nao chuta). Tres tentativas com grid falharam: a altura da barra muda
-   com a largura (238px em 375, onde as pastilhas quebram em 3 linhas; 117px em
-   1440), e no mobile a grade vira uma coluna so e cria uma faixa a mais. */
-.marcas {
-  position: absolute;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  z-index: 2;
-  padding: clamp(14px, 2vh, 22px) clamp(20px, 6vw, 104px) 0;
-  padding-left: var(--br-goteira);
-  border-top: 1px solid color-mix(in srgb, var(--br-tinta) 8%, transparent);
-}
-.marcas__titulo {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: baseline;
-  gap: 6px 14px;
-  margin: 0 0 clamp(16px, 2.2vh, 24px);
-  font-size: 11px;
-  letter-spacing: 0.18em;
-  text-transform: uppercase;
-  color: var(--br-fraco);
-}
-/* a legenda muda com o foco; reservar a linha impede o pulo de layout */
-.marcas__titulo em {
-  min-height: 1em;
-  font-style: normal;
-  letter-spacing: 0.1em;
-  color: var(--br-luz);
-}
-
-.marcas__lista {
-  display: flex;
-  flex-wrap: wrap;
-  gap: clamp(8px, 1vw, 14px);
-  margin: 0;
-  /* a estrada desce pela faixa da direita e precisa atravessar esta barra em
-     algum ponto; sem este recuo ela cortava a última pastilha em 1024 (medido).
-     A lista para antes da faixa, e a linha passa pelo vão. */
-  padding: 0 clamp(0px, 9vw, 150px) 0 0;
-  list-style: none;
-}
-.marcas__lista button {
-  display: grid;
-  place-items: center;
-  /* 44px de alvo tátil */
-  width: clamp(56px, 6vw, 76px);
-  height: 44px;
-  padding: 0 8px;
-  background: none;
-  border: 1px solid color-mix(in srgb, var(--br-tinta) 20%, transparent);
-  border-radius: 999px;
-  cursor: pointer;
-  transition:
-    border-color 0.35s ease,
-    background-color 0.35s ease;
-}
-.marcas__lista img {
-  width: 100%;
-  max-height: 22px;
-  object-fit: contain;
-  /* 0.45 em repouso era pouco: no navegador de verdade "NTN", "Nidec" e "VP"
-     sumiam contra o chao (as capturas nao mostravam). As onze marcas SAO a
-     credencial do representante — precisam se ler sem hover. O realce de quem
-     esta em foco continua, pela borda e pelo salto de opacidade. */
-  opacity: 0.72;
-  transition: opacity 0.35s ease;
-}
-.marcas__lista span {
-  font-size: 10px;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  color: var(--br-fraco);
-}
-.marcas__lista button:hover,
-.marcas__lista button:focus-visible,
-.marcas__lista button.is-foco {
-  border-color: color-mix(in srgb, var(--br-luz) 55%, transparent);
-  background: color-mix(in srgb, var(--br-marca) 16%, transparent);
-}
-.marcas__lista button:hover img,
-.marcas__lista button:focus-visible img,
-.marcas__lista button.is-foco img {
-  opacity: 1;
-}
-
-@media (max-width: 900px) {
-  /* no mobile a capsula fica EM CIMA do texto: os dois empilhados nao cabem numa
-     tela junto com a barra. Ela volta ao fluxo, logo abaixo do hero. */
-  .marcas {
-    position: static;
-    padding: clamp(18px, 2.6vh, 26px) clamp(20px, 6vw, 104px);
-    border-bottom: 1px solid color-mix(in srgb, var(--br-tinta) 8%, transparent);
-  }
-  .hero-tr {
-    padding-bottom: calc(clamp(28px, 4vh, 44px) + 76px);
-  }
-}
-
 @media (prefers-reduced-motion: reduce) {
   .cap {
     opacity: 1;
@@ -1496,8 +929,6 @@
     gap: 0;
   }
   .cap-nav span,
-  .marcas__lista img,
-  .marcas__lista button,
   .cap-nav a {
     transition: none;
   }
@@ -1508,7 +939,7 @@
    O path e gerado em JS pelas posicoes REAIS dos capitulos (Estrada.tsx). */
 .estrada-linha {
   position: absolute;
-  z-index: 0;
+  z-index: 1;
   top: 0;
   left: 0;
   width: 100%;
@@ -1516,13 +947,11 @@
   pointer-events: none;
 }
 .estrada-linha path {
-  /* MEDIDO: com --br-marca (#005f96) a 0.55 sobre o chao (#0a0a0c) o contraste
-     efetivo era 1.63:1 — invisivel. Copiei peso e opacidade da fita da SoftHam sem
-     ver que la a fita era VERMELHA sobre preto, e aqui e azul escuro sobre quase
-     preto. Com --br-luz a 0.55 o contraste sobe para 4.20:1. */
-  stroke: var(--br-luz);
-  stroke-width: 1.5;
-  stroke-opacity: 0.55;
+  /* Visível tanto sobre o breu do Hero (#08090c) quanto no corredor claro
+     de A Casa (#edf2f7): o azul vivo #1c7fc2 sustenta contraste nos dois planos. */
+  stroke: #1c7fc2;
+  stroke-width: 1.8;
+  stroke-opacity: 0.62;
   stroke-linecap: round;
 }
 
@@ -1531,8 +960,7 @@
    `position: fixed` da nav (o hero furou a dobra) e depois colapsou a abertura
    para 101px com z-index 1. Regra larga com lista de excecoes so cresce.
    Agora NOMEIA quem sobe, em vez de subir todo mundo e abrir excecao. */
-.travessia > .hero-tr,
-.travessia > .marcas {
+.travessia > .hero-tr {
   position: relative;
   z-index: 1;
 }
@@ -1630,17 +1058,6 @@
   transform: translateY(calc((1 - var(--t)) * 26px));
 }
 
-/* 02 · AS MARCAS — a grade se ACENDE. As células entram por linha, e a borda
-   da grade se desenha antes do conteúdo: é uma pasta sendo aberta. */
-.cap--marcas .marcas-lista {
-  --t: clamp(0, calc((var(--cap-entra, 1) - 0.25) / 0.75), 1);
-  /* a grade cresce a partir do topo, revelando as linhas */
-  clip-path: inset(0 0 calc((1 - var(--t)) * 100%) 0);
-}
-.cap--marcas .marcas-lista li {
-  opacity: clamp(0, calc((var(--cap-entra, 1) - 0.3) / 0.5), 1);
-}
-
 /* 03 · A ESTRADA — o MG cresce, e as regiões chegam depois dele.
    A hierarquia do gesto repete a hierarquia do argumento: a casa primeiro.
 
@@ -1701,7 +1118,6 @@
   /* sem movimento tudo existe, inteiro e parado */
   .cap--casa .cap__titulo,
   .cap--casa .cap__corpo,
-  .cap--marcas .marcas-lista li,
   /* as duas camadas de profundidade do cap 03 tambem param aqui: sem isto,
      quem desliga movimento veria o titulo deslocado 60px e parado la */
   .cap--estrada .cap__titulo,
@@ -1713,13 +1129,10 @@
     opacity: 1;
     transform: none;
   }
-  .cap--marcas .marcas-lista {
-    clip-path: none;
-  }
 }
 
 /* ── A PALAVRA-FANTASMA ──────────────────────────────────────────────────────
-   Refs: 36 Techwear e 25 Silent Shogun. É ela que recorta a cápsula. */
+   Refs: 36 Techwear e 25 Silent Shogun. Escultura metálica em baixo-relevo luminoso. */
 .hero-tr__fantasma {
   position: absolute;
   z-index: 0;
@@ -1728,17 +1141,33 @@
   transform: translateY(-50%) translateX(var(--fant-x, 0px));
   font-family: var(--font-display), sans-serif;
   font-size: 21vw;
-  font-weight: 700;
+  font-weight: 800;
   font-stretch: 125%;                /* o eixo de largura no máximo */
   line-height: 1;
   letter-spacing: -0.03em;
   text-transform: uppercase;
   white-space: nowrap;
-  /* --br-superficie sobre --br-chao: ~1,1:1 de contraste. É textura, não título. */
-  color: var(--br-superficie);
+  background: linear-gradient(
+    115deg,
+    rgba(255, 255, 255, 0.05) 0%,
+    rgba(255, 255, 255, 0.24) 22%,
+    rgba(217, 119, 87, 0.50) 48%,
+    rgba(96, 165, 250, 0.40) 72%,
+    rgba(255, 255, 255, 0.06) 100%
+  );
+  background-size: 200% 100%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  animation: metallicShimmer 9s cubic-bezier(0.4, 0, 0.2, 1) infinite alternate;
+  filter: drop-shadow(0 24px 48px rgba(0, 0, 0, 0.95));
   pointer-events: none;
   user-select: none;
   will-change: transform;
+}
+@keyframes metallicShimmer {
+  0% { background-position: 0% 50%; }
+  100% { background-position: 100% 50%; }
 }
 
 /* o texto e a cápsula passam POR CIMA dela */
@@ -1773,12 +1202,25 @@
   gap: clamp(14px, 2vw, 26px);
   margin: clamp(24px, 3.2vh, 36px) 0 0;
 }
+@property --btn-ima-x {
+  syntax: "<length>";
+  inherits: false;
+  initial-value: 0px;
+}
+@property --btn-ima-y {
+  syntax: "<length>";
+  inherits: false;
+  initial-value: 0px;
+}
 .btn-falar {
+  --btn-ima-x: 0px;
+  --btn-ima-y: 0px;
   display: inline-flex;
   align-items: stretch;
   text-decoration: none;
-  /* a peça inteira sobe junto: é um objeto só, não dois botões */
-  transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+  transform: translate3d(var(--btn-ima-x), var(--btn-ima-y), 0);
+  /* a peça inteira sobe junto e acompanha o ponteiro com imã suave */
+  transition: transform 0.38s cubic-bezier(0.16, 1, 0.3, 1);
 }
 .btn-falar span {
   display: flex;
@@ -1801,7 +1243,7 @@
   transition: background 0.35s ease;
 }
 .btn-falar:hover {
-  transform: translateY(-2px);
+  transform: translate3d(var(--btn-ima-x), calc(var(--btn-ima-y) - 2px), 0);
 }
 /* o aperto: o clique afunda 1px (o `translate` soma ao `transform` do hover) */
 .btn-falar:active {
@@ -2235,8 +1677,20 @@ body.is-abrindo {
   --costura-dir: 180deg;
   top: 0;
   bottom: 0;
-  width: 1px;
+  width: 3px;
   left: calc((1 - var(--rev)) * 100%);
+  background: linear-gradient(
+    180deg,
+    transparent 0%,
+    var(--br-luz) 15%,
+    #ffffff 50%,
+    var(--br-luz) 85%,
+    transparent 100%
+  );
+  box-shadow:
+    0 0 18px 2px rgba(160, 208, 240, 0.88),
+    18px 0 54px 8px rgba(0, 95, 150, 0.72);
+  opacity: calc(4 * var(--rev) * (1 - var(--rev)) * 0.98);
 }
 /* o do nome tem duas bordas; a costura fica só na esquerda para não dobrar */
 .cap--nome::before {
@@ -2346,46 +1800,12 @@ body.is-abrindo {
   transform: translateX(calc((1 - var(--p)) * 0.48em));
 }
 
-/* ═══════════════════════════════════════════════════════════════════════════
-   O CARROSSEL DAS MARCAS
-   Quatro cópias num trilho que anda 25% do próprio comprimento: sem emenda.
-   ═══════════════════════════════════════════════════════════════════════════ */
-.marcas {
-  overflow: hidden;
-  /* as pontas esmaecem: a fila não corta na borda, ela some */
-  -webkit-mask-image: linear-gradient(90deg, transparent, #000 6%, #000 94%, transparent);
-  mask-image: linear-gradient(90deg, transparent, #000 6%, #000 94%, transparent);
-}
-.marcas__trilho {
-  display: flex;
-  width: max-content;
-  animation: marcas-rola 46s linear infinite;
-}
-/* devagar o bastante para se LER cada logo passando; e para no hover, porque
-   o hover é onde a legenda diz o que cada marca fornece */
-.marcas:hover .marcas__trilho,
-.marcas:focus-within .marcas__trilho {
-  animation-play-state: paused;
-}
-.marcas__trilho .marcas__lista {
-  flex: none;
-  flex-wrap: nowrap;
-  /* o vão entre a última pastilha de uma cópia e a primeira da seguinte é o
-     mesmo vão entre pastilhas — senão a emenda aparece como um buraco */
-  padding-right: clamp(8px, 1vw, 14px);
-}
-@keyframes marcas-rola {
-  to { transform: translateX(-25%); }
-}
-
 @media (prefers-reduced-motion: reduce) {
   .hero-tr .pal,
   .hero-tr.is-pronta .pal { opacity: 1; transform: none; animation: none; }
   .cap__titulo .pal,
   .cap--casa .cap__titulo .pal,
   .cap--estrada .cap__titulo .pal { opacity: 1; transform: none; }
-  .marcas__trilho { animation: none; }
-  .marcas { mask-image: none; -webkit-mask-image: none; }
 }
 
 /* ═══════════════════════════════════════════════════════════════════════════
@@ -2437,98 +1857,6 @@ body.is-abrindo {
 }
 
 /* ═══════════════════════════════════════════════════════════════════════════
-   AS PEÇAS — o capítulo 02 deixa de ser texto sobre preto
-   Achado nº 1 do júri: num site sobre um homem que vende rolamento, filtro e
-   lanterna, não aparecia nenhum dos três. As 11 peças foram geradas,
-   normalizadas (mesma luz, mesmo preto, mesmo enquadramento) e tratadas em
-   duotom na paleta do site. Nenhuma tem marca visível.
-   ═══════════════════════════════════════════════════════════════════════════ */
-
-/* ── a peça presa ao cursor (desktop) ────────────────────────────────────── */
-.peca-cursor {
-  position: fixed;
-  z-index: 30;
-  left: 0;
-  top: 0;
-  width: clamp(180px, 15vw, 260px);
-  aspect-ratio: 1;
-  pointer-events: none;
-  opacity: 0;
-  /* A POSICAO e o GESTO ficam em propriedades SEPARADAS.
-     Antes tudo vivia num `transform` so, com `transition: scale` — mas `scale`
-     e `transform` sao propriedades diferentes, entao a transicao nunca pegava e
-     o transform ficava travado no estado de repouso. Medido: as variaveis
-     diziam (361, 499) e o transform aplicava (253, 391) — a peca parava 161px
-     acima do ponteiro.
-     Com `translate` e `scale` proprios (nao dentro de `transform`), cada um
-     anima sozinho e a conta fecha. */
-  translate: var(--peca-x, 0px) var(--peca-y, 0px);
-  transform: translate(-50%, -50%);
-  scale: 0.86;
-  transition: opacity 0.32s ease, scale 0.42s cubic-bezier(0.16, 1, 0.3, 1);
-}
-.peca-cursor.is-visivel {
-  opacity: 1;
-  scale: 1;
-}
-.peca-cursor img {
-  width: 100%;
-  height: 100%;
-  object-fit: contain;
-  display: block;
-}
-
-/* ── a linha da marca reage ──────────────────────────────────────────────── */
-.marcas-lista li {
-  position: relative;
-  transition: background-color 0.3s ease;
-}
-.marcas-lista li:hover {
-  background: color-mix(in srgb, var(--br-marca) 9%, var(--br-chao));
-}
-
-/* a peça dentro do card: escondida no desktop, é lá que o cursor a leva */
-.marcas-lista__peca {
-  display: none;
-}
-
-/* ── EM TOQUE não existe cursor ──────────────────────────────────────────────
-   A spec obriga a definir isto aqui, não na fase seguinte: sem alternativa, o
-   capítulo 02 voltaria a ser uma lista de texto exatamente onde parte do
-   público vai olhar. A peça entra no próprio card, conforme ele chega à tela. */
-@media (hover: none), (pointer: coarse) {
-  .marcas-lista li {
-    grid-template-columns: 68px minmax(0, 1fr);
-    grid-template-areas:
-      "peca nome"
-      "peca fornece";
-    align-items: center;
-    column-gap: 14px;
-  }
-  .marcas-lista li b {
-    grid-area: nome;
-  }
-  .marcas-lista li span {
-    grid-area: fornece;
-  }
-  .marcas-lista__peca {
-    display: block;
-    grid-area: peca;
-    width: 68px;
-    height: 68px;
-    object-fit: contain;
-    /* nasce apagada e acende com o capítulo, junto com o resto do gesto */
-    opacity: calc(0.25 + var(--cap-entra, 1) * 0.75);
-  }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .peca-cursor {
-    transition: none;
-  }
-}
-
-/* ═══════════════════════════════════════════════════════════════════════════
    TEMA POR CAPÍTULO — o chão muda ao longo da travessia
    Ref: landonorris.com, medido (03/09): o fundo dele vai de rgb(40,44,32) a
    rgb(244,244,237) ao longo da página, por `data-theme` nas seções.
@@ -2549,83 +1877,153 @@ body.is-abrindo {
    troca acontecendo, vira efeito; se não pegar, vira clima.
    ═══════════════════════════════════════════════════════════════════════════ */
 .cap {
-  transition: background-color 1.1s ease, color 1.1s ease;
+  transition: background-color 0.8s ease, color 0.8s ease;
 }
 
-/* 02 · AS MARCAS — a oficina */
+/* 01 · A CASA — Papel Editorial / Alabastro de Estúdio (contraste alto estilo landonorris.com).
+   O Hero parte do breu (#08090c); quando a cápsula se abre, entrega este plano
+   claro (#edf2f7) onde o azul oficial #005f96 brilha puro (6,15:1 AA) e a tinta
+   #091526 atinge 16,1:1. */
+.cap--casa {
+  --br-chao: #edf2f7;
+  --br-superficie: #dde6f1;
+  --br-tinta: #091526;
+  --br-fraco: #344963;
+  --br-marca: #005f96;
+  --br-marca-texto: #005282;
+  --br-luz: #005f96;
+  color: var(--br-tinta);
+}
+
+/* Adaptação automática da espinha de navegação sobre o capítulo claro (01 · A Casa) */
+.cap-nav[data-nav-tema="claro"] {
+  --nav-chao: #edf2f7;
+  --br-tinta: #091526;
+  --br-fraco: #344963;
+  --br-luz: #005f96;
+  --br-marca-texto: #005282;
+  background: linear-gradient(
+    to right,
+    rgba(237, 242, 247, 0.94) 0%,
+    rgba(237, 242, 247, 0.78) 58%,
+    transparent 100%
+  );
+}
+@media (max-width: 900px) {
+  .cap-nav[data-nav-tema="claro"] {
+    background: rgba(237, 242, 247, 0.9);
+  }
+}
+.cap-nav[data-nav-tema="claro"] a.cap-nav__contato:hover,
+.cap-nav[data-nav-tema="claro"] a.cap-nav__contato:focus-visible {
+  color: #091526;
+}
+
+/* 02 · AS MARCAS — Bancada Industrial / Blueprint Profundo */
 .cap--marcas {
-  /* JORNADA TONAL (05/09): de quase-preto a azul profundo, dentro da familia
-     da identidade. Antes ia de #0a0a0c a #121b25 — 25 niveis em 255, e a tira
-     de 24 quadros mostrava UMA cor do inicio ao fim. */
-  --br-chao: #0c1421;
-  --br-superficie: #131a23;
-  background: var(--br-chao);
+  --br-chao: #0b1626;
+  --br-superficie: #13253d;
+  --br-tinta: #e4ecf6;
+  --br-fraco: #93a4b8;
+  --br-luz: #a0d0f0;
+  --br-marca-texto: color-mix(in srgb, var(--br-marca) 48%, var(--br-luz));
+  background:
+    radial-gradient(ellipse 80% 50% at 50% 0%, rgba(0, 95, 150, 0.22) 0%, transparent 65%),
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='160' height='160' filter='url(%23n)' opacity='0.035'/%3E%3C/svg%3E"),
+    var(--br-chao);
 }
 
-/* 03 · A ESTRADA — o amanhecer */
+/* 03 · A ESTRADA — Atlas Cobalt Royal Iluminado (contrasta fortemente com o
+   estúdio raio-X #040508 que vem antes e com o Coda Noir #07080c que vem depois) */
 .cap--estrada {
-  --br-chao: #0f1f34;
-  --br-superficie: #182c46;
-  background: var(--br-chao);
+  --br-chao: #0c2b4b;
+  --br-superficie: #163d66;
+  --br-tinta: #eef4fa;
+  --br-fraco: #9eb5cd;
+  --br-luz: #aee0ff;
+  --br-marca-texto: #7cc4f0;
+  position: relative;
+  z-index: 3;
+  background:
+    radial-gradient(
+      ellipse 82% 66% at 28% 42%,
+      color-mix(in srgb, var(--br-marca) 46%, #0c2b4b) 0%,
+      #0c2b4b 72%
+    );
   /* A área final segura a conclusão antes de o próximo painel começar a
      cobri-la. A margem equivalente em O Nome conserva o comprimento total. */
   padding-bottom: calc(clamp(96px, 16vh, 200px) + 32vh);
 }
 
-/* 04 · O NOME — a revelação, o ponto mais claro da travessia */
+/* Recuo em profundidade da conclusão da Estrada enquanto o painel Coda Noir de O Nome sobe */
+.cap--estrada > .cap__titulo,
+.cap--estrada > .cap__corpo {
+  --estrada-sai: 0;
+  scale: calc(1 - var(--estrada-sai, 0) * 0.055);
+  translate: 0 calc(var(--estrada-sai, 0) * 9vh);
+  opacity: calc((0.25 + var(--cap-entra, 1) * 0.75) * (1 - var(--estrada-sai, 0) * 0.55));
+  transform-origin: 50% 0%;
+}
+
+/* 04 · O NOME — Coda Noir Monumental (Ref. 11 da biblioteca: fecho editorial dark).
+   Cobre o azul royal da Estrada com um monólito obsidiana (#07080c) onde o traço
+   luminoso escreve H.M. e o retrato de estúdio do Fábio funde-se sem borda. */
 .cap--nome {
-  /* o mais claro: #8a8fa3 sobre #122a44 da 4,59:1, acima do minimo (medido) */
-  --br-chao: #122a44;
-  --br-superficie: #1d3a5c;
+  --br-chao: #07080c;
+  --br-superficie: #11141d;
+  --br-tinta: #eef2f8;
+  --br-fraco: #949bb0;
+  --br-luz: #a0d0f0;
   position: relative;
-  z-index: 2;
+  z-index: 4;
   margin-top: -32vh;
-  background: var(--br-chao);
-  border-radius: clamp(22px, 3vw, 48px) clamp(22px, 3vw, 48px) 0 0;
-  box-shadow: 0 -1px 0 color-mix(in srgb, var(--br-luz) 18%, transparent);
+  background:
+    radial-gradient(ellipse 62% 38% at 50% 22%, rgba(0, 95, 150, 0.24) 0%, transparent 70%),
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='160' height='160' filter='url(%23n)' opacity='0.035'/%3E%3C/svg%3E"),
+    var(--br-chao);
+  border-radius: clamp(24px, 3.4vw, 52px) clamp(24px, 3.4vw, 52px) 0 0;
+  box-shadow:
+    0 -2px 0 color-mix(in srgb, var(--br-luz) 48%, transparent),
+    0 -32px 84px rgba(0, 0, 0, 0.82);
   transform: none;
 }
 
-/* a barra de marcas acompanha o capítulo que ela introduz */
-.marcas {
-  transition: background-color 1.1s ease;
-}
-
-/* ── A COSTURA ENTRE OS CHÃOS ────────────────────────────────────────────────
-   MEDIDO: sem isto a troca acontecia numa LINHA de pixels — salto de 4,2 níveis
-   de luminância entre y=420 e y=440, visível como costura. A transição de 1,1s
-   só age quando o token muda no MESMO elemento; entre irmãos, o corte é seco.
-
-   Cada capítulo ganha uma faixa no topo que faz a passagem do chão anterior
-   para o seu, ao longo de ~180px. É a mesma solução da barra de marcas: quando
-   duas superfícies se encontram, quem resolve é o degradê, não a transição. */
-.cap--estrada::after {
-  content: "";
-  position: absolute;
-  z-index: 0;
-  left: 0;
-  right: 0;
-  top: 0;
-  height: clamp(120px, 18vh, 200px);
-  pointer-events: none;
-}
-.cap--estrada::after {
-  background: linear-gradient(to bottom, #0c1421, transparent);
-}
-/* P36-B · CASA → MARCAS
-   A seção verdadeira é o painel. A Casa reserva um final sem conteúdo e
-   Marcas ocupa exatamente essa reserva; por isso nenhum texto, retrato ou
-   marco é cortado. A antiga cortina fixa repetia a manchete e entregava um
-   painel cenográfico antes da prancha real. */
+/* P36-B · CASA → MARCAS ("A seção dois vem comendo a seção um")
+   A Casa (#edf2f7, clara) recua em escala 3D e escurece sob um véu de sombra
+   enquanto o monólito industrial de As Marcas (#0b1626, escuro) sobe com borda
+   luminosa e engole o capítulo anterior. */
 .passagem-casa-marcas {
   --marcas-sobrepoe: 24vh;
   position: relative;
-  isolation: isolate;
 }
 .passagem-casa-marcas > .cap--casa {
+  --casa-sai: 0;
   position: relative;
   z-index: 0;
-  padding-bottom: calc(clamp(96px, 16vh, 200px) + var(--marcas-sobrepoe));
+  padding-bottom: calc(clamp(124px, 22vh, 240px) + var(--marcas-sobrepoe));
+}
+.passagem-casa-marcas > .cap--casa > .casa {
+  position: relative;
+  z-index: 2;
+  transform-origin: 50% 55%;
+  scale: calc(1 - var(--casa-sai, 0) * 0.065);
+  translate: 0 calc(var(--casa-sai, 0) * 14vh);
+  opacity: calc((0.25 + var(--cap-entra, 1) * 0.75) * (1 - var(--casa-sai, 0) * 0.58));
+  will-change: scale, translate, opacity;
+}
+/* Véu de sombra dramática que escurece o papel claro de A Casa conforme Marcas sobe */
+.passagem-casa-marcas > .cap--casa::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 3;
+  pointer-events: none;
+  background: linear-gradient(
+    180deg,
+    rgba(6, 12, 22, 0.08) 0%,
+    rgba(6, 12, 22, 0.68) 100%
+  );
+  opacity: calc(var(--casa-sai, 0) * var(--casa-sai, 0));
 }
 .passagem-casa-marcas > .cap--marcas {
   position: relative;
@@ -2634,8 +2032,10 @@ body.is-abrindo {
   padding-top: 0;
   overflow: visible;
   clip-path: none;
-  border-radius: clamp(20px, 3vw, 46px) clamp(20px, 3vw, 46px) 0 0;
-  box-shadow: 0 -1px 0 color-mix(in srgb, var(--br-luz) 18%, transparent);
+  border-radius: clamp(24px, 3.4vw, 52px) clamp(24px, 3.4vw, 52px) 0 0;
+  box-shadow:
+    0 -2px 0 color-mix(in srgb, var(--br-luz) 52%, transparent),
+    0 -30px 76px rgba(4, 10, 20, 0.62);
   transform: none;
 }
 @media (min-width: 901px) {
@@ -2646,9 +2046,10 @@ body.is-abrindo {
     bottom: auto;
     left: 0;
     width: auto;
-    height: 1px;
-    background: linear-gradient(90deg, transparent, var(--br-marca), transparent);
-    opacity: 0.8;
+    height: 2px;
+    background: linear-gradient(90deg, transparent 5%, var(--br-luz) 50%, transparent 95%);
+    box-shadow: 0 0 24px rgba(160, 208, 240, 0.65);
+    opacity: 0.92;
   }
 }
 
@@ -2759,194 +2160,6 @@ body.is-abrindo {
 }
 
 /* ═══════════════════════════════════════════════════════════════════════════
-   O PALCO DAS PEÇAS — o capítulo 02 deixa de ser grade
-   Ref. 26 da biblioteca (Ferrari 296 GTB): objeto ocupando METADE DA TELA com
-   luz dramática, texto AO LADO (não em cima), marcas ancoradas embaixo.
-   O que quebra a repetição dos quatro capítulos: aqui o esqueleto é OUTRO.
-   ═══════════════════════════════════════════════════════════════════════════ */
-.palco-pecas {
-  /* A PISTA: abertura + cinco categorias, MAIS a passagem com altura própria.
-     BUG ACHADO NA AUDITORIA (06/09): o componente dividia a pista em 13 trechos
-     (abertura + 11 + passagem) e o CSS reservava altura para 12. O 13º — a
-     passagem — não tinha altura nenhuma: espremia-se no resto e durava ~110px
-     de rolagem. O progresso saltava de 0 para 0,987 num gesto normal, e a
-     transformação existia no código sem ser vista.
-     Dois números que precisam concordar não podem ser escritos duas vezes: o
-     `+ 1` daqui e o `+ 2` de lá discordavam em silêncio.
-     CALIBRAÇÃO PÓS-D36 (12/09): em 720px, 22vh deixava só 71px úteis por
-     categoria. Um gesto de roda de 200–220px atravessava quase três imagens.
-     Com 45vh, cada ato recebe cerca de 223px úteis: o mesmo gesto percorre
-     aproximadamente uma peça, sem transformar o palco em seis telas longas.
-     A passagem permanece em 50vh para não desacelerar a costura já aprovada.
-     As duas medidas são lidas pelo TS; esta regra é a fonte única do relógio. */
-  --palco-trecho: 45vh;
-  --palco-passagem: 50vh;
-  height: calc(
-    (var(--n, 5) + 1) * var(--palco-trecho) + var(--palco-passagem)
-  );
-  position: relative;
-}
-
-.palco-pecas__cena {
-  position: sticky;
-  top: 0;
-  height: 100vh;
-  display: grid;
-  /* 1fr / 1.15fr: o objeto manda, mas o texto nao pode ficar espremido no
-     meio. E `justify-items: start` ancora a coluna de texto na margem em vez
-     de centralizar dentro da propria celula. */
-  grid-template-columns: minmax(0, 1fr) minmax(0, 1.15fr);
-  /* areas nomeadas: a ABERTURA e a coluna de texto ocupam a MESMA celula e
-     trocam por opacidade — e o que faz o titulo do capitulo ceder o lugar ao
-     "01 NTN-SNR" sem corte (trecho 0 do palco) */
-  grid-template-areas: "dizer objeto";
-  align-items: center;
-  justify-items: start;
-  gap: clamp(24px, 4vw, 72px);
-  /* MEDIDO: com a goteira aqui E no .cap o texto comecava quase no meio da
-     tela, deixando um terco vazio a esquerda. O .cap ja abre a goteira da nav;
-     o palco so precisa do respiro proprio. */
-  padding-inline: clamp(8px, 2vw, 40px) clamp(24px, 5vw, 96px);
-}
-
-/* ── a coluna que fala ─────────────────────────────────────────────────────── */
-.palco-pecas__conta {
-  display: flex;
-  align-items: baseline;
-  gap: 8px;
-  margin: 0 0 clamp(16px, 2vw, 28px);
-  font-family: var(--font-display), sans-serif;
-  letter-spacing: 0.14em;
-}
-.palco-pecas__conta b {
-  font-size: clamp(2.4rem, 4vmin, 3.4rem);
-  font-weight: 700;
-  color: var(--br-marca);
-  line-height: 1;
-}
-.palco-pecas__conta span {
-  font-size: 0.7rem;
-  color: var(--br-fraco);
-}
-
-.palco-pecas__marca {
-  margin: 0 0 clamp(10px, 1.4vw, 18px);
-  font-family: var(--font-display), sans-serif;
-  /* vmin, não vw: em tela baixa (1440x900, 1280x720) o vw estoura a coluna */
-  font-size: clamp(2rem, 5.6vmin, 4.2rem);
-  font-weight: 700;
-  line-height: 0.98;
-  letter-spacing: -0.02em;
-  text-transform: uppercase;
-  color: var(--br-tinta);
-  text-wrap: balance;
-}
-.palco-pecas__fornece {
-  margin: 0;
-  max-width: 34ch;
-  font-size: clamp(0.95rem, 1.5vmin, 1.15rem);
-  line-height: 1.5;
-  color: var(--br-fraco);
-  text-wrap: pretty;
-}
-
-/* ── o objeto: é ele que carrega a tela ───────────────────────────────────── */
-.palco-pecas__objeto {
-  position: relative;
-  aspect-ratio: 1;
-  /* o teto por ALTURA impede o objeto de estourar em tela baixa */
-  height: min(76vh, 100%);
-  margin-inline: auto;
-  justify-self: center;
-  width: 100%;
-}
-.palco-pecas__objeto img {
-  position: absolute;
-  z-index: 1;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-  object-fit: contain;
-  /* O JPG tem fundo (10,10,12) e o chao do capitulo e (15,22,32): doze niveis
-     de diferenca no azul, e a imagem quadrada vira uma CAIXA PRETA visivel,
-     com borda nitida. Moldura acidental e a definicao de acabamento amador.
-     `screen` some com o preto do arquivo (preto e o neutro desse modo) e
-     mantem a peca: nao ha recorte a fazer, o modo de mesclagem resolve. */
-  /* SEM mix-blend-mode: ele mesclava com o ::before da luz (mesmo elemento),
-     nao com o chao — a caixa continuava visivel. Medido na borda: (10,13,17)
-     dentro contra (11,16,22) fora.
-     A mascara resolve sozinha: dissolve a borda do quadrado num raio, e onde
-     nao ha aresta nao ha caixa. O corte comeca em 52% (antes do canto) e
-     termina em 88%, bem dentro do quadro. */
-  -webkit-mask-image: radial-gradient(circle at 50% 50%, #000 52%, transparent 88%);
-  mask-image: radial-gradient(circle at 50% 50%, #000 52%, transparent 88%);
-  opacity: 0;
-  /* entra crescendo de leve: a peça "assume" o palco em vez de piscar */
-  scale: 0.94;
-  transition: opacity 0.5s ease, scale 0.7s cubic-bezier(0.16, 1, 0.3, 1);
-}
-.palco-pecas__objeto img.is-emcena {
-  opacity: 1;
-  scale: 1;
-}
-
-/* a luz que cai sobre a peça — o que a referência tem e nós não tínhamos */
-.palco-pecas__objeto::before {
-  content: "";
-  position: absolute;
-  /* z-index 0 e as imagens em 1: a luz fica ATRAS sem sair do elemento */
-  z-index: 0;
-  inset: -12%;
-  background: radial-gradient(
-    ellipse 52% 46% at 50% 44%,
-    color-mix(in srgb, var(--br-marca) 24%, transparent),
-    transparent 72%
-  );
-  filter: blur(28px);
-  pointer-events: none;
-}
-
-/* ── as pastilhas, ancoradas embaixo ──────────────────────────────────────── */
-.palco-pecas__trilha {
-  position: absolute;
-  left: clamp(8px, 2vw, 40px);
-  bottom: clamp(20px, 4vh, 44px);
-  display: flex;
-  gap: 10px;
-  margin: 0;
-  padding: 0;
-  list-style: none;
-}
-.palco-pecas__trilha button {
-  /* 44px de ALVO com pastilha de 10px dentro: o portão da casa exige o alvo,
-     o desenho pede o ponto pequeno. Os dois convivem com padding. */
-  display: grid;
-  place-items: center;
-  width: 44px;
-  height: 44px;
-  padding: 0;
-  background: none;
-  border: 0;
-  cursor: pointer;
-}
-.palco-pecas__trilha i {
-  width: 10px;
-  height: 10px;
-  border-radius: 999px;
-  background: var(--br-fraco);
-  opacity: 0.4;
-  transition: opacity 0.3s ease, background-color 0.3s ease, scale 0.3s ease;
-}
-.palco-pecas__trilha button:hover i {
-  opacity: 0.75;
-}
-.palco-pecas__trilha button.is-aqui i {
-  background: var(--br-marca);
-  opacity: 1;
-  scale: 1.5;
-}
-
-/* ═══════════════════════════════════════════════════════════════════════════
    CARRO ONZE — a cena-assinatura que substitui o PalcoPecas (lab, item ★,
    `#p9`). O carro em raio-X ganha luz conforme as 11 peças chegam, cada uma
    pousa numa vaga e uma guia a liga ao componente dela dentro do carro.
@@ -2984,11 +2197,22 @@ body.is-abrindo {
   height: 480vh;
 }
 .carro-onze__cena {
+  /* ESTÚDIO RAIO-X EM OBSIDIANA (#040508): destaca-se nitidamente da bancada
+     azul-petróleo da Esteira (#0b1626) antes dele e do Atlas Royal (#0c2b4b)
+     de A Estrada depois dele. */
+  --carro-chao: #040508;
   position: sticky;
   top: 0;
   height: 100vh;
   overflow: hidden;
-  background: radial-gradient(ellipse at 50% 58%, color-mix(in srgb, var(--br-marca) 22%, var(--br-chao)) 0%, var(--br-chao) 62%);
+  background:
+    radial-gradient(
+      ellipse 66% 58% at 50% 56%,
+      color-mix(in srgb, var(--br-marca) 34%, var(--carro-chao)) 0%,
+      color-mix(in srgb, var(--br-marca) 12%, var(--carro-chao)) 42%,
+      var(--carro-chao) 74%
+    ),
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='160' height='160' filter='url(%23n)' opacity='0.035'/%3E%3C/svg%3E");
   /* A CENA INTEIRA ESMAECE NO FIM (achado da revisão): sem isto, o fundo
      opaco desta `position: sticky` cobria a tela até o fim FÍSICO da
      pista mesmo depois de todo o conteúdo interno (carro, guias) já ter
@@ -3329,7 +2553,15 @@ body.is-abrindo {
   }
   .carro-onze__cena {
     grid-template-rows: auto auto 1fr;
+    /* A COLUNA É QUE ESTOURAVA (medido 25/10): 415,6px dentro de 375. A lista
+       só esticava para caber nela, e o texto saía amputado. `auto` deixa o
+       min-content de um filho (o SVG) empurrar a coluna; minmax(0,...) trava
+       na largura real e os filhos encolhem. */
+    grid-template-columns: minmax(0, 1fr);
     gap: 10px;
+  }
+  .carro-onze__cena > * {
+    min-width: 0;
   }
   .carro-onze__topo {
     min-height: 58px;
@@ -3368,7 +2600,10 @@ body.is-abrindo {
   }
   .carro-onze__lista {
     display: grid;
-    grid-template-columns: 1fr 1fr;
+    /* minmax(0,...) e obrigatorio: `1fr` tem piso de min-content e a lista
+       ficava com 416px numa tela de 375 (medido) — o texto era amputado no
+       meio da palavra pelo overflow da cena. */
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
     gap: 8px 10px;
     list-style: none;
     margin: 0;
@@ -3377,7 +2612,7 @@ body.is-abrindo {
   }
   .carro-onze__lista li {
     display: grid;
-    grid-template-columns: 42px 1fr;
+    grid-template-columns: 42px minmax(0, 1fr);
     gap: 8px;
     align-items: center;
     opacity: calc((0.12 + var(--k2, 0) * 0.88) * (1 - var(--x, 0) * 2.5));
@@ -3413,57 +2648,6 @@ body.is-abrindo {
   }
   .carro-onze__cena {
     position: relative;
-  }
-}
-
-/* ── celular: o objeto vai para cima, o texto embaixo ─────────────────────── */
-@media (max-width: 900px) {
-  .palco-pecas__cena {
-    grid-template-columns: 1fr;
-    grid-template-rows: 1fr auto;
-    grid-template-areas: "objeto" "dizer";
-    align-content: center;
-    gap: clamp(16px, 3vh, 32px);
-    padding-inline: clamp(20px, 6vw, 40px);
-    padding-block: clamp(60px, 10vh, 90px) clamp(76px, 12vh, 110px);
-  }
-  .palco-pecas__objeto {
-    height: min(42vh, 100%);
-  }
-  /* AS 11 PASTILHAS NAO CABEM EM TELA ESTREITA.
-     MEDIDO (05/09, achado da revisao do gerente): 11 alvos de 44px + 10 vaos
-     de 10px = 584px de trilha. Em 375 ela ia de x=-104 a 480: as duas
-     primeiras ficavam FORA DA TELA pela esquerda.
-     E o portao nao pegou porque `translate: -50%` sangra para os DOIS lados —
-     `overflow do documento: 0px` com conteudo inalcancavel. Overflow zero nao
-     prova que cabe.
-     A saida nao e encolher o alvo (44px e o piso da casa): e deixar a trilha
-     ROLAR de lado, com o alvo intacto. */
-  .palco-pecas__trilha {
-    left: 0;
-    right: 0;
-    translate: none;
-    justify-content: flex-start;
-    gap: 4px;
-    padding-inline: clamp(20px, 6vw, 40px);
-    overflow-x: auto;
-    scroll-snap-type: x proximity;
-    /* a barra some, o gesto fica */
-    scrollbar-width: none;
-  }
-  .palco-pecas__trilha::-webkit-scrollbar {
-    display: none;
-  }
-  .palco-pecas__trilha li {
-    scroll-snap-align: center;
-    flex: 0 0 auto;
-  }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .palco-pecas__objeto img {
-    transition: none;
-    scale: 1;
   }
 }
 
@@ -3532,94 +2716,6 @@ body.is-abrindo {
 .casa__bio i {
   font-style: italic;
   color: var(--br-tinta);
-}
-
-/* ── o retrato ────────────────────────────────────────────────────────────── */
-.casa__retrato {
-  position: relative;
-  margin: 0;
-  /* o mesmo raio assimétrico da cápsula do hero: a forma é a assinatura da
-     casa, e repeti-la aqui costura os dois capítulos */
-  border-radius: clamp(80px, 14vw, 180px) 0 0 clamp(80px, 14vw, 180px);
-  overflow: hidden;
-}
-.casa__retrato img {
-  display: block;
-  width: 100%;
-  height: auto;
-  /* A PASSAGEM hero -> 01 (05/09): o mesmo homem MUDANDO DE QUADRO, nao outra
-     foto entrando. O retrato nasce ABERTO — escala 1,24, que aproxima o close
-     do enquadramento do busto que a capsula do hero mostra — e FECHA no close
-     conforme o capitulo entra. A origem fica nos olhos (60% 34%), para o
-     rosto nao deslizar durante o zoom. E ele entra ANTES do texto (0,05, nao
-     0,25): a imagem conduz, a historia vem atras. */
-  --t: clamp(0, calc((var(--cap-entra, 1) - 0.05) / 0.7), 1);
-  opacity: calc(0.35 + var(--t) * 0.65);
-  scale: calc(1.24 - var(--t) * 0.24);
-  transform-origin: 60% 34%;
-  transition: none;
-}
-/* a luz que sobe do canto — o mesmo cone da cápsula */
-.casa__retrato::after {
-  content: "";
-  position: absolute;
-  inset: 0;
-  pointer-events: none;
-  background: linear-gradient(
-    200deg,
-    transparent 52%,
-    color-mix(in srgb, var(--br-chao) 72%, transparent)
-  );
-}
-
-/* ── TABLET (700–900px): composição própria, não regra de celular esticada ──
-   MEDIDO (4a auditoria, captura de 768): o retrato ficava preso à esquerda com
-   `max-width: 420px`, sobrava uma faixa vazia de ~300px à direita, e o título
-   era empurrado para fora da primeira tela. A assimetria não relacionava foto
-   e texto — parecia a regra móvel aplicada a uma largura que comporta duas
-   colunas.
-   Aqui o retrato ocupa uma coluna estreita À DIREITA e o texto a coluna larga:
-   a mesma relação do desktop, em proporção que cabe. */
-@media (min-width: 700px) and (max-width: 900px) {
-  .casa {
-    grid-template-columns: minmax(0, 1.35fr) minmax(0, 0.75fr);
-    align-items: center;
-    gap: clamp(20px, 3vw, 36px);
-  }
-  .casa__retrato {
-    order: 0;
-    max-width: none;
-    border-radius: clamp(60px, 10vw, 110px) 0 0 clamp(60px, 10vw, 110px);
-  }
-  .casa__marcos {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: clamp(12px, 1.8vw, 20px) clamp(14px, 2vw, 26px);
-  }
-}
-
-@media (max-width: 699px) {
-  .casa {
-    grid-template-columns: 1fr;
-    gap: clamp(24px, 5vh, 40px);
-  }
-  /* no celular o retrato vem PRIMEIRO: a pessoa antes da história */
-  .casa__retrato {
-    order: -1;
-    max-width: 420px;
-    /* no celular a imagem ocupa a largura inteira: raio nos cantos da esquerda
-       cai no vão e não se lê. A assinatura passa para o topo, onde há corte. */
-    border-radius: clamp(70px, 20vw, 140px) clamp(70px, 20vw, 140px) 0 0;
-  }
-  .casa__marcos {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .casa__retrato img {
-    opacity: 1;
-    scale: 1;
-  }
 }
 
 /* ═══════════════════════════════════════════════════════════════════════════
@@ -3997,90 +3093,9 @@ body.is-abrindo {
   initial-value: 0;
 }
 
-/* PREPARAÇÃO + TRANSFORMAÇÃO: o objeto recua e sobe, cedendo o lugar */
-.palco-pecas__objeto {
-  --sai: clamp(0, calc((var(--entrega, 0) - 0.35) / 0.45), 1);
-  translate: 0 calc(var(--sai) * -8%);
-
-  /* A PEÇA É UMA PROMESSA durante a abertura, não uma ausência. A tira de
-     contatos mostrou 4-5 quadros com METADE DA TELA VAZIA enquanto o título
-     subia (o objeto estava a zero). A 42% ela já está lá, fantasma, e cresce
-     para assumir quando o texto cede.
-     42%, NÃO 16%: medido, a 16% a área da peça dava luminância 18,3 contra
-     18,9 do chão ao lado — uma imagem escura sobre preto fica MAIS ESCURA que
-     o fundo em opacidade baixa. Invisível por construção.
-     E some a ZERO no fim (não a 8%): a tira mostrou o fantasma da peça dois
-     quadros sobre o capítulo 03 depois da passagem. Resíduo é ruído. */
-  opacity: calc((0.42 + var(--abre, 1) * 0.58) * (1 - var(--sai)));
-
-  /* UMA EXPRESSÃO SÓ PARA A ESCALA — entrada e saída no mesmo cálculo.
-     BUG ACHADO NA REVISÃO (06/09): esta regra declarava `scale` DUAS VEZES.
-     A segunda (a entrada, `--abre`) sobrescrevia a primeira (a saída, `--sai`),
-     e a redução de 16% na passagem nunca acontecia — a peça esmaecia sem
-     recuar. Duas declarações da mesma propriedade no mesmo seletor: a última
-     vence, silenciosamente, e nada acusa erro.
-     Agora os dois gestos se compõem: nasce em 0,90 durante a abertura, chega a
-     1 quando o texto cede, e recua até 0,84 na saída. */
-  scale: calc(
-    (1 - (1 - var(--abre, 1)) * 0.1) * (1 - var(--sai) * 0.16)
-  );
-  grid-area: objeto;
-}
-
-/* o texto solta antes do objeto: a leitura termina, depois a imagem sai */
-.palco-pecas__dizer {
-  --sai: clamp(0, calc(var(--entrega, 0) / 0.5), 1);
-  /* A introdução termina antes deste texto nascer. No cruzamento linear antigo,
-     os dois ocupavam a mesma célula a 50% e viravam uma mancha tipográfica. */
-  opacity: calc(clamp(0, calc((var(--abre, 1) - 0.58) / 0.42), 1) * (1 - var(--sai)));
-  translate: calc(var(--sai) * -18px) 0;
-  grid-area: dizer;
-}
-
-/* a trilha é a última a sair: ela é o mapa do próprio capítulo */
-.palco-pecas__trilha {
-  --sai: clamp(0, calc((var(--entrega, 0) - 0.6) / 0.4), 1);
-  opacity: calc(var(--abre, 1) * (1 - var(--sai)));
-}
-
-/* CHEGADA: a costura entre os dois chãos acende no meio da entrega — o mesmo
-   recurso das transições de capítulo, agora marcando a passagem */
-.palco-pecas::after {
-  content: "";
-  position: absolute;
-  z-index: 2;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  height: 1px;
-  pointer-events: none;
-  background: linear-gradient(
-    90deg,
-    transparent,
-    color-mix(in srgb, var(--br-luz) 60%, transparent),
-    transparent
-  );
-  /* parábola: acende no meio do gesto e apaga quando assenta */
-  opacity: calc(4 * var(--entrega, 0) * (1 - var(--entrega, 0)) * 0.7);
-}
-
 @media (prefers-reduced-motion: reduce) {
-  /* sem movimento a cena EXISTE inteira: nada recua, nada esmaece */
-  .palco-pecas__objeto,
-  .palco-pecas__dizer,
-  .palco-pecas__trilha {
-    translate: none;
-    scale: 1;
-    opacity: 1;
-  }
-  /* e sem passagem nao ha sobreposicao: com a margem negativa e o cap 03
-     aberto de saida (Capitulos.tsx forca --cap-entra=1 neste modo), ele
-     cobriria a metade de baixo da VP para sempre */
   .cap--estrada {
     margin-top: 0;
-  }
-  .palco-pecas::after {
-    opacity: 0;
   }
 }
 
@@ -4171,45 +3186,10 @@ body.is-abrindo {
   /* 0: sem JS a abertura e o que se le (texto), nao uma peca presa */
   initial-value: 0;
 }
-.palco-pecas__abre {
-  grid-area: dizer;
-  max-width: 44ch;
-  opacity: clamp(0, calc((0.42 - var(--abre, 0)) / 0.42), 1);
-  translate: calc(var(--abre, 0) * -18px) 0;
-  pointer-events: none;
-}
-/* o titulo no tamanho da coluna do palco, nao no do capitulo */
-.palco-pecas__titulo {
-  font-size: clamp(1.55rem, 4.6vmin, 3.1rem);
-  margin-bottom: clamp(14px, 1.8vw, 24px);
-}
-.palco-pecas__abre .cap__corpo p {
-  max-width: 36ch;
-  font-size: clamp(0.92rem, 1.45vmin, 1.08rem);
-}
-@media (max-width: 900px) {
-  .palco-pecas__abre {
-    max-width: none;
-  }
-  .palco-pecas__titulo {
-    font-size: clamp(1.35rem, 6vw, 1.9rem);
-  }
-}
-@media (prefers-reduced-motion: reduce) {
-  .palco-pecas__abre {
-    translate: none;
-  }
-}
-
-
 @media (prefers-reduced-motion: reduce) {
   /* as passagens nao existem sem movimento: cada cena nasce inteira */
   .hero-tr__capsula {
     opacity: 1;
-  }
-  .casa__retrato img {
-    opacity: 1;
-    scale: 1;
   }
   .cap--nome,
   .cap--nome > .nome,
@@ -4249,8 +3229,8 @@ body.is-abrindo {
   inset: 0;
   pointer-events: none;
   background:
-    linear-gradient(90deg, color-mix(in srgb, var(--br-marca) 14%, transparent) 1px, transparent 1px),
-    linear-gradient(0deg, color-mix(in srgb, var(--br-marca) 10%, transparent) 1px, transparent 1px);
+    linear-gradient(90deg, color-mix(in srgb, var(--br-casa-luz) 22%, transparent) 1px, transparent 1px),
+    linear-gradient(0deg, color-mix(in srgb, var(--br-casa-luz) 16%, transparent) 1px, transparent 1px);
   background-size: clamp(96px, 11vw, 180px) clamp(96px, 11vw, 180px);
   mask-image: radial-gradient(ellipse 78% 90% at 56% 46%, black, transparent 78%);
   -webkit-mask-image: radial-gradient(ellipse 78% 90% at 56% 46%, black, transparent 78%);
@@ -4302,7 +3282,7 @@ body.is-abrindo {
   position: absolute;
   inset: 0 auto auto 0;
   display: block;
-  width: 3850px;
+  width: 4180px;
   height: 100%;
   margin: 0;
   padding: 0 clamp(24px, 5vw, 96px) 0 var(--br-goteira);
@@ -4316,34 +3296,48 @@ body.is-abrindo {
   transition: opacity 0.2s linear;
 }
 
-/* ── os cartões: três larguras, três alturas ──────────────────────────────── */
+/* ── os cartões padronizados (largura e altura uniformes) ─────────────────── */
 .esteira__item {
   position: absolute;
   display: block;
-  width: auto;
+  width: 330px;
   height: auto;
+  /* Enquanto o painel de Marcas sobe sobre A Casa (--cap-entra 0->1), os
+     cartões se abrem em leque para a posição final, como no protótipo #p2 do lab */
+  translate: calc((1 - var(--cap-entra, 1)) * 38px) calc((1 - var(--cap-entra, 1)) * 52px);
+  rotate: calc((1 - var(--cap-entra, 1)) * -2deg);
 }
-.esteira__item--p { width: 260px; }
-.esteira__item--m { width: 390px; }
-.esteira__item--g { width: 650px; }
-.esteira__item--alto  { top: 0; }
-.esteira__item--meio  { top: 150px; }
-.esteira__item--baixo { top: 330px; }
+@media (prefers-reduced-motion: reduce) {
+  .esteira__item {
+    translate: none;
+    rotate: none;
+  }
+}
+.esteira__item--p,
+.esteira__item--m,
+.esteira__item--g {
+  width: 330px;
+}
+.esteira__item--alto  { top: 24px; }
+.esteira__item--meio  { top: 160px; }
+.esteira__item--baixo { top: 296px; }
 
-/* A prancha não é uma fila: cada bloco ocupa uma coordenada editorial própria.
-   As posições alternam duas faixas e deixam vazios deliberados, como a referência.
-   O último bloco é a dobradiça visual para o PalcoPecas. */
-.esteira__item:nth-child(1) { left: 800px; top: 24px; width: 300px; }
-.esteira__item:nth-child(2) { left: 1090px; top: 330px; width: 360px; }
-.esteira__item:nth-child(3) { left: 1400px; top: 62px; width: 280px; }
-.esteira__item:nth-child(4) { left: 1660px; top: 300px; width: 390px; }
-.esteira__item:nth-child(5) { left: 2010px; top: 18px; width: 300px; }
-.esteira__item:nth-child(6) { left: 2300px; top: 334px; width: 250px; }
-.esteira__item:nth-child(7) { left: 2540px; top: 52px; width: 380px; }
-.esteira__item:nth-child(8) { left: 2870px; top: 310px; width: 280px; }
-.esteira__item:nth-child(9) { left: 3130px; top: 24px; width: 360px; }
-.esteira__item:nth-child(10) { left: 3370px; top: 330px; width: 250px; }
-.esteira__item:nth-child(11) { left: 3560px; top: 54px; width: 260px; }
+/* Posicionamento geométrico padronizado: duas fileiras regulares (alto/baixo)
+   com passo uniforme de 290px e dimensões perfeitamente idênticas */
+.esteira__item:nth-child(odd)  { top: 24px; }
+.esteira__item:nth-child(even) { top: 296px; }
+
+.esteira__item:nth-child(1)  { left: 800px; width: 330px; }
+.esteira__item:nth-child(2)  { left: 1090px; width: 330px; }
+.esteira__item:nth-child(3)  { left: 1380px; width: 330px; }
+.esteira__item:nth-child(4)  { left: 1670px; width: 330px; }
+.esteira__item:nth-child(5)  { left: 1960px; width: 330px; }
+.esteira__item:nth-child(6)  { left: 2250px; width: 330px; }
+.esteira__item:nth-child(7)  { left: 2540px; width: 330px; }
+.esteira__item:nth-child(8)  { left: 2830px; width: 330px; }
+.esteira__item:nth-child(9)  { left: 3120px; width: 330px; }
+.esteira__item:nth-child(10) { left: 3410px; width: 330px; }
+.esteira__item:nth-child(11) { left: 3700px; width: 330px; }
 
 /* ── O CARTÃO QUE VIRA (lab, item 6, `#p7`) ───────────────────────────────────
    Antes cada cartão era um <a> inteiro para o portal. Agora um <button> vira
@@ -4354,11 +3348,25 @@ body.is-abrindo {
 .esteira__item {
   perspective: 1400px;
 }
+@property --card-rx {
+  syntax: "<angle>";
+  inherits: false;
+  initial-value: 0deg;
+}
+@property --card-ry {
+  syntax: "<angle>";
+  inherits: false;
+  initial-value: 0deg;
+}
 .esteira__girar {
+  --card-rx: 0deg;
+  --card-ry: 0deg;
+  --card-lx: 50%;
+  --card-ly: 50%;
   position: relative;
   display: block;
   width: 100%;
-  height: clamp(220px, 34vh, 310px);
+  height: 280px;
   padding: 0;
   background: none;
   border: 0;
@@ -4367,10 +3375,14 @@ body.is-abrindo {
   text-align: left;
   cursor: pointer;
   transform-style: preserve-3d;
-  transition: transform 0.7s cubic-bezier(0.2, 0.7, 0.2, 1);
+  transform: rotateX(var(--card-rx)) rotateY(var(--card-ry));
+  transition: transform 0.65s cubic-bezier(0.2, 0.7, 0.2, 1);
+}
+.esteira.is-livre .esteira__girar {
+  height: 100%;
 }
 .esteira__item.is-aberta .esteira__girar {
-  transform: rotateY(180deg);
+  transform: rotateY(calc(180deg + var(--card-ry))) rotateX(calc(-1 * var(--card-rx)));
 }
 /* o aperto do cartao, como o do CTA: 1px, sem mexer no giro */
 .esteira__girar:active {
@@ -4381,20 +3393,40 @@ body.is-abrindo {
   inset: 0;
   backface-visibility: hidden;
   -webkit-backface-visibility: hidden;
-  border-top: 1px solid color-mix(in srgb, var(--br-tinta) 26%, transparent);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-top: 1.5px solid rgba(255, 255, 255, 0.45);
+  border-radius: 14px;
+  background: linear-gradient(
+    165deg,
+    color-mix(in srgb, var(--br-superficie) 94%, #254670) 0%,
+    color-mix(in srgb, var(--br-chao) 96%, #050a12) 100%
+  );
+  box-shadow: 
+    0 1px 0 0 rgba(255, 255, 255, 0.18) inset,
+    0 24px 50px -10px rgba(0, 0, 0, 0.7);
   overflow: hidden;
+  transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.4s ease, border-color 0.4s ease;
 }
 .esteira__frente {
   display: grid;
   grid-template-rows: auto 1fr auto;
   gap: clamp(10px, 1.4vh, 18px);
-  padding: clamp(10px, 1.2vw, 18px) 0;
-  transition: border-color 0.35s ease, background-color 0.35s ease;
+  padding: clamp(14px, 1.4vw, 22px);
+  transition: border-color 0.35s ease, background-color 0.35s ease, box-shadow 0.35s ease;
+}
+.esteira__girar:hover .esteira__face,
+.esteira__girar:focus-visible .esteira__face {
+  border-color: rgba(96, 165, 250, 0.75);
+  border-top-color: #fff;
+  box-shadow:
+    0 1px 0 0 rgba(255, 255, 255, 0.5) inset,
+    0 0 32px rgba(217, 119, 87, 0.4),
+    0 30px 65px -10px rgba(0, 0, 0, 0.85);
+  transform: translateY(-5px);
 }
 .esteira__girar:hover .esteira__frente,
 .esteira__girar:focus-visible .esteira__frente {
-  border-color: var(--br-marca);
-  background: color-mix(in srgb, var(--br-marca) 5%, transparent);
+  border-color: var(--br-luz);
 }
 .esteira__num {
   font-family: var(--font-display), sans-serif;
@@ -4452,21 +3484,59 @@ body.is-abrindo {
   color: var(--br-fraco);
   line-height: 1.4;
 }
-/* a dica que convida ao clique — só na frente, some ao virar */
+/* reflexo de bancada acompanhando o ponteiro (Vidro Aeroespacial Líquido) */
+.esteira__face::after {
+  content: "";
+  position: absolute;
+  inset: -1px;
+  pointer-events: none;
+  opacity: 0.2;
+  background: radial-gradient(
+    280px circle at var(--card-lx, 50%) var(--card-ly, 50%),
+    rgba(255, 255, 255, 0.45) 0%,
+    rgba(96, 165, 250, 0.22) 35%,
+    transparent 70%
+  );
+  mix-blend-mode: overlay;
+  transition: opacity 0.3s ease;
+}
+.esteira__girar:hover .esteira__face::after {
+  opacity: 1;
+}
+/* a dica que convida ao giro nos dois lados */
 .esteira__dica {
   position: absolute;
-  top: clamp(16px, 1.8vw, 26px);
-  right: clamp(16px, 1.8vw, 26px);
-  font-size: 0.7rem;
+  top: clamp(12px, 1.4vw, 20px);
+  right: clamp(12px, 1.4vw, 20px);
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 4px 9px;
+  border: 1px solid color-mix(in srgb, var(--br-tinta) 16%, transparent);
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--br-chao) 68%, transparent);
+  font-size: 0.66rem;
   font-weight: 600;
   letter-spacing: 0.14em;
   text-transform: uppercase;
   color: var(--br-fraco);
-  transition: color 0.35s ease;
+  transition: color 0.35s ease, border-color 0.35s ease, background-color 0.35s ease;
+}
+.esteira__dica i {
+  font-style: normal;
+  font-size: 0.8rem;
+  line-height: 1;
+  color: var(--br-luz);
+  transition: rotate 0.4s cubic-bezier(0.16, 1, 0.3, 1);
 }
 .esteira__girar:hover .esteira__dica,
 .esteira__girar:focus-visible .esteira__dica {
-  color: var(--br-marca-texto);
+  color: var(--br-tinta);
+  border-color: color-mix(in srgb, var(--br-luz) 45%, transparent);
+  background: color-mix(in srgb, var(--br-marca) 22%, var(--br-chao));
+}
+.esteira__girar:hover .esteira__dica i {
+  rotate: 45deg;
 }
 /* o verso: a peça que a marca fornece, a mesma imagem do palco */
 .esteira__verso {
@@ -4489,7 +3559,7 @@ body.is-abrindo {
 .esteira__versoRodape {
   display: grid;
   gap: 2px;
-  padding: 0 0 clamp(10px, 1.2vw, 18px);
+  padding: 0 clamp(14px, 1.4vw, 22px) clamp(14px, 1.4vw, 22px);
 }
 .esteira__versoRodape b {
   font-family: var(--font-display), sans-serif;
@@ -4867,11 +3937,12 @@ body::-webkit-scrollbar {
    admitiu. A moldura fecha em 0,92, não em 1: o último trecho do pino é a
    cápsula já aberta, parada, antes de o hero soltar. Nenhum quadro mostra o rosto maior que no hero: ele nunca escala. */
 .hero-tr {
-  --some: clamp(0, calc((var(--passa, 0) - 0.22) / 0.2), 1);
-  --abre: clamp(0, calc((var(--passa, 0) - 0.3) / 0.62), 1);
-  /* o chão de A Casa: um azul da marca a 7% sobre o chão da página. O mesmo
-     valor dentro da cápsula aberta e na seção seguinte é o que apaga a emenda */
-  --casa-chao: color-mix(in srgb, var(--br-casa-luz) 7%, transparent);
+  --some: clamp(0, calc((var(--passa, 0) - 0.18) / 0.2), 1);
+  --abre: clamp(0, calc((var(--passa, 0) - 0.24) / 0.68), 1);
+  /* O chão de A Casa: Papel Editorial / Alabastro (#edf2f7). Quando a cápsula se
+     abre sobre o breu do Hero (#08090c), o contraste de luminância torna a janela
+     arquitetônica impossível de ignorar e entrega o novo plano sem emenda. */
+  --casa-chao: #edf2f7;
 }
 
 /* A foto SAI, não cresce. `filter: opacity` e não `opacity`: a entrada da
@@ -4880,9 +3951,21 @@ body::-webkit-scrollbar {
   filter: opacity(calc(1 - var(--some)));
 }
 
+/* No desktop preso, enquanto a cápsula de luz varre o Hero da direita para a
+   esquerda, a coluna de texto recua em profundidade (como no protótipo #p1 do lab). */
+@media (min-width: 901px) {
+  .hero-tr__texto {
+    translate: calc(var(--abre, 0) * -7vw) 0;
+    scale: calc(1 - var(--abre, 0) * 0.055);
+    opacity: calc(1 - clamp(0, calc((var(--passa, 0) - 0.18) / 0.36), 1));
+    transform-origin: 0% 50%;
+    will-change: translate, scale, opacity;
+  }
+}
+
 .hero-tr__moldura {
   position: absolute;
-  z-index: 1;                        /* igual ao texto; vem antes no DOM */
+  z-index: 2;                        /* passa por cima do texto que recua no desktop */
   pointer-events: none;
   /* nasce na caixa MEDIDA da cápsula e encolhe as quatro distâncias a zero */
   top: calc(var(--cap-t, 0px) * (1 - var(--abre)));
@@ -4899,50 +3982,34 @@ body::-webkit-scrollbar {
   background:
     radial-gradient(
       ellipse 70% 60% at 72% 30%,
-      color-mix(in srgb, var(--br-casa-luz) 16%, transparent),
+      color-mix(in srgb, var(--br-casa-luz) 18%, transparent),
       color-mix(in srgb, var(--br-casa-luz) 0%, transparent) 70%
     ),
     var(--casa-chao);
-  /* o fio de luz na borda: desenha a forma enquanto ela ainda é cápsula e
-     some antes de a moldura chegar às bordas da tela */
-  box-shadow: inset 0 0 0 1px
-    rgba(160, 208, 240, calc(0.3 * (1 - min(1, var(--abre) / 0.4))));
+  /* Borda luminosa + rastro de luz royal varrendo o breu do Hero */
+  box-shadow:
+    inset 0 0 0 2px rgba(0, 95, 150, calc(0.55 * (1 - min(1, var(--abre) / 0.85)))),
+    -32px 0 80px rgba(0, 95, 150, calc(0.5 * (1 - min(1, var(--abre) / 0.92))));
 }
 
 @media (max-width: 900px) {
-  /* NO CELULAR A BASE JÁ NASCE EM A CASA. Sem pino, a cápsula está no topo
-     do hero e o hero rola inteiro; se a base crescesse junto com o resto,
-     MEDIDO em 375: sobrava uma faixa do chão antigo entre a moldura e o topo
-     de A Casa, com duas bordas horizontais atravessando o texto. Aqui a
-     moldura desce até a base do hero desde o primeiro quadro em que aparece;
-     o que abre são o topo, as laterais e o raio. O canto de baixo não tem
-     raio: ele encosta em A Casa, e um canto curvo deixaria um dente de chão. */
+  /* No celular (Invariante 5 do D-36): o Hero não é sticky e o texto fica abaixo
+     da cápsula. Para nunca lavar o texto claro do Hero com fundo claro enquanto
+     o usuário lê o CTA, a moldura não cobre o texto no mobile; é a própria seção
+     A Casa (#edf2f7) que sobe como folha arquitetônica arredondada sobre o breu. */
   .hero-tr__moldura {
-    bottom: 0;
-    border-radius: calc(clamp(80px, 22vw, 160px) * (1 - var(--abre))) 0 0 0;
-    /* o fio de luz SEM a borda de baixo: ali é a emenda com A Casa, e um fio
-       horizontal nela seria exatamente o corte que a passagem existe para
-       apagar (visto na tira de 375). Topo+esquerda num, direita no outro. */
-    --fio: rgba(160, 208, 240, calc(0.3 * (1 - min(1, var(--abre) / 0.4))));
-    box-shadow:
-      inset 1px 1px 0 0 var(--fio),
-      inset -1px 0 0 0 var(--fio);
+    display: none;
+  }
+  .hero-tr__capsula {
+    filter: none;
   }
 }
 
-/* A CASA É O QUE ESTAVA DENTRO. O chão dela tem o tom da cápsula aberta, e
-   por isso o fim do pino não tem corte: a moldura cobre o hero inteiro no
-   mesmo instante em que ele começa a subir, e embaixo dele vem o mesmo chão.
-   Translúcido de propósito: a estrada (Estrada.tsx) passa POR TRÁS da seção e
-   continua visível no corredor entre os marcos.
-   A cortina da direita e o degrau de 34px saem daqui — a passagem agora é a
-   cápsula; manter as duas era contar a mesma entrada duas vezes. */
+/* A CASA É O QUE ESTAVA DENTRO. No desktop, o chão claro (#edf2f7) acompanha a
+   moldura no mesmo compasso (--some), apagando qualquer corte na soltura do pino. */
 .passagem-casa-marcas > .cap--casa {
-  /* o tom acompanha a moldura NO MESMO compasso (--some é a opacidade dela):
-     onde as duas se encostam, o valor é idêntico, e rolando de volta ele
-     recua junto. Sem JS, --passa cai no 1 e o chão fica pronto. */
-  --some: clamp(0, calc((var(--passa, 1) - 0.22) / 0.2), 1);
-  background: color-mix(in srgb, var(--br-casa-luz) calc(7% * var(--some)), transparent);
+  --some: clamp(0, calc((var(--passa, 1) - 0.18) / 0.2), 1);
+  background: color-mix(in srgb, #edf2f7 calc(100% * var(--some)), #08090c);
   clip-path: none;
   transform: none;
 }
@@ -4950,21 +4017,32 @@ body::-webkit-scrollbar {
   opacity: 0;
 }
 
+@media (max-width: 900px) {
+  .passagem-casa-marcas > .cap--casa {
+    background: #edf2f7;
+    border-radius: 28px 28px 0 0;
+    box-shadow:
+      0 -2px 0 rgba(0, 95, 150, 0.45),
+      0 -24px 60px rgba(0, 0, 0, 0.72);
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   /* sem movimento não há passagem: o hero fica inteiro, com a foto, e A Casa
-     nasce no chão dela — que entra por um degradê, sem degrau na emenda */
+     nasce no chão claro dela */
   .hero-tr__moldura {
     display: none;
   }
   .hero-tr__capsula {
     filter: none;
   }
+  .hero-tr__texto {
+    translate: none;
+    scale: 1;
+    opacity: 1;
+  }
   .passagem-casa-marcas > .cap--casa {
-    background: linear-gradient(
-      to bottom,
-      color-mix(in srgb, var(--br-casa-luz) 0%, transparent),
-      color-mix(in srgb, var(--br-casa-luz) 7%, transparent) clamp(96px, 16vh, 200px)
-    );
+    background: #edf2f7;
   }
 }
 
@@ -4993,10 +4071,10 @@ body::-webkit-scrollbar {
 }
 
 /* 2 e 3 · a ligação e as letras: uma camada sobre a página, acima do painel
-   de O Nome (z 2) e abaixo da nav (z 40). Não captura nada. */
+   de O Nome (z 4) e abaixo da nav (z 40). Não captura nada. */
 .estrada-escreve {
   position: absolute;
-  z-index: 3;
+  z-index: 5;
   left: 0;
   top: 0;
   width: 0;
@@ -5060,18 +4138,21 @@ body::-webkit-scrollbar {
   stroke-dashoffset: calc(1 - var(--ponto, 0));
 }
 
-/* AS LETRAS SÓLIDAS NASCEM DO TRAÇO. Antes elas chegavam deslizando (o
-   `--cap-entra` do capítulo); agora o traço as escreve no lugar final, e o
-   deslize faria a letra sólida não cair em cima da de traço. Elas ficam nos
-   planos de sempre (±26%) e aparecem enquanto o traço engrossa.
-   Sem JS (`--vira` ausente) vale 1: as letras existem inteiras. */
+/* AS LETRAS SÓLIDAS NASCEM DO TRAÇO E SE ABREM COMO PORTAS MONUMENTAIS PARA O FECHO.
+   Enquanto o traço engrossa (--vira), elas ficam em ±26% para coincidir 1:1 com
+   a geometria do SVG. Depois que --vira já completou (1) e o usuário rola para
+   o FechoFabio (--fecho-t > 0.22), o H desliza para a esquerda e o M para a
+   direita, abrindo o palco Coda Noir para o retrato do Fábio emergir. */
+.cap--nome {
+  --fecho-abre: clamp(0, calc((var(--fecho-t, 0) - 0.22) / 0.58), 1);
+}
 .cap--nome .nome__letra--h {
-  translate: -26% 0;
-  opacity: clamp(0, calc((var(--vira, 1) - 0.3) / 0.55), 1);
+  translate: calc(-26% - var(--fecho-abre, 0) * 12%) 0;
+  opacity: calc(clamp(0, calc((var(--vira, 1) - 0.3) / 0.55), 1) * (1 - var(--fecho-abre, 0) * 0.32));
 }
 .cap--nome .nome__letra--m {
-  translate: 26% 0;
-  opacity: clamp(0, calc((var(--vira, 1) - 0.3) / 0.55), 1);
+  translate: calc(26% + var(--fecho-abre, 0) * 12%) 0;
+  opacity: calc(clamp(0, calc((var(--vira, 1) - 0.3) / 0.55), 1) * (1 - var(--fecho-abre, 0) * 0.32));
 }
 /* primeiro o H.M., depois o porquê: a homenagem chega quando o nome assenta */
 .cap--nome .nome__homenagem {
@@ -5231,16 +4312,19 @@ body::-webkit-scrollbar {
   position: absolute;
   inset: 0;
   border-radius: inherit;
-  /* o MESMO chão da cena do carro — é ela que vai se abrir aqui dentro */
+  /* o MESMO chão de estúdio raio-X (#040508) da cena do carro que se abre aqui dentro */
   background: radial-gradient(
-    ellipse at 50% 58%,
-    color-mix(in srgb, var(--br-marca) 22%, var(--br-chao)) 0%,
-    var(--br-chao) 62%
+    ellipse 66% 58% at 50% 56%,
+    color-mix(in srgb, var(--br-marca) 34%, #040508) 0%,
+    color-mix(in srgb, var(--br-marca) 12%, #040508) 42%,
+    #040508 74%
   );
-  /* contorno fino, sem linha dura: some no fim do respiro, antes da janela */
-  box-shadow: inset 0 0 0 1px
-    color-mix(in srgb, var(--br-luz) calc(18% * (1 - clamp(0, calc((var(--entrar-h) - 0.6) / 0.4), 1))), transparent);
-  opacity: clamp(0, calc(var(--entrar-a) / 0.4), 1);
+  /* Borda iluminada de câmara raio-X enquanto o cartão se expande sobre a bancada #0b1626 */
+  box-shadow:
+    inset 0 0 0 1.5px color-mix(in srgb, var(--br-luz) calc(52% * (1 - clamp(0, calc((var(--entrar-h) - 0.65) / 0.35), 1))), transparent),
+    0 28px 80px rgba(0, 0, 0, 0.85),
+    0 0 44px color-mix(in srgb, var(--br-marca) calc(48% * (1 - clamp(0, calc((var(--entrar-h) - 0.65) / 0.35), 1))), transparent);
+  opacity: clamp(0, calc(var(--entrar-a) / 0.35), 1);
 }
 /* O QUE HÁ DENTRO DO CARTÃO: a peça que a marca fabrica (a mesma do verso) e
    o parágrafo-ponte. Largura FIXA — a do quadro final, não a da moldura — para
@@ -5317,34 +4401,24 @@ body::-webkit-scrollbar {
 }
 
 /* ── o lado do carro ───────────────────────────────────────────────────────── */
-/* a pista sobe por cima do fim da esteira; a caixa dela (transparente) não
-   pode roubar o clique dos cartões — só a cena, e só quando aparece */
+/* a pista sobe por cima do fim da esteira; escapa do padding do capítulo para ocupar
+   100% da largura da tela (borda a borda), exatamente como a esteira */
 .carro-onze {
+  position: relative;
   margin-top: calc(-1 * var(--entrar-recuo, 0px));
+  margin-inline: calc(-1 * var(--br-goteira)) calc(-1 * clamp(20px, 6vw, 104px));
   pointer-events: none;
 }
+@media (max-width: 900px) {
+  .carro-onze {
+    margin-inline: calc(-1 * clamp(20px, 6vw, 40px));
+  }
+}
 .carro-onze__cena {
-  --entrar-fundo: clamp(0, calc(var(--entrar-b, 1) / 0.6), 1);
   pointer-events: auto;
-  /* ANTES DE GRUDAR (`--entrar-v` 0) a cena não aparece: ela sobe por baixo
-     da esteira presa. Grudada, abre do quadro da moldura até a tela inteira. */
-  clip-path: inset(
-    max(calc(var(--mid2-t) * (1 - var(--entrar-b, 1))), calc((1 - var(--entrar-v, 1)) * 50%))
-      max(calc(var(--mid2-l) * (1 - var(--entrar-b, 1))), calc((1 - var(--entrar-v, 1)) * 50%))
-      round calc(var(--entrar-raio) * (1 - var(--entrar-b, 1)))
-  );
-  /* o chão da cena entra junto com a janela: nos primeiros quadros a moldura
-     (e o parágrafo saindo) ainda se vê por trás do carro que se desenha */
-  background: radial-gradient(
-    ellipse at 50% 58%,
-    color-mix(
-        in srgb,
-        color-mix(in srgb, var(--br-marca) 22%, var(--br-chao)) calc(var(--entrar-fundo) * 100%),
-        transparent
-      )
-      0%,
-    color-mix(in srgb, var(--br-chao) calc(var(--entrar-fundo) * 100%), transparent) 62%
-  );
+  clip-path: none;
+  /* A cena do estúdio raio-X assume a tela inteira com transição suave, sem clip-path decepando o cabeçalho */
+  opacity: calc(clamp(0, calc(var(--entrar-b, 1) * 2.2), 1) * (1 - var(--cede, 0) * 0.94));
 }
 
 /* sem movimento: nada de passagem — o parágrafo volta ao fluxo, sob os
@@ -5382,5 +4456,696 @@ body::-webkit-scrollbar {
   }
   .carro-onze__cena {
     clip-path: none;
+  }
+}
+
+
+/* ═══ ACESSIBILIDADE, ATALHO DE CONTATO (D-38) E MICROINTERAÇÕES TÁTEIS (FASE 5) ═══ */
+
+/* Skip-to-content: permanece no fluxo de tabulação (opacity 0, >=44px, dentro da
+   viewport) e surge nítido no primeiro Tab do teclado. */
+.pular-conteudo {
+  position: fixed;
+  top: 16px;
+  left: var(--br-goteira);
+  z-index: 95;
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  min-width: 44px;
+  padding: 0 18px;
+  background: var(--br-tinta);
+  color: var(--br-chao);
+  font-family: var(--font-display), sans-serif;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  text-decoration: none;
+  border-radius: 2px;
+  opacity: 0;
+  pointer-events: none;
+  translate: 0 -8px;
+  transition: opacity 0.25s ease, translate 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.pular-conteudo:focus-visible {
+  opacity: 1;
+  pointer-events: auto;
+  translate: 0 0;
+  outline: 2px solid var(--br-marca);
+  outline-offset: 3px;
+}
+
+/* Atalho persistente de contato na nav de capítulos (Gap D-38):
+   nasce invisível no Hero (onde o .btn-falar já domina) e antes do FechoFabio,
+   e acompanha os capítulos intermediários sem invadir a goteira. */
+.cap-nav a.cap-nav__contato {
+  margin-top: 8px;
+  padding-top: 4px;
+  border-top: 1px solid color-mix(in srgb, var(--br-tinta) 14%, transparent);
+  color: var(--br-luz);
+  font-weight: 600;
+  visibility: hidden;
+  opacity: 0;
+  pointer-events: none;
+  transition:
+    opacity 0.35s ease,
+    color 0.35s ease,
+    visibility 0s 0.35s;
+}
+.cap-nav a.cap-nav__contato.is-visivel {
+  visibility: visible;
+  opacity: 1;
+  pointer-events: auto;
+  transition:
+    opacity 0.35s ease,
+    color 0.35s ease,
+    visibility 0s 0s;
+}
+.cap-nav a.cap-nav__contato span {
+  max-width: none;
+  opacity: 1;
+  overflow: visible;
+}
+.cap-nav a.cap-nav__contato i {
+  font-style: normal;
+  font-size: 12px;
+  line-height: 1;
+  color: var(--br-marca-texto);
+  transition: translate 0.3s ease, color 0.3s ease;
+}
+.cap-nav a.cap-nav__contato:hover,
+.cap-nav a.cap-nav__contato:focus-visible {
+  color: #fff;
+}
+.cap-nav a.cap-nav__contato:hover i,
+.cap-nav a.cap-nav__contato:focus-visible i {
+  color: var(--br-luz);
+  translate: 1px -1px;
+}
+
+@media (max-width: 900px) {
+  .cap-nav {
+    display: flex;
+    align-items: stretch;
+  }
+  .cap-nav ul {
+    flex: 1 1 auto;
+  }
+  .cap-nav a.cap-nav__contato {
+    margin-top: 0;
+    padding: 8px 12px;
+    min-width: 56px;
+    border-top: 0;
+    border-left: 1px solid color-mix(in srgb, var(--br-tinta) 12%, transparent);
+    background: color-mix(in srgb, var(--br-marca) 22%, transparent);
+  }
+  .cap-nav a.cap-nav__contato:not(.is-visivel) {
+    display: none;
+  }
+}
+
+/* Sincronização tátil bidirecional entre o Mapa de Minas e a lista das 8 regiões */
+.mapa-mg [data-regiao] {
+  cursor: pointer;
+}
+.mapa-mg__alvo {
+  fill: transparent;
+  pointer-events: all;
+}
+.mapa-mg [data-regiao].is-foco .mapa-mg__ponto {
+  fill: #fff;
+  opacity: 1;
+  transform: scale(1.45);
+  transform-box: fill-box;
+  transform-origin: center;
+}
+.mapa-mg [data-regiao].is-foco .mapa-mg__halo {
+  opacity: 0.95;
+  scale: 1.45;
+  stroke: var(--br-luz);
+  stroke-width: 0.65;
+}
+.mapa-mg [data-regiao].is-foco .mapa-mg__num {
+  fill: #fff;
+}
+.estrada__ufs li {
+  cursor: pointer;
+}
+.estrada__ufs li.is-foco b,
+.estrada__ufs li.is-foco em {
+  color: var(--br-luz);
+  opacity: 1;
+}
+.estrada__ufs li.is-foco::before {
+  background: #fff;
+  opacity: 1;
+  box-shadow: 0 0 0 5px color-mix(in srgb, var(--br-luz) 32%, transparent);
+}
+
+/* ==========================================================================
+   TOQUES DE ALTA ENGENHARIA & PRESTÍGIO EXECUTIVO (PADRÃO LUXO AWWWARDS)
+   ========================================================================== */
+
+/* Extras da navegação (Contato + Alternador de Áudio Tátil) */
+.cap-nav__extras {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-top: 8px;
+  border-top: 1px solid color-mix(in srgb, var(--br-tinta) 14%, transparent);
+  padding-top: 6px;
+}
+.cap-nav a.cap-nav__contato {
+  margin-top: 0;
+  border-top: 0;
+}
+.cap-nav button.cap-nav__som {
+  pointer-events: auto;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 44px;
+  padding: 0 8px;
+  background: transparent;
+  border: 1px solid transparent;
+  color: var(--br-fraco);
+  font-family: inherit;
+  font-size: 10px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  cursor: pointer;
+  border-radius: 4px;
+  transition: color 0.3s ease, border-color 0.3s ease, background 0.3s ease;
+}
+.cap-nav button.cap-nav__som .cap-nav__som-txt {
+  max-width: none;
+  opacity: 1;
+  overflow: visible;
+}
+.cap-nav button.cap-nav__som:hover,
+.cap-nav button.cap-nav__som:focus-visible {
+  color: var(--br-tinta);
+  border-color: color-mix(in srgb, var(--br-luz) 30%, transparent);
+  background: color-mix(in srgb, var(--br-luz) 8%, transparent);
+  outline: none;
+}
+.cap-nav button.cap-nav__som.is-ativo {
+  color: var(--br-luz);
+  border-color: color-mix(in srgb, var(--br-luz) 40%, transparent);
+  background: color-mix(in srgb, var(--br-luz) 10%, transparent);
+}
+.cap-nav__som-barras {
+  display: flex;
+  align-items: flex-end;
+  gap: 2px;
+  width: 12px;
+  height: 12px;
+}
+.cap-nav__som-barras i {
+  display: block;
+  width: 2px;
+  height: 4px;
+  background: currentColor;
+  border-radius: 1px;
+  transition: height 0.25s ease;
+}
+.cap-nav button.cap-nav__som.is-ativo .cap-nav__som-barras i:nth-child(1) {
+  height: 8px;
+  animation: somOnda 0.8s ease-in-out infinite alternate;
+}
+.cap-nav button.cap-nav__som.is-ativo .cap-nav__som-barras i:nth-child(2) {
+  height: 12px;
+  animation: somOnda 0.8s ease-in-out 0.2s infinite alternate;
+}
+.cap-nav button.cap-nav__som.is-ativo .cap-nav__som-barras i:nth-child(3) {
+  height: 6px;
+  animation: somOnda 0.8s ease-in-out 0.4s infinite alternate;
+}
+@keyframes somOnda {
+  from { height: 4px; }
+  to { height: 12px; }
+}
+@media (max-width: 900px) {
+  .cap-nav__extras {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 0;
+    margin-top: 0;
+    padding-top: 0;
+    border-top: 0;
+    border-left: 1px solid color-mix(in srgb, var(--br-tinta) 12%, transparent);
+  }
+  .cap-nav button.cap-nav__som {
+    padding: 8px 12px;
+    min-height: 44px;
+    border-left: 1px solid color-mix(in srgb, var(--br-tinta) 10%, transparent);
+  }
+}
+
+/* Holofote de estúdio de alta engenharia que segue o ponteiro no CarroOnze (Volumétrico de Alto Impacto) */
+.carro-onze__cena::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: radial-gradient(
+    540px circle at var(--spot-x, 50%) var(--spot-y, 50%),
+    rgba(217, 119, 87, 0.36) 0%,
+    rgba(160, 208, 240, 0.24) 28%,
+    rgba(255, 255, 255, 0.10) 48%,
+    transparent 72%
+  );
+  mix-blend-mode: screen;
+  opacity: 1;
+  transition: opacity 0.3s ease;
+  z-index: 1;
+}
+
+.carro-onze__foto {
+  filter: contrast(1.15) brightness(1.2) drop-shadow(0 0 45px rgba(217, 119, 87, 0.25));
+}
+.carro-onze__aro {
+  stroke-width: 2.5px;
+  stroke: var(--br-luz);
+  filter: drop-shadow(0 0 12px var(--br-luz));
+}
+.carro-onze__guia {
+  stroke-width: 1.8px;
+  stroke: var(--br-marca-texto);
+  filter: drop-shadow(0 0 6px rgba(217, 119, 87, 0.6));
+}
+
+/* Badge de Homologação 100% no contador do CarroOnze */
+.carro-onze__homologado-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin-left: 14px;
+  padding: 4px 12px;
+  font-size: 10px;
+  letter-spacing: 0.18em;
+  font-weight: 700;
+  color: #34d399;
+  background: rgba(16, 185, 129, 0.16);
+  border: 1.5px solid rgba(16, 185, 129, 0.5);
+  box-shadow: 0 0 16px rgba(16, 185, 129, 0.4);
+  border-radius: 999px;
+  vertical-align: middle;
+  opacity: 0;
+  transform: translateY(4px);
+  transition: opacity 0.4s ease, transform 0.4s ease;
+}
+.carro-onze__cena.is-homologado .carro-onze__homologado-badge {
+  opacity: 1;
+  transform: translateY(0);
+}
+.carro-onze__homologado-led {
+  display: block;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #10b981;
+  box-shadow: 0 0 10px #10b981;
+}
+@media (max-width: 900px) {
+  .carro-onze__homologado-badge {
+    margin-left: 8px;
+    padding: 3px 8px;
+    font-size: 9px;
+  }
+}
+
+/* Especificações de precisão mecânica nas etiquetas SVG das 11 peças */
+.carro-onze__spec {
+  font-family: var(--font-mono, monospace);
+  font-size: 10px;
+  letter-spacing: 0.12em;
+  fill: var(--br-luz);
+  opacity: 0.85;
+}
+
+/* Indicador de status operacional ao vivo no Hero */
+.hero-tr__ponto-vivo {
+  display: inline-block;
+  width: 7px;
+  height: 7px;
+  margin-right: 6px;
+  border-radius: 50%;
+  background: #10b981;
+  box-shadow: 0 0 12px #10b981;
+  vertical-align: middle;
+  animation: pulsoVerde 2s ease-in-out infinite;
+}
+@keyframes pulsoVerde {
+  0%, 100% { opacity: 0.6; transform: scale(0.9); }
+  50% { opacity: 1; transform: scale(1.3); }
+}
+.hero-tr__coord {
+  font-family: var(--font-mono, monospace);
+  font-size: 10px;
+  letter-spacing: 0.12em;
+  color: var(--br-fraco);
+  opacity: 0.85;
+}
+
+/* Selo de Garantia e Diretoria Executiva de Fábio Borçato */
+.fecho__selo {
+  display: inline-flex;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: clamp(18px, 2.8vh, 32px);
+  padding: 10px 20px;
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.08) 0%, rgba(255, 255, 255, 0.02) 100%);
+  border: 1px solid rgba(255, 255, 255, 0.22);
+  border-top: 1.5px solid rgba(255, 255, 255, 0.45);
+  border-radius: 8px;
+  box-shadow: 
+    0 1px 0 0 rgba(255, 255, 255, 0.2) inset,
+    0 16px 36px -8px rgba(0, 0, 0, 0.65),
+    0 0 25px rgba(217, 119, 87, 0.2);
+  opacity: 1;
+  transform: none;
+}
+.fecho__selo-brasao {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 42px;
+  height: 42px;
+  font-family: var(--font-display), sans-serif;
+  font-weight: 800;
+  font-size: 16px;
+  letter-spacing: 0.05em;
+  color: #fff;
+  background: linear-gradient(145deg, #1b283d, #0b121e);
+  border: 1.5px solid var(--br-luz);
+  border-radius: 6px;
+  box-shadow: 0 0 16px rgba(96, 165, 250, 0.45), inset 0 1px 0 rgba(255, 255, 255, 0.3);
+}
+.fecho__selo-meta {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+.fecho__selo-meta b {
+  font-family: var(--font-display), sans-serif;
+  font-size: 14px;
+  letter-spacing: 0.14em;
+  color: #fff;
+}
+.fecho__selo-meta small {
+  font-size: 9px;
+  letter-spacing: 0.16em;
+  color: var(--br-fraco);
+  text-transform: uppercase;
+}
+
+/* ==========================================================================
+   MALHA RODOVIÁRIA VIVA DE MINAS GERAIS & AÇÕES EXECUTIVAS
+   ========================================================================== */
+
+/* Artérias e Rodovias Federais no Mapa de Minas */
+.mapa-mg__arterias {
+  pointer-events: none;
+}
+.mapa-mg__arteria {
+  stroke: color-mix(in srgb, var(--br-luz) 20%, transparent);
+  stroke-width: 0.5px;
+  stroke-dasharray: 2 1.5;
+  transition: stroke 0.3s ease, stroke-width 0.3s ease, opacity 0.3s ease;
+  opacity: 0.6;
+}
+.mapa-mg__arteria.is-ativa {
+  stroke: #60a5fa;
+  stroke-width: 1.1px;
+  stroke-dasharray: 3 1.5;
+  opacity: 1;
+  filter: drop-shadow(0 0 3px #60a5fa);
+  animation: pulsoArteria 1.2s linear infinite;
+}
+@keyframes pulsoArteria {
+  to {
+    stroke-dashoffset: -9;
+  }
+}
+
+/* HUD Flutuante da Rodovia Ativa sobre o Ponto */
+.mapa-mg__hud {
+  pointer-events: none;
+  animation: hudEntra 0.25s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+@keyframes hudEntra {
+  from {
+    opacity: 0;
+    transform: translateY(2px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+.mapa-mg__hud-bg {
+  fill: #061120;
+  stroke: #60a5fa;
+  stroke-width: 0.5px;
+  filter: drop-shadow(0 3px 8px rgba(0, 0, 0, 0.85));
+}
+.mapa-mg__hud-txt {
+  font-family: var(--font-display), sans-serif;
+  font-size: 3px;
+  font-weight: 700;
+  fill: #93c5fd;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+.mapa-mg__hud-sub {
+  font-family: system-ui, sans-serif;
+  font-size: 2.2px;
+  font-weight: 500;
+  fill: #e2e8f0;
+}
+
+/* Rodovias na Lista das Regiões do Capítulo 03 */
+.estrada__regiao-box {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.estrada__rodovia-badge {
+  font-family: var(--font-mono, monospace);
+  font-size: 9px;
+  letter-spacing: 0.12em;
+  color: var(--br-luz);
+  opacity: 0.85;
+  text-transform: uppercase;
+}
+.estrada__ufs li.is-foco .estrada__rodovia-badge {
+  color: #fff;
+  opacity: 1;
+  text-shadow: 0 0 8px rgba(96, 165, 250, 0.8);
+}
+
+/* Ações Executivas de Contato no Fecho */
+.fecho__acoes-executivas {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-bottom: clamp(24px, 3.5vh, 40px);
+}
+.fecho__btn-vcard,
+.fecho__btn-whats {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 44px;
+  padding: 10px 18px;
+  border-radius: 6px;
+  font-family: inherit;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  text-decoration: none;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.4);
+}
+.fecho__btn-vcard {
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.22);
+  color: var(--br-tinta);
+}
+.fecho__btn-vcard:hover,
+.fecho__btn-vcard:focus-visible {
+  background: rgba(255, 255, 255, 0.14);
+  border-color: #fff;
+  color: #fff;
+  transform: translateY(-2px);
+  box-shadow: 0 10px 24px rgba(0, 0, 0, 0.6), 0 0 20px rgba(255, 255, 255, 0.2);
+}
+.fecho__btn-whats {
+  background: linear-gradient(135deg, rgba(16, 185, 129, 0.22), rgba(16, 185, 129, 0.08));
+  border: 1px solid rgba(16, 185, 129, 0.45);
+  color: #34d399;
+}
+.fecho__btn-whats:hover,
+.fecho__btn-whats:focus-visible {
+  background: linear-gradient(135deg, rgba(16, 185, 129, 0.35), rgba(16, 185, 129, 0.18));
+  border-color: #10b981;
+  color: #fff;
+  transform: translateY(-2px);
+  box-shadow: 0 10px 28px rgba(0, 0, 0, 0.6), 0 0 28px rgba(16, 185, 129, 0.45);
+}
+.fecho__btn-vcard i,
+.fecho__btn-whats i {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   PASSAGEM 05 · O NOME → O FECHAMENTO — "o nome revela o homem"
+
+   Protótipo `#p6` de laboratorio/transicoes/index.html — o único dos sete que
+   nunca chegou ao site, e justamente o que fecha o arco.
+
+   As letras H.M. são uma MÁSCARA sobre a foto do Fábio. A máscara e o contorno
+   escalam juntos (`--pn-z`); a foto não escala. Por isso não existe perda de
+   resolução: as letras é que vêm em direção ao visitante, e a foto é revelada
+   no lugar — o olho lê como câmera entrando pela haste do M.
+
+   O JS escreve só progresso (`--pn`, `--pn-z`, `--pn-hom`, `--pn-veu`); quem
+   compõe é o CSS, como no resto da casa.
+   ═══════════════════════════════════════════════════════════════════════════ */
+.passagem-nome {
+  position: relative;
+  height: 220vh;
+  /* a cena é de ponta a ponta: cancela o padding do capítulo */
+  margin-top: calc(-1 * clamp(96px, 16vh, 200px));
+  margin-left: calc(-1 * var(--br-goteira));
+  margin-right: calc(-1 * clamp(20px, 6vw, 104px));
+  background: #0f1f34;
+  /* `.cap > *` esmaece os filhos na entrada; esta cena tem relógio próprio */
+  opacity: 1;
+}
+.passagem-nome__cena {
+  position: sticky;
+  top: 0;
+  height: 100svh;
+  overflow: hidden;
+  background: #0f1f34;
+}
+.passagem-nome__svg {
+  position: absolute;
+  inset: 0;
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+.passagem-nome__letra,
+.passagem-nome__contorno {
+  font-family: var(--font-display), sans-serif;
+  font-size: 440px;
+  font-weight: 700;
+  font-stretch: 100%;
+  letter-spacing: -0.02em;
+  transform-box: view-box;
+  transform-origin: 820px 450px;
+  transform: scale(var(--pn-z, 1));
+}
+.passagem-nome__contorno {
+  fill: none;
+  stroke: color-mix(in srgb, var(--br-luz) 52%, transparent);
+  stroke-width: 1.4;
+  /* a espessura não escala com a letra: o caixilho continua fino a 12x */
+  vector-effect: non-scaling-stroke;
+  opacity: calc(1 - clamp(0, calc((var(--pn, 0) - 0.42) / 0.2), 1));
+}
+/* a foto inteira assume a tela quando a janela já abriu */
+.passagem-nome__cheia {
+  /* A FOTO CHEIA NÃO ENTRA DO ZERO. Se ela nasce em 0, o lado de fora das
+     letras fica mais escuro que o de dentro durante todo o cruzamento, e a
+     aresta da letra corta o rosto como um defeito (visto em t=0.55). Nascendo
+     em 0,14 ela já é um fantasma atrás das letras: a diferença entre dentro e
+     fora encolhe continuamente até zero, em vez de saltar. */
+  opacity: calc(0.14 + clamp(0, calc((var(--pn, 0) - 0.5) / 0.12), 1) * 0.86);
+}
+/* A JANELA PRECISA LER COMO JANELA. Sem o realce, as áreas escuras do retrato
+   igualavam o fundo e a letra virava um borrão preto — só o rosto aparecia.
+   O filtro é só na camada mascarada: a foto cheia (que assume no fim) fica
+   com a luz original. */
+/* As duas camadas são a MESMA imagem e a mesma exposição: a foto cresce de
+   dentro das letras para fora, sem costura de luminância. (Uma versão anterior
+   realçava a janela em 1,45x e isso virava uma emenda reta clara no meio do
+   rosto quando a foto cheia entrava por baixo — visto em t=0.55.) */
+.passagem-nome__janela {
+  opacity: calc(1 - clamp(0, calc((var(--pn, 0) - 0.62) / 0.12), 1));
+}
+.passagem-nome__veu {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: linear-gradient(
+    0deg,
+    #0f1f34 0%,
+    rgba(15, 31, 52, 0.78) 20%,
+    rgba(15, 31, 52, 0) 54%
+  );
+  opacity: var(--pn-veu, 0);
+}
+.passagem-nome__homenagem {
+  position: absolute;
+  left: 50%;
+  bottom: clamp(8vh, 11vh, 13vh);
+  width: min(34ch, 86vw);
+  margin: 0;
+  transform: translateX(-50%);
+  text-align: center;
+  /* --br-tinta sobre o azul de O Nome dava ~2:1 (visto na captura): a
+     homenagem é a razão do nome, não pode ser a coisa menos legível da tela */
+  color: #cfd7e6;
+  font-size: clamp(15px, 1.4vw, 20px);
+  line-height: 1.6;
+  text-wrap: balance;
+  opacity: var(--pn-hom, 1);
+  text-shadow: 0 1px 26px rgba(6, 12, 22, 0.9);
+}
+
+@media (max-width: 900px) {
+  .passagem-nome {
+    height: 180vh;
+    margin-left: calc(-1 * clamp(20px, 6vw, 104px));
+  }
+  /* "H.M." a 440px num viewBox de 1600 não cabe em 375: o slice corta as
+     letras nas laterais. 230px mantém a palavra inteira na tela estreita. */
+  .passagem-nome__letra,
+  .passagem-nome__contorno {
+    /* 230px ainda estourava: com slice, 375px de tela mostram 462 unidades do
+       viewBox e "H.M." a 230 ocupa ~506 — as duas pontas eram cortadas.
+       180 deixa a palavra inteira com margem. */
+    font-size: 180px;
+    transform-origin: 800px 480px;
+  }
+  .passagem-nome__homenagem {
+    /* a barra de capítulos ocupa o rodapé no celular: 11vh encostava nela */
+    bottom: 21vh;
+    width: min(30ch, 84vw);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  /* sem movimento a cena entrega o estado que tem significado: as letras como
+     janela, com a homenagem legível. A foto cheia não diria nada parada. */
+  .passagem-nome {
+    height: auto;
+  }
+  .passagem-nome__cena {
+    position: relative;
+  }
+  .passagem-nome__letra,
+  .passagem-nome__contorno {
+    transform: none;
   }
 }

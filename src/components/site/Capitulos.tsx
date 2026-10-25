@@ -1,4 +1,6 @@
 import { useEffect, useRef, useState } from "react";
+import { empresa } from "@/lib/dados";
+import { som } from "@/lib/som";
 
 // A ESPINHA da travessia — direção "A DISTÂNCIA", referência Grigoletto #26 (Ferrari).
 //
@@ -24,52 +26,108 @@ export const CAPITULOS = [
 
 export function NavCapitulos() {
   const [ativo, setAtivo] = useState<string>(CAPITULOS[0].id);
+  const [mostrarContato, setMostrarContato] = useState(false);
+  const [somAtivo, setSomAtivo] = useState(false);
   const marcado = useRef<string>(CAPITULOS[0].id);
+  const contatoMarcado = useRef(false);
   const navRef = useRef<HTMLElement>(null);
+
+  useEffect(() => {
+    setSomAtivo(som.estaAtivo);
+  }, []);
+
+  const alternarSom = () => {
+    const prox = som.alternar();
+    setSomAtivo(prox);
+  };
 
   useEffect(() => {
     const casa = document.getElementById("cap-casa");
     const marcas = document.getElementById("cap-marcas");
     const nome = document.getElementById("cap-nome");
+    const fecho = document.querySelector<HTMLElement>(".fecho");
     if (!casa || !marcas || !nome) return;
 
     let pedido = 0;
-    // O VÉU DA NAV TOMA O CHÃO DO CAPÍTULO ATIVO. Cada capítulo redefine o
-    // próprio --br-chao (jornada tonal), mas a nav mora fora deles e só via o
-    // da raiz — o véu escuro virava mancha sobre A Estrada e O Nome. O chão é
-    // LIDO da seção (não copiado aqui): se a paleta mudar no CSS, o véu segue.
-    const pintarChao = (id: string) => {
-      const secao = document.getElementById(id);
-      const chao = secao ? getComputedStyle(secao).getPropertyValue("--br-chao").trim() : "";
-      if (chao) navRef.current?.style.setProperty("--nav-chao", chao);
+    let ultimoTemaClaro: boolean | null = null;
+    let ultimoChaoNav = "";
+    // O VÉU DA NAV TOMA O CHÃO DO CAPÍTULO VISÍVEL SOB ELA.
+    // Quando a página está no Hero (#08090c, antes da cápsula clara de A Casa
+    // cobrir a coluna da nav), o véu permanece escuro. Assim que A Casa (#edf2f7)
+    // assume, a nav recebe `data-nav-tema="claro"` e adapta tinta/contraste AA.
+    const atualizarTemaNav = (idAtivo: string, emCasaClara: boolean) => {
+      const nav = navRef.current;
+      if (!nav) return;
+      if (emCasaClara !== ultimoTemaClaro) {
+        ultimoTemaClaro = emCasaClara;
+        if (emCasaClara) {
+          nav.setAttribute("data-nav-tema", "claro");
+        } else {
+          nav.removeAttribute("data-nav-tema");
+        }
+      }
+      let chao = "#08090c";
+      if (emCasaClara) {
+        chao = "#edf2f7";
+      } else if (idAtivo !== "cap-casa") {
+        const secao = document.getElementById(idAtivo);
+        const lido = secao ? getComputedStyle(secao).getPropertyValue("--br-chao").trim() : "";
+        if (lido) chao = lido;
+      }
+      if (chao !== ultimoChaoNav) {
+        ultimoChaoNav = chao;
+        nav.style.setProperty("--nav-chao", chao);
+      }
     };
     const marcar = (id: string) => {
       if (id === marcado.current) return;
       marcado.current = id;
-      pintarChao(id);
       setAtivo(id);
     };
-    pintarChao(marcado.current);
     const medir = () => {
       if (pedido) return;
       pedido = window.requestAnimationFrame(() => {
         pedido = 0;
-        const linhaDeTroca = window.innerHeight * 0.55;
+        const vh = window.innerHeight;
+        const linhaDeTroca = vh * 0.55;
         const entrega = parseFloat(
           getComputedStyle(document.documentElement).getPropertyValue("--entrega"),
         ) || 0;
 
+        const rCasa = casa.getBoundingClientRect();
+        const rMarcas = marcas.getBoundingClientRect();
+        const rNome = nome.getBoundingClientRect();
+
         // O Nome volta ao critério geométrico porque já não divide palco com
         // outro capítulo. Estrada usa o relógio da entrega: sua margem negativa
         // cruza o centro cedo demais, enquanto a quinta peça ainda manda no quadro.
-        if (nome.getBoundingClientRect().top <= linhaDeTroca) {
+        if (rNome.top <= linhaDeTroca) {
           marcar("cap-nome");
         } else if (entrega >= ENTREGA_ESTRADA_DOMINANTE) {
           marcar("cap-estrada");
-        } else if (marcas.getBoundingClientRect().top <= linhaDeTroca) {
+        } else if (rMarcas.top <= linhaDeTroca) {
           marcar("cap-marcas");
         } else {
           marcar("cap-casa");
+        }
+
+        // A coluna da nav fica sobre o papel claro (#edf2f7) de A Casa quando a
+        // cápsula do Hero terminou de abrir (--passa >= 0.68) ou o topo de A Casa
+        // já subiu, até o monólito escuro de As Marcas cruzar a linha de troca.
+        const passaHero = parseFloat(casa.style.getPropertyValue("--passa")) || 0;
+        const emCasaClara =
+          marcado.current === "cap-casa" &&
+          (passaHero >= 0.68 || rCasa.top <= vh * 0.65) &&
+          rMarcas.top > linhaDeTroca;
+        atualizarTemaNav(marcado.current, emCasaClara);
+
+        // D-38: Contato persistente durante a travessia (entre o CTA do Hero e o FechoFabio)
+        const passouHero = window.scrollY > vh * 0.72;
+        const antesDoFecho = !fecho || fecho.getBoundingClientRect().top > vh * 0.72;
+        const visivel = passouHero && antesDoFecho;
+        if (visivel !== contatoMarcado.current) {
+          contatoMarcado.current = visivel;
+          setMostrarContato(visivel);
         }
       });
     };
@@ -93,6 +151,8 @@ export function NavCapitulos() {
               href={`#${c.destino}`}
               className={ativo === c.id ? "is-aqui" : undefined}
               aria-current={ativo === c.id ? "true" : undefined}
+              onPointerEnter={() => som.tique()}
+              onClick={() => som.clique()}
             >
               <b>{c.num}</b>
               <span>{c.rotulo}</span>
@@ -100,6 +160,39 @@ export function NavCapitulos() {
           </li>
         ))}
       </ul>
+      <div className="cap-nav__extras">
+        <a
+          href={empresa.celular.href}
+          target="_blank"
+          rel="noopener noreferrer"
+          className={`cap-nav__contato${mostrarContato ? " is-visivel" : ""}`}
+          aria-label="Falar com a Borçato pelo WhatsApp"
+          tabIndex={mostrarContato ? 0 : -1}
+          onPointerEnter={() => som.tique()}
+          onClick={() => som.clique()}
+        >
+          <i aria-hidden>
+            <svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" strokeWidth="2.2">
+              <path d="M7 17L17 7M9 7h8v8" />
+            </svg>
+          </i>
+          <span>Contato</span>
+        </a>
+        <button
+          type="button"
+          className={`cap-nav__som${somAtivo ? " is-ativo" : ""}`}
+          onClick={alternarSom}
+          aria-label={somAtivo ? "Desativar áudio mecânico tátil" : "Ativar áudio mecânico tátil"}
+          title={somAtivo ? "Áudio mecânico ativo" : "Ativar áudio tátil"}
+        >
+          <span className="cap-nav__som-barras" aria-hidden>
+            <i />
+            <i />
+            <i />
+          </span>
+          <span className="cap-nav__som-txt">{somAtivo ? "SOM ON" : "SOM OFF"}</span>
+        </button>
+      </div>
     </nav>
   );
 }
@@ -131,6 +224,12 @@ export function Capitulo({ id, children, className }: CapituloProps) {
     }
 
     let pedido = 0;
+    let ultimoCap = "";
+    let ultimoSai = "";
+    const ultimosRevela = new WeakMap<HTMLElement, string>();
+    const capCasa = el.id === "cap-marcas" ? document.getElementById("cap-casa") : null;
+    const capEstrada = el.id === "cap-nome" ? document.getElementById("cap-estrada") : null;
+
     const medir = () => {
       if (pedido) return;
       pedido = window.requestAnimationFrame(() => {
@@ -143,29 +242,15 @@ export function Capitulo({ id, children, className }: CapituloProps) {
         el.querySelectorAll<HTMLElement>("[data-revela]").forEach((bloco) => {
           const caixa = bloco.getBoundingClientRect();
           const local = (vh - caixa.top) / (vh * 0.32);
-          bloco.style.setProperty("--revela", String(Math.min(1, Math.max(0, local))));
+          const val = Math.min(1, Math.max(0, local)).toFixed(4);
+          if (ultimosRevela.get(bloco) !== val) {
+            ultimosRevela.set(bloco, val);
+            bloco.style.setProperty("--revela", val);
+          }
         });
         // 0 quando o topo encosta no rodapé da tela; 1 quando sobe 62% da viewport.
-        // A faixa de 62% é a mesma do Movimento 2 da SoftHam — larga o bastante para
-        // duas seções dividirem a tela por um instante, que é o que evita corte seco.
-        // MEDIDO no fim da página: o capítulo 04 fica com topo=216 numa viewport
-        // de 900, e esta fórmula dá 1.225 — ela chega a 1 sozinha, inclusive no
-        // último capítulo. Tentei "consertar" isso com uma janela de fim de página
-        // e foi o conserto que quebrou o gesto (--cap-entra caiu de 0.97 p/ 0.13).
         let t = (vh - r.top) / (vh * 0.62);
 
-        // A PASSAGEM DO PALCO GOVERNA O CAPITULO 03 (05/09).
-        //
-        // O cap 03 comeca 60vh antes de a pista do palco acabar (margin-top
-        // negativa no CSS) e pinta por cima dele. Se ele usasse a PROPRIA
-        // medida aqui, ja estaria 53% revelado no instante em que a passagem
-        // comeca — cobrindo o texto do palco antes da hora.
-        // Entao, enquanto a entrega corre (0 -> 1), e ELA que abre o capitulo.
-        // A abertura começa em 0,38: antes disso a quinta peça ainda é o quadro,
-        // e revelar qualquer faixa do mapa cria exatamente a sobreposição errada
-        // vista na auditoria pós-D36. De 0,38 a 1 a nova cena cobre a anterior;
-        // existe coexistência, mas o capítulo 03 não nasce como rodapé fantasma.
-        // Reversivel: ao voltar, a entrega cai e o capitulo fecha de novo.
         if (el.id === "cap-estrada") {
           const e = parseFloat(
             getComputedStyle(document.documentElement).getPropertyValue("--entrega"),
@@ -176,7 +261,26 @@ export function Capitulo({ id, children, className }: CapituloProps) {
           );
           t = e >= 0.98 ? Math.max(t, 1) : passagem;
         }
-        el.style.setProperty("--cap-entra", String(Math.min(1, Math.max(0, t))));
+        const capVal = Math.min(1, Math.max(0, t)).toFixed(4);
+        if (capVal !== ultimoCap) {
+          ultimoCap = capVal;
+          el.style.setProperty("--cap-entra", capVal);
+        }
+
+        // Recuo em profundidade da cena anterior enquanto o painel atual sobe
+        if (capCasa) {
+          const saiVal = Math.min(1, Math.max(0, (vh * 0.74 - r.top) / (vh * 0.62))).toFixed(4);
+          if (saiVal !== ultimoSai) {
+            ultimoSai = saiVal;
+            capCasa.style.setProperty("--casa-sai", saiVal);
+          }
+        } else if (capEstrada) {
+          const saiVal = Math.min(1, Math.max(0, (vh * 0.82 - r.top) / (vh * 0.68))).toFixed(4);
+          if (saiVal !== ultimoSai) {
+            ultimoSai = saiVal;
+            capEstrada.style.setProperty("--estrada-sai", saiVal);
+          }
+        }
       });
     };
     medir();

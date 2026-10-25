@@ -13,6 +13,34 @@ import { SmoothScroll } from "@/components/site/SmoothScroll";
 import appCss from "../styles.css?url";
 import { reportLovableError } from "../lib/lovable-error-reporting";
 
+const JSON_LD_BORCATO = JSON.stringify({
+  "@context": "https://schema.org",
+  "@type": "LocalBusiness",
+  name: "H.M. Borçato — Representação Comercial e Marketing",
+  alternateName: "H.M. Borçato",
+  description:
+    "Representação comercial de autopeças em Minas Gerais. Onze indústrias representadas, praça por praça, desde 2018.",
+  url: "https://www.hmborcato.com.br/",
+  image: "https://www.hmborcato.com.br/og.png",
+  foundingDate: "2018-09",
+  founder: {
+    "@type": "Person",
+    name: "Fábio Borçato",
+  },
+  address: {
+    "@type": "PostalAddress",
+    addressLocality: "Belo Horizonte",
+    addressRegion: "MG",
+    addressCountry: "BR",
+  },
+  areaServed: {
+    "@type": "AdministrativeArea",
+    name: "Minas Gerais",
+  },
+  telephone: "+55-31-98336-6251",
+  email: "fabio.borcato@yahoo.com.br",
+});
+
 function NotFoundComponent() {
   return (
     <div className="flex min-h-screen items-center justify-center bg-background px-4">
@@ -78,6 +106,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
+      { name: "theme-color", content: "#0a0a0c" },
       { title: "H.M. Borçato — Representação Comercial e Marketing" },
       {
         name: "description",
@@ -90,6 +119,8 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
         content: "Onze indústrias representadas em Minas Gerais. Todo distribuidor de Minas conhece o nome.",
       },
       { property: "og:type", content: "website" },
+      { property: "og:locale", content: "pt_BR" },
+      { property: "og:site_name", content: "H.M. Borçato" },
       { property: "og:url", content: "https://www.hmborcato.com.br/" },
       { property: "og:image", content: "https://www.hmborcato.com.br/og.png" },
       { property: "og:image:width", content: "1200" },
@@ -106,7 +137,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { rel: "preconnect", href: "https://fonts.gstatic.com", crossOrigin: "anonymous" },
       {
         rel: "stylesheet",
-        href: "https://fonts.googleapis.com/css2?family=Archivo:ital,wdth,wght@0,62..125,300..700;1,62..125,300..700&display=swap",
+        href: "https://fonts.googleapis.com/css2?family=Archivo:ital,wdth,wght@0,62..125,300..700;1,62..125,300..700&family=Roboto+Mono:wght@400;500&display=swap",
       },
       { rel: "icon", href: "/favicon.png", type: "image/png" },
       { rel: "canonical", href: "https://www.hmborcato.com.br/" },
@@ -123,6 +154,10 @@ function RootShell({ children }: { children: ReactNode }) {
     <html lang="pt-BR">
       <head>
         <HeadContent />
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON_LD_BORCATO }}
+        />
       </head>
       <body>
         {children}

@@ -1,6 +1,7 @@
-import { useEffect, useRef } from "react";
-import { regioes, casa, empresa } from "@/lib/dados";
+import { useEffect, useRef, type PointerEvent as ReactPointerEvent } from "react";
+import { regioes, empresa } from "@/lib/dados";
 import { Palavras } from "@/components/site/Palavras";
+import { som } from "@/lib/som";
 // Gerada com o Nano Banana a partir da original (marca/geracao/): luz lateral
 // dura e olhar fora de quadro. O passo do rastro de exposicao longa FALHOU —
 // o modelo criou uma segunda pessoa atras dele — entao o rastro fica no CSS.
@@ -27,17 +28,22 @@ import fabioEscuro from "@/assets/site/frames/0.avif";
 export function HeroTravessia() {
   const capsulaRef = useRef<HTMLDivElement>(null);
 
-  // A BARRA DE MARCAS SAIU DO HERO (D-15, 06/09).
-  //
-  // Ela existia para pôr as 11 credenciais na primeira tela — e isso continua
-  // certo como argumento. O que mudou foi a esteira do capítulo 02: MEDIDO,
-  // o logo lá tem 261×42px contra 58×9px aqui. **4,5× maior.** A barra gastava
-  // 99px do hero aprovado para exibir logos de 9px de altura — que era a queixa
-  // original do dono ("o carrossel de indústrias está muito pequeno").
-  //
-  // Com a esteira, as mesmas 11 marcas apareciam TRÊS vezes (barra, esteira,
-  // palco). Saiu a menor. O `--alt-marcas` some junto: sem ele, o hero não
-  // reserva um vão para algo que não existe mais.
+  const aoMoverCta = (e: ReactPointerEvent<HTMLAnchorElement>) => {
+    if (e.pointerType === "touch") return;
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    const el = e.currentTarget;
+    const r = el.getBoundingClientRect();
+    const dx = Math.max(-7, Math.min(7, (e.clientX - (r.left + r.width / 2)) * 0.16));
+    const dy = Math.max(-5, Math.min(5, (e.clientY - (r.top + r.height / 2)) * 0.26));
+    el.style.setProperty("--btn-ima-x", `${dx.toFixed(1)}px`);
+    el.style.setProperty("--btn-ima-y", `${dy.toFixed(1)}px`);
+  };
+
+  const aoSairCta = (e: ReactPointerEvent<HTMLAnchorElement>) => {
+    const el = e.currentTarget;
+    el.style.setProperty("--btn-ima-x", "0px");
+    el.style.setProperty("--btn-ima-y", "0px");
+  };
 
   // O TEXTO SE ESCREVE quando a abertura termina, nao quando a pagina carrega:
   // a abertura cobre tudo, e animar por baixo dela e desperdicar o gesto. A
@@ -80,24 +86,18 @@ export function HeroTravessia() {
     // O PALCO PRESO. O hero fica grudado na tela enquanto a pista rola por baixo,
     // e só libera a página quando BORÇATO atravessou INTEIRO. Pedido do dono:
     // "o site só deve sair da seção hero após todo o texto BORÇATO ser visualizado".
-    //
-    // A pista tem --hero-pista de altura (ver CSS); o hero é sticky dentro dela.
-    // `t` deixa de ser "fração de uma viewport rolada" e passa a ser a fração DA
-    // PISTA — que é o que faz o gesto durar o quanto a palavra precisa.
     const palco = el.closest<HTMLElement>(".hero-palco");
     const secaoHero = el.closest<HTMLElement>(".hero-tr");
     const casaCap = document.getElementById("cap-casa");
 
-    // A CÁPSULA SE ABRE (passagem B, 27/09). A moldura nasce EXATAMENTE onde a
-    // cápsula está — medida, não copiada do CSS, porque a caixa depende do
-    // max-height e do alinhamento da grade. Ela escreve as quatro distâncias até
-    // as bordas do hero; o CSS as encolhe até zero conforme a passagem corre.
-    // preso ou solto muda com a largura: lido no resize, nao a cada quadro
-    // (ler estilo depois de escrever variavel forcaria recalculo por quadro)
     let preso = false;
+    let ultimoT = "";
+    let ultimoPassa = "";
     const medirCapsula = () => {
       if (!secaoHero) return;
       preso = getComputedStyle(secaoHero).position === "sticky";
+      ultimoT = "";
+      ultimoPassa = "";
       const w = secaoHero.clientWidth;
       const h = secaoHero.clientHeight;
       const l = el.offsetLeft;
@@ -113,41 +113,32 @@ export function HeroTravessia() {
       if (pedido) return;
       pedido = window.requestAnimationFrame(() => {
         pedido = 0;
-        // quanto da pista já foi percorrido, travado em [0,1]
         const pista = palco
           ? Math.max(1, palco.offsetHeight - window.innerHeight)
           : window.innerHeight;
         const t = Math.min(1, Math.max(0, window.scrollY / pista));
-        el.style.setProperty("--capsula-y", `${t * 64}px`);
-        el.style.setProperty("--capsula-esc", String(1 + t * 0.06));
-        // o grão assenta conforme a foto "chega" — sem deslocar canal nenhum
-        el.style.setProperty("--filme", String(1 - t * 0.55));
-        // A PALAVRA-FANTASMA ANDA: rolando para baixo ela vai para a ESQUERDA,
-        // e volta quando se sobe. E parallax — mais lenta que o conteudo — o que
-        // faz a capsula "passar na frente" dela. O dono pediu exatamente isto.
-        // 14% da largura no percurso da primeira tela: le como movimento, nao
-        // como a palavra fugindo.
-        // A PALAVRA ATRAVESSA INTEIRA. Antes andava 14% da largura e o "ÇATO"
-        // nunca aparecia — a palavra saia de cena antes de ser lida. Agora o
-        // deslocamento e medido: o quanto falta para a ULTIMA letra entrar no
-        // quadro, mais uma folga. Assim ela e lida do B ao O.
+        const tStr = t.toFixed(4);
+
         const secao = el.closest<HTMLElement>(".hero-tr");
         const fant = secao?.querySelector<HTMLElement>(".hero-tr__fantasma");
+        const curso = preso
+          ? Math.max(1, (palco?.offsetHeight ?? 0) - window.innerHeight)
+          : Math.max(1, (secao?.offsetHeight ?? window.innerHeight) - window.innerHeight * 0.45);
+        const passa = Math.min(1, Math.max(0, window.scrollY / curso)).toFixed(4);
+
+        if (tStr === ultimoT && passa === ultimoPassa) return;
+        ultimoT = tStr;
+        ultimoPassa = passa;
+
+        el.style.setProperty("--capsula-y", `${(t * 64).toFixed(1)}px`);
+        el.style.setProperty("--capsula-esc", (1 + t * 0.06).toFixed(4));
+        el.style.setProperty("--filme", (1 - t * 0.55).toFixed(4));
+
         if (secao && fant) {
           const sobra = Math.max(0, fant.scrollWidth - document.documentElement.clientWidth);
           secao.style.setProperty("--fant-x", `${(-t * (sobra + 40)).toFixed(1)}px`);
-          // o progresso do pino, cru, para o CSS compor a SAIDA da capsula
-          // (a passagem hero -> 01: ela recua e esmaece no ultimo quarto)
-          secao.style.setProperty("--hero-t", t.toFixed(4));
-          // O progresso DA PASSAGEM. Com o hero preso (desktop) e o proprio
-          // pino; sem pino (celular) o hero rola inteiro, entao o curso vai ate
-          // a base dele passar do meio da tela — e ali que A Casa assume.
-          const curso = preso
-            ? Math.max(1, (palco?.offsetHeight ?? 0) - window.innerHeight)
-            : Math.max(1, secao.offsetHeight - window.innerHeight * 0.45);
-          const passa = Math.min(1, Math.max(0, window.scrollY / curso)).toFixed(4);
+          secao.style.setProperty("--hero-t", tStr);
           secao.style.setProperty("--passa", passa);
-          // A Casa recebe o MESMO numero: o chao dela e o de dentro da capsula
           casaCap?.style.setProperty("--passa", passa);
         }
       });
@@ -160,7 +151,6 @@ export function HeroTravessia() {
     aoRolar();
     window.addEventListener("scroll", aoRolar, { passive: true });
     window.addEventListener("resize", aoRedimensionar);
-    // as fontes mudam a altura do texto, e com ela o centro da grade
     document.fonts?.ready.then(aoRedimensionar);
     return () => {
       window.removeEventListener("scroll", aoRolar);
@@ -170,64 +160,19 @@ export function HeroTravessia() {
   }, []);
 
   return (
-    // A PISTA. O hero e sticky dentro dela: enquanto ela rola, ele fica na tela.
-    // A altura da pista define quanto tempo o hero segura a pagina — e ela e
-    // calculada no CSS a partir do quanto BORCATO precisa andar.
     <div className="hero-palco">
     <section className="hero-tr" aria-label="Apresentação">
-      {/* A PALAVRA-FANTASMA — a peça central da direção.
-          Referências: 36 (Techwear) e 25 (Silent Shogun), onde a figura fica NA
-          FRENTE das letras e as corta.
-
-          Ela resolve o defeito estrutural do hero anterior: a cápsula tem fundo
-          preto e a página também, então a curva não se lia — preto sobre preto.
-          Com a palavra atrás, a janela da foto RECORTA as letras, e é o corte que
-          devolve a forma à cápsula. Sem tocar na foto.
-
-          Ela precisa ficar abaixo de 8% de contraste, cortada pelas DUAS bordas
-          laterais e pela cápsula. Se aparecer inteira em alguma largura, vira o
-          clichê da palavra gigante de fundo. */}
       <span className="hero-tr__fantasma" aria-hidden>Borçato</span>
-
-      {/* A MOLDURA — a cápsula como FORMA, sem o Fábio dentro (27/09).
-          O cliente não quer ênfase no rosto: na passagem para A Casa a foto
-          esmaece dentro da cápsula e o que cresce é a moldura, até virar o
-          chão do capítulo seguinte. Fica ATRÁS do texto e da foto; à frente
-          da palavra-fantasma, que continua lida através dela. */}
       <span className="hero-tr__moldura" aria-hidden />
 
       <div className="hero-tr__texto">
         <p className="hero-tr__eb">
-          <span>Desde {empresa.fundacao}</span>
+          <span className="hero-tr__ponto-vivo" aria-hidden />
+          <span>MINAS GERAIS · DESDE {empresa.fundacao}</span>
           <i aria-hidden />
-          <span>{empresa.base}</span>
+          <span className="hero-tr__coord" aria-hidden>19°55' S · 43°56' W</span>
         </p>
 
-        {/* Tres linhas, tres PESOS — como o 26 (regular/itálico/light) e o 22
-            (alternando bold e light por palavra). Antes era um peso só, com a
-            diferenciação feita só por cor: assinatura de template.
-            O <em> destaca "de Minas" — o argumento agora é o ESTADO, não a
-            contagem de UFs. */}
-        {/* A MANCHETE. Dizia "De Minas para outros onze estados" e era FALSO — o
-            proprio Fabio pegou o erro olhando o hero (03/09/2026). Ele atende
-            APENAS MINAS GERAIS. Ver a nota em dados.ts.
-
-            A cobertura mineira e um argumento MAIS FORTE que doze estados
-            arranhados, e a prova estava no material dele desde o inicio: atendeu
-            todos os distribuidores regionais de MG e as filiais dos nacionais no
-            estado. Deixa de ser quantidade de UF e vira reputacao.
-
-            As linhas dividem UMA cascata de 6 palavras: a contagem continua de
-            uma linha para a outra, entao o titulo se escreve na ordem da leitura.
-
-            O "O" ORFAO (06/09, revisao do dono em 1440 e 375): "conhece o nome."
-            era UMA linha so, longa demais para caber — e o navegador quebrava
-            onde dava, deixando "CONHECE O" junto e "NOME." descendo sozinho. O
-            desfecho da frase, que e o gancho do capitulo 04, virava sobra.
-
-            A quebra agora e ESTRUTURAL, nao sorte de largura: "conhece" e "o
-            nome." sao linhas proprias (recomendacao do dono). Os indices da
-            cascata seguem 4, 5, 6 — a animacao nao sabe que mudou nada. */}
         <h1 className="hero-tr__titulo">
           <span className="ln ln--1"><Palavras texto="Todo distribuidor" total={6} /></span>{" "}
           <em className="ln ln--2"><Palavras texto="de Minas" desde={2} total={6} /></em>{" "}
@@ -240,19 +185,16 @@ export function HeroTravessia() {
           por estrada, praça por praça.
         </p>
 
-        {/* O CTA — o hero nao tinha NENHUM. Todos os 14 heros da biblioteca tem.
-            Formato dividido (ref 25 Silent Shogun): bloco claro com o rotulo +
-            quadrado na cor da marca com a seta. O numero ja existia em dados.ts,
-            so nao estava na tela — e e WhatsApp. */}
         <div className="hero-tr__acoes">
           <a
             className="btn-falar"
-            /* a URL vem pronta de dados.ts (fonte unica). Antes era montada
-               aqui, extraindo digitos do ROTULO — dois lugares para a mesma
-               coisa, e o fecho da pagina ja tinha divergido para `tel:`. */
             href={empresa.celular.href}
             target="_blank"
             rel="noopener noreferrer"
+            onPointerMove={aoMoverCta}
+            onPointerLeave={aoSairCta}
+            onPointerEnter={() => som.tique()}
+            onClick={() => som.clique()}
           >
             <span>Falar com a Borçato</span>
             <i aria-hidden>
@@ -261,21 +203,16 @@ export function HeroTravessia() {
               </svg>
             </i>
           </a>
-          <a className="link-marcas" href="#marcas-inicio">Ver as onze marcas ↓</a>
+          <a
+            className="link-marcas"
+            href="#marcas-inicio"
+            onPointerEnter={() => som.tique()}
+            onClick={() => som.clique()}
+          >
+            Ver as onze marcas ↓
+          </a>
         </div>
 
-      {/* O TRILHO DA COBERTURA. Antes eram as 12 UFs do RepOne — dado FALSO, e o
-          proprio Fabio pegou o erro olhando o hero (03/09). Ver dados.ts.
-          Agora sao as regioes de Minas: a cobertura que ele tem de verdade.
-
-          O "853 municipios" SAIU (06/09, decisao do dono). O numero era
-          verdadeiro e publico (IBGE) e falava do ESTADO, nao do cliente — mas
-          nesta moldura sugeria que a Borcato atende os 853, e transformava uma
-          informacao de PRESENCA num indicador quantitativo que nao prova
-          desempenho nenhum. Um numero que promete o que ninguem afirmou e pior
-          do que numero nenhum.
-
-          O que fica diz a mesma coisa sem a promessa: o territorio, inteiro. */}
       <ul className="hero-tr__trilho" aria-label="Cobertura em Minas Gerais">
         <li className="trilho__rotulo" aria-hidden>
           <b>Minas Gerais</b>
@@ -289,23 +226,7 @@ export function HeroTravessia() {
       </ul>
       </div>
 
-      {/* O GRÃO e a VINHETA ficam; o RGB SPLIT SAIU.
-          Ele era invenção minha — o cliente escolheu a FORMA da cápsula do
-          lukebaffait.fr, não um glitch sobre o rosto. E ele estava destruindo a
-          foto: deslocava duas cópias tingidas 6px para cada lado na primeira
-          pintura, deixando o logo bordado da camisa ILEGÍVEL — justamente a
-          prova visível da cor da marca. Nenhuma das 39 referências da biblioteca
-          aplica glitch sobre rosto humano. */}
       <div className="hero-tr__capsula" ref={capsulaRef}>
-        {/* A FOTO E PARADA (27/09). A FotoViva — o Fabio virando o rosto
-            conforme se rola — SAIU: ela misturava duas poses vizinhas com
-            alpha, e no meio da troca a capsula mostrava DOIS rostos (dois
-            pares de olhos, duas bocas; auditoria scroll-craft/d5). E a virada
-            durava ~765px de rolagem, mas a foto some aos ~340px na passagem
-            da capsula: os quadros 1-4 (~178 KB) eram baixados para quase
-            ninguem ver. O cliente pediu MENOS enfase na imagem dele; a
-            profundidade continua vindo da palavra-fantasma, do deslocamento
-            da capsula e da moldura da passagem, nao do rosto. */}
         <img
           src={fabioEscuro}
           width={780}

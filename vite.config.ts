@@ -27,7 +27,13 @@ const semLixoDoWindows = {
 };
 
 export default defineConfig({
-  vite: { plugins: [semLixoDoWindows] },
+  vite: {
+    plugins: [semLixoDoWindows],
+    server: {
+      allowedHosts: true,
+      host: true,
+    },
+  },
   tanstackStart: {
     // Redirect TanStack Start's bundled server entry to src/server.ts (our SSR error wrapper).
     // nitro/vite builds from this

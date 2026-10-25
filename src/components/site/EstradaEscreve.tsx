@@ -22,15 +22,6 @@ type Marcos = { s0: number; s1: number; s2: number; s3: number; fh: number; fm: 
 
 const lim = (v: number) => Math.min(1, Math.max(0, v));
 
-/**
- * A anatomia de uma letra, medida no próprio desenho da fonte.
- *
- * A caixa do `<b>` é a caixa da linha, não a da tinta: as hastes do H e o
- * vértice do M só existem nos pixels. A letra é desenhada uma vez num canvas
- * com a mesma fonte da página e lida por varredura — as letras de traço
- * caem em cima das sólidas em qualquer fonte que o navegador tenha carregado.
- * Tudo relativo à origem do glifo (x) e à linha de base (y, negativo acima).
- */
 function anatomia(fonte: string, ch: string) {
   const cv = document.createElement("canvas");
   const ctx = cv.getContext("2d", { willReadFrequently: true });
@@ -49,7 +40,6 @@ function anatomia(fonte: string, ch: string) {
   const px = ctx.getImageData(0, 0, cv.width, cv.height).data;
   const cheio = (x: number, y: number) => px[(y * cv.width + x) * 4 + 3]! > 127;
 
-  // trechos cheios numa linha / numa coluna
   const linha = (y: number) => {
     const r: [number, number][] = [];
     let ini = -1;
@@ -78,7 +68,6 @@ function anatomia(fonte: string, ch: string) {
   };
 
   const topo = -m.actualBoundingBoxAscent;
-  // as hastes são lidas no quarto de baixo, longe da barra do H e do V do M
   const hastes = linha(Math.round(base + topo * 0.2));
   return {
     esq: -m.actualBoundingBoxLeft,
@@ -110,9 +99,11 @@ export function EstradaEscreve() {
     const reduzido = window.matchMedia("(prefers-reduced-motion: reduce)");
     const largo = window.matchMedia("(min-width: 901px)");
     const capNome = document.getElementById("cap-nome");
+    let ultimaChave = "";
 
     /** Remonta o traço a partir de onde o mapa e as letras estão AGORA. */
     const montar = (): Marcos | null => {
+      ultimaChave = "";
       const capE = document.getElementById("cap-estrada");
       const raiz = svg.parentElement;
       const pista = capE?.querySelector<HTMLElement>(".estrada");
@@ -148,12 +139,8 @@ export function EstradaEscreve() {
       const W = document.documentElement.clientWidth;
       const desktop = largo.matches;
 
-      // O ESTADO FINAL DA ESTRADA, CONGELADO PARA MEDIR.
-      // Na passagem a Estrada já está assentada (entrega 1: nada deslocado),
-      // mas o resize pode acontecer em qualquer ponto da página. Por um
-      // instante, síncrono e sem pintura no meio, os gestos saem e a cena
-      // presa volta ao fluxo — mede-se a página como ela estará quando o traço
-      // passar, e tudo volta como estava.
+      const lH = bH.parentElement;
+      const lM = bM.parentElement;
       const congelados: [HTMLElement | SVGSVGElement, string, string][] = [
         [capE, "transform", "none"],
         [pista, "translate", "none"],
@@ -161,13 +148,17 @@ export function EstradaEscreve() {
         [mapa, "scale", "1"],
         [titulo, "transform", "none"],
         [corpo, "transform", "none"],
+        [titulo, "translate", "none"],
+        [corpo, "translate", "none"],
+        [titulo, "scale", "1"],
+        [corpo, "scale", "1"],
       ];
+      if (lH) congelados.push([lH, "translate", "-26% 0"]);
+      if (lM) congelados.push([lM, "translate", "26% 0"]);
       if (desktop) congelados.push([cena, "position", "static"]);
       const antes = congelados.map(([el, prop]) => el.style.getPropertyValue(prop));
       congelados.forEach(([el, prop, v]) => el.style.setProperty(prop, v));
 
-      // no desktop a cena termina presa no pé da pista: é lá que o mapa está
-      // quando a pista solta, e é ali que o traço sai dele
       const dCena = desktop ? pista.offsetHeight - cena.offsetHeight : 0;
       const ctm = mapa.getScreenCTM();
       const rMapa = mapa.getBoundingClientRect();
@@ -201,7 +192,6 @@ export function EstradaEscreve() {
       const dizerTopo = rDizer.top + sy + dCena;
       const tituloTopo = rTitulo.top + sy;
 
-      // ── AS LETRAS: a tinta de verdade, no lugar final ──────────────────────
       const cs = getComputedStyle(bH);
       const fonte = `${cs.fontStyle} ${cs.fontWeight} ${cs.fontSize} ${cs.fontFamily}`;
       const F = parseFloat(cs.fontSize) || 100;
@@ -215,8 +205,6 @@ export function EstradaEscreve() {
       const asc = cv.measureText("H").fontBoundingBoxAscent;
       const rH = bH.getBoundingClientRect();
       const rM = bM.getBoundingClientRect();
-      // a caixa de um inline é a área de conteúdo da fonte: a base fica a
-      // `ascent` do topo dela
       const base = rH.top + sy + asc;
       const topo = base + aH.topo;
 
@@ -225,7 +213,6 @@ export function EstradaEscreve() {
       const xL = rH.left + (hEsq[0] + hEsq[1]) / 2;
       const xR = rH.left + (hDir[0] + hDir[1]) / 2;
       const haste = (hEsq[1] - hEsq[0] + (hDir[1] - hDir[0])) / 2;
-      // a barra do H: o trecho cheio no meio do vão entre as hastes
       const barra = aH
         .coluna((hEsq[1] + hDir[0]) / 2)
         .find((r) => r[0] > aH.topo * 0.8 && r[1] < -2);
@@ -236,7 +223,6 @@ export function EstradaEscreve() {
       const xML = rM.left + (mEsq[0] + mEsq[1]) / 2;
       const xMR = rM.left + (mDir[0] + mDir[1]) / 2;
       const meioM = (aM.esq + aM.dir) / 2;
-      // o vértice do V: o trecho cheio mais baixo na coluna do meio do M
       const v = aM
         .coluna(meioM)
         .filter((r) => r[1] - r[0] > 2)
@@ -244,7 +230,6 @@ export function EstradaEscreve() {
       const xV = rM.left + meioM;
       const yV = base + (v ? (v[0] + v[1]) / 2 : 0);
 
-      // o ponto depois do M: a letra-espaçamento negativa aproxima os dois
       const ls = parseFloat(getComputedStyle(bM).letterSpacing) || 0;
       const oP = rM.left + aM.avanco + ls;
       const xP = oP + (aP.esq + aP.dir) / 2;
@@ -253,17 +238,11 @@ export function EstradaEscreve() {
       const Htopo = { x: xL, y: topo };
       const f = (n: number) => n.toFixed(1);
 
-      // ── A LIGAÇÃO: do fim do elo até o topo do H ──────────────────────────
       let d = `M ${f(E.x)},${f(E.y)}`;
       if (desktop) {
-        // O VÃO LIVRE É À DIREITA (a mesma leitura da Estrada global): o
-        // título e o corpo são alinhados à esquerda, as letras são centradas.
-        // O traço desce o vão entre o mapa e o título, desce pela coluna livre
-        // e faz a curva por cima do H.M. para entrar no topo do H.
         const direitaLetras = rM.right;
-        const xc = Math.min(W - 24, Math.max(direitaTexto, direitaLetras) + Math.max(40, W * 0.04));
-        // a curva cruza o vão entre o mapa e o título na diagonal e chega à
-        // coluna já descendo — sem trecho reto na horizontal
+        const margemCurva = Math.min(84, Math.max(40, Math.min(W, 1920) * 0.04));
+        const xc = Math.min(W - 24, Math.max(direitaTexto, direitaLetras) + margemCurva);
         const yBanda = (Math.max(mapaFundo, dizerFundo) + tituloTopo) / 2;
         const B = { x: xc, y: yBanda + Math.min(vh * 0.08, (tituloTopo - yBanda) * 0.6) };
         const yArco = Math.max(B.y + 10, topo - F * 0.95);
@@ -271,13 +250,9 @@ export function EstradaEscreve() {
         const k2 = (B.y - E.y) * 0.6;
         d += ` C ${f(E.x + t0.x * k1)},${f(E.y + t0.y * k1)} ${f(B.x)},${f(B.y - k2)} ${f(B.x)},${f(B.y)}`;
         d += ` L ${f(xc)},${f(yArco)}`;
-        // alças curtas: o S por cima do H.M. desce em diagonal, não deita
         const dv = (Htopo.y - yArco) * 0.45;
         d += ` C ${f(xc)},${f(yArco + dv)} ${f(Htopo.x)},${f(Htopo.y - dv)} ${f(Htopo.x)},${f(Htopo.y)}`;
       } else {
-        // NO CELULAR NÃO HÁ VÃO: o conteúdo ocupa a largura toda. O traço
-        // encosta na margem esquerda (metade do recuo do capítulo), desce
-        // rente a ela e dobra para dentro no topo do H — que fica à esquerda.
         const xg = Math.max(6, recuo / 2);
         const dA = Math.max(34, Math.min(dizerTopo - E.y - 6, (E.x - xg) * 0.45));
         const A = { x: xg, y: E.y + dA };
@@ -288,19 +263,12 @@ export function EstradaEscreve() {
         d += ` C ${f(B.x)},${f(B.y + dv)} ${f(Htopo.x)},${f(Htopo.y - dv)} ${f(Htopo.x)},${f(Htopo.y)}`;
       }
 
-      // ── AS LETRAS, num traço ─────────────────────────────────────────────
-      // H: desce a haste esquerda, volta até a barra (por cima de si mesma,
-      // invisível), atravessa, sobe a haste direita e desce de novo.
       const dH =
         `M ${f(xL)},${f(topo)} L ${f(xL)},${f(base)} L ${f(xL)},${f(barraY)} ` +
         `L ${f(xR)},${f(barraY)} L ${f(xR)},${f(topo)} L ${f(xR)},${f(base)}`;
-      // M: nasce no pé dele mesmo, colado ao pé do H (o M cobre a haste
-      // direita do H; entre os dois pés há 2-3 px). Um tracinho emendando os
-      // dois pés virava, grosso, um dente abaixo da base — medido na captura.
       const dM =
         `M ${f(xML)},${f(base)} L ${f(xML)},${f(topo)} ` +
         `L ${f(xV)},${f(yV)} L ${f(xMR)},${f(topo)} L ${f(xMR)},${f(base)}`;
-      // o ponto: um toque curto, da largura da haste
       const dP = `M ${f(xP)},${f(pTopo)} L ${f(xP)},${f(base)}`;
 
       const yMin = Math.floor(E.y - 60);
@@ -310,15 +278,12 @@ export function EstradaEscreve() {
       svg.style.top = `${yMin - raizTopo}px`;
       svg.style.width = `${W}px`;
       svg.style.height = `${yMax - yMin}px`;
-      // a mesma espessura da rota no mapa (0,6 unidade do viewBox dele)
       svg.style.setProperty("--traco", `${(0.6 * escala).toFixed(2)}px`);
       svg.style.setProperty("--haste", `${haste.toFixed(1)}px`);
       liga.setAttribute("d", d);
       letraH.setAttribute("d", dH);
       letraM.setAttribute("d", dM);
       ponto.setAttribute("d", dP);
-      // a faixa das letras: do topo da letra à base. O bisel das quinas do M
-      // espeta para fora dela quando o traço engrossa; a letra de verdade não
       const faixa = faixaRef.current;
       if (faixa) {
         faixa.setAttribute("x", "0");
@@ -327,14 +292,7 @@ export function EstradaEscreve() {
         faixa.setAttribute("height", f(base - topo));
       }
 
-      // ── OS TEMPOS, em pixels de rolagem ─────────────────────────────────
-      // s0: o elo termina (a pista solta a cena / a âncora chega a 48%)
-      // s1: a base das letras já está na tela — a escrita pode começar
-      // s3: o H.M. chega perto do meio da tela (ou a foto do fecho ia entrar),
-      //     sólido, com a homenagem
-      // s2: fim da escrita; de s2 a s3 o traço engrossa e vira letra
       const s0 = desktop ? pistaTopo + pista.offsetHeight - vh : marcoTopo - vh * CEL_SEGUE_FIM;
-      // no celular a barra de capítulos ocupa o rodapé: a base tem de passar dela
       const nav = document.querySelector<HTMLElement>(".cap-nav");
       const rNav = nav?.getBoundingClientRect();
       const rodape = rNav && rNav.top > vh / 2 ? vh - rNav.top : 0;
@@ -342,16 +300,10 @@ export function EstradaEscreve() {
       s1 = Math.max(s1, s0 + vh * 0.3);
       const rMarca = marca.getBoundingClientRect();
       const centro = (rMarca.top + rMarca.bottom) / 2 + sy;
-      // RESTRIÇÃO DO CLIENTE: o rosto do Fábio só no hero e no fecho. O fecho
-      // vem logo depois de O Nome, e no celular a foto dele entra na tela
-      // antes de o H.M. chegar ao meio. A passagem termina ANTES de a foto
-      // aparecer: o nome assenta sozinho, e só então o fecho sobe.
       const retrato = document.querySelector<HTMLElement>(".fecho__retrato");
       const fecho = document.querySelector<HTMLElement>(".fecho");
       let sFoto = Infinity;
       if (retrato && fecho) {
-        // sem os gestos de entrada do fecho: o lugar mais alto que a foto
-        // pode ocupar (o conservador — ela nunca aparece antes disso)
         const els = [fecho, retrato];
         const antesF = els.map((el) => el.style.getPropertyValue("transform"));
         els.forEach((el) => el.style.setProperty("transform", "none"));
@@ -373,12 +325,20 @@ export function EstradaEscreve() {
 
     let marcos: Marcos | null = null;
     const escrever = (liga_: number, l: number, vira: number, m: Marcos) => {
-      svg.style.setProperty("--liga", liga_.toFixed(4));
-      svg.style.setProperty("--h", lim(l / m.fh).toFixed(4));
-      svg.style.setProperty("--m", lim((l - m.fh) / (m.fm - m.fh)).toFixed(4));
-      svg.style.setProperty("--ponto", lim((l - m.fm) / (1 - m.fm)).toFixed(4));
-      svg.style.setProperty("--vira", vira.toFixed(4));
-      capNome?.style.setProperty("--vira", vira.toFixed(4));
+      const ligaStr = liga_.toFixed(4);
+      const hStr = lim(l / m.fh).toFixed(4);
+      const mStr = lim((l - m.fh) / (m.fm - m.fh)).toFixed(4);
+      const pStr = lim((l - m.fm) / (1 - m.fm)).toFixed(4);
+      const viraStr = vira.toFixed(4);
+      const chave = `${ligaStr}|${hStr}|${mStr}|${pStr}|${viraStr}`;
+      if (chave === ultimaChave) return;
+      ultimaChave = chave;
+      svg.style.setProperty("--liga", ligaStr);
+      svg.style.setProperty("--h", hStr);
+      svg.style.setProperty("--m", mStr);
+      svg.style.setProperty("--ponto", pStr);
+      svg.style.setProperty("--vira", viraStr);
+      capNome?.style.setProperty("--vira", viraStr);
     };
 
     let pedido = 0;
@@ -389,11 +349,9 @@ export function EstradaEscreve() {
         const m = marcos;
         if (!m) return;
         if (reduzido.matches) {
-          // sem movimento: o estado final, direto
           escrever(1, 1, 1, m);
           return;
         }
-        // LINEAR em cada trecho: a ponta anda o que o dedo anda
         const s = window.scrollY;
         escrever(
           lim((s - m.s0) / (m.s1 - m.s0)),
@@ -418,7 +376,6 @@ export function EstradaEscreve() {
     window.addEventListener("scroll", esfregar, { passive: true });
     window.addEventListener("resize", aoRedimensionar);
     window.addEventListener("load", aoRedimensionar);
-    // as fontes chegam depois e mudam o desenho das letras
     document.fonts?.ready.then(aoRedimensionar);
 
     return () => {

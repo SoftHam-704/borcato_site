@@ -21,38 +21,6 @@ import { useEffect, useRef } from "react";
 //    distorce a curva em telas muito largas ou estreitas. Aqui a curva é remontada a
 //    cada resize, ancorada em onde os capítulos REALMENTE estão.
 
-/**
- * Por onde a estrada passa, em fração da largura da tela.
- *
- * A 1a rota jogava a linha em cima da grade das 11 marcas (0,72 no cap-marcas) e ela
- * MORRIA ali — atravessar conteúdo denso é o erro nº 3 da fita da SoftHam, e eu o
- * repeti. O conteúdo dos capítulos é alinhado à esquerda e tem `max-width`, então a
- * faixa da direita é o vão livre: é por lá que a estrada desce, serpenteando.
- */
-/**
- * O MAPA DE MINAS, em fração da largura e da altura do capítulo 03.
- *
- * 🔒 DECISÃO FECHADA (03/09, opção C do relatório da fase 3): a linha desenha esta
- * rota ATRÁS do capítulo 03 e não aparece dentro dele — o fundo opaco da seção a
- * cobre, e nenhum z-index resolve, porque o `clip-path` do gesto de revelação cria
- * contexto de empilhamento. Foram quatro tentativas; a spec mandava parar em duas.
- *
- * O que o visitante vê, e que é o que importa: as 8 regiões acendendo em ordem
- * conforme a ponta da linha chega em cada uma. Rota percorrida, não mapa de calor.
- *
- * **Não "consertar" isto.** Ver `war-game/outputs/fases/f3-PARCIAL.md`.
- *
- * Não é cartografia — é a silhueta reconhecível de Minas, na ordem em que o Fábio
- * roda. O público é mineiro: errar ONDE fica o Triângulo ou a Zona da Mata é o
- * único erro que ele detecta na hora.
- *
- * A ordem é a de uma viagem que sai de casa e volta: BH (centro) → Sul → Triângulo
- * (oeste) → Alto Paranaíba → Centro-Oeste → Norte → Vale do Aço → Zona da Mata
- * (leste). Nunca dois saltos seguidos atravessando o estado.
- *
- * `x` é fração da largura da tela; `y` é fração da ALTURA do capítulo 03 — assim o
- * mapa acompanha o capítulo em qualquer viewport, sem número fixo.
- */
 export const REGIOES_MAPA: { nome: string; x: number; y: number }[] = [
   { nome: "Central / RMBH", x: 0.62, y: 0.52 },
   { nome: "Sul de Minas", x: 0.54, y: 0.74 },
@@ -65,16 +33,9 @@ export const REGIOES_MAPA: { nome: string; x: number; y: number }[] = [
 ];
 
 const ROTA: Record<string, number> = {
-  // A rota SERPENTEIA: entra larga, recua, avança de novo. Uma rota quase reta
-  // (a 1a tinha os quatro pontos entre 0,78 e 1,06) vira régua, não estrada —
-  // é a amplitude horizontal que dá a leitura de curva.
   "cap-casa": 0.74,
   "cap-marcas": 1.02,
-  // a lista das regiões de Minas é a mais larga da página: aqui a estrada recua para o
-  // vão e volta, o que também dá o bojo da curva
   "cap-estrada": 0.86,
-  // o capítulo do nome é o único CENTRALIZADO: o "H.M." gigante ocupa o meio da
-  // tela, e qualquer rota interna passa por cima dele. A estrada contorna por fora.
   "cap-nome": 1.1,
 };
 
@@ -92,9 +53,11 @@ export function Estrada() {
     // curva caíam SOBRE o texto. No celular não existe vão por onde a estrada passe:
     // ela é um efeito de desktop, e no mobile simplesmente não existe.
     const estreito = window.matchMedia("(max-width: 900px)");
+    let ultimoOffset = "";
 
     /** Remonta a curva a partir de onde os capítulos estão AGORA. */
     const montar = () => {
+      ultimoOffset = "";
       if (estreito.matches) {
         svg.style.display = "none";
         return 0;
@@ -108,13 +71,6 @@ export function Estrada() {
       const topoDoc = window.scrollY;
       const larg = document.documentElement.clientWidth;
 
-      // Um ponto por capítulo, no centro vertical dele — EXCETO o capítulo 03,
-      // que entrega os 8 pontos do mapa de Minas.
-      //
-      // A spec é explícita: UM path só. Se houvesse dois — a estrada global e uma
-      // rota local do capítulo 03 — eles teriam progressos diferentes e a emenda
-      // ficaria visível (risco R-43, o modo de falha nº 1 desta fase). Aqui as
-      // regiões são pontos da MESMA spline: a emenda não existe por construção.
       const pontos = alvos.flatMap((el) => {
         const r = el.getBoundingClientRect();
         const topo = r.top + topoDoc;
@@ -124,11 +80,6 @@ export function Estrada() {
             y: topo + r.height * g.y,
           }));
         }
-        // CORREDOR MEDIDO (27/09): sem o close do Fábio em A Casa, a coluna
-        // da direita virou texto (os marcos) e a estrada a 74% cortava as
-        // palavras. Onde o capítulo marca um `[data-estrada-corredor]`, a
-        // estrada passa pelo vão REAL entre os dois primeiros itens dele —
-        // medido, não fração fixa, porque o vão muda com a largura.
         const corredor = el.querySelector<HTMLElement>("[data-estrada-corredor]");
         const itens = corredor ? corredor.children : null;
         if (itens && itens.length >= 2 && window.matchMedia("(min-width: 901px)").matches) {
@@ -141,29 +92,20 @@ export function Estrada() {
         return [{ x: larg * (ROTA[el.id] ?? 0.5), y: topo + r.height / 2 }];
       });
 
-      // a estrada nasce na cápsula do hero e morre depois do último capítulo:
-      // entrar e sair FORA do quadro é o que faz ela parecer estrada, não enfeite
       const ultimo = pontos[pontos.length - 1]!;
       const primeiro = pontos[0]!;
       const alturaTotal = ultimo.y + 320;
+      const largRef = Math.min(larg, 1920);
 
-      // MEDIDO: com -420 o ponto de partida nascia SOBRE uma pastilha da barra de
-      // marcas em 1280/1024. Com -560 ele nasce acima dela, dentro da cápsula do
-      // hero — que é de onde a estrada deve sair de qualquer forma.
-      pontos.unshift({ x: larg * 0.9, y: primeiro.y - 620 });
-      // sai pela direita, nao pelo centro: pelo centro ela cruzava o fecho de contato
-      pontos.push({ x: larg * 1.12, y: alturaTotal });
+      pontos.unshift({ x: Math.min(larg * 0.9, largRef * 0.94), y: primeiro.y - 620 });
+      pontos.push({ x: Math.min(larg * 1.12, largRef * 1.08), y: alturaTotal });
 
-      // Catmull-Rom -> Bézier cúbica: passa POR todos os pontos (uma spline comum
-      // só se aproxima deles), que é o que garante a linha encostar em cada capítulo
       let d = `M ${pontos[0]!.x.toFixed(1)},${pontos[0]!.y.toFixed(1)}`;
       for (let i = 0; i < pontos.length - 1; i++) {
         const p0 = pontos[i - 1] ?? pontos[i]!;
         const p1 = pontos[i]!;
         const p2 = pontos[i + 1]!;
         const p3 = pontos[i + 2] ?? p2;
-        // TENSÃO: menor = curva mais solta. 6 é o Catmull-Rom padrão e deixava o
-        // traço quase reto; 4.2 abre a barriga da curva sem criar laço.
         const T = 4.2;
         const c1x = p1.x + (p2.x - p0.x) / T;
         const c1y = p1.y + (p2.y - p0.y) / T;
@@ -178,15 +120,8 @@ export function Estrada() {
 
       const compr = path.getTotalLength();
 
-      // ONDE, ao longo do traco, cada regiao fica. Mede-se o comprimento do path
-      // ate o ponto dela — assim a luz acende no instante em que a ponta passa,
-      // e nao num palpite de porcentagem.
       path.style.strokeDasharray = `${compr}`;
-      // reduced-motion: a estrada existe inteira E as regioes ficam acesas —
-      // e o que a spec exige, para quem nao ve movimento nao perder a cena.
       path.style.strokeDashoffset = reduzido.matches ? "0" : `${compr}`;
-      if (reduzido.matches) {
-      }
 
       return compr;
     };
@@ -195,7 +130,7 @@ export function Estrada() {
 
     let pedido = 0;
     const esfregar = () => {
-      if (pedido || reduzido.matches) return;
+      if (pedido || reduzido.matches || estreito.matches) return;
       pedido = window.requestAnimationFrame(() => {
         pedido = 0;
         const doc = document.documentElement;
@@ -203,19 +138,15 @@ export function Estrada() {
         if (rolavel <= 0) return;
         // LINEAR. Sem ease: a ponta anda exatamente o que o dedo anda.
         const t = Math.min(1, Math.max(0, window.scrollY / rolavel));
-        path.style.strokeDashoffset = (compr * (1 - t)).toFixed(1);
-
-        // AS REGIOES DA LISTA NAO SAO MAIS DAQUI.
-        // Elas acendiam por esta linha global, casadas com REGIOES_MAPA. Desde
-        // que o capitulo 03 ganhou o mapa proprio (que mede a si mesmo), passou
-        // a haver DOIS relogios na mesma cena — medido: em +700 o mapa tinha 4
-        // acesas e a lista 8. Quem o visitante olha e o mapa, e e ele que
-        // governa a lista (ver MapaMinas.tsx). Aqui sobrou so o traco.
+        const offsetStr = (compr * (1 - t)).toFixed(1);
+        if (offsetStr !== ultimoOffset) {
+          ultimoOffset = offsetStr;
+          path.style.strokeDashoffset = offsetStr;
+        }
       });
     };
     esfregar();
 
-    // o resize muda a altura da página, e a curva inteira tem de ser remontada
     let pedidoResize = 0;
     const aoRedimensionar = () => {
       if (pedidoResize) return;
@@ -228,7 +159,6 @@ export function Estrada() {
 
     window.addEventListener("scroll", esfregar, { passive: true });
     window.addEventListener("resize", aoRedimensionar);
-    // as fontes chegam depois e mudam a altura dos capítulos
     document.fonts?.ready.then(aoRedimensionar);
 
     return () => {

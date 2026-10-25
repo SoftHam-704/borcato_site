@@ -92,7 +92,7 @@ export const casa = {
 export const representadas = [
   { id: "ntn-snr", nome: "NTN-SNR", fornece: "Rolamentos", site: "https://ntn.com.br/" },
   { id: "filtros-brasil", nome: "Filtros Brasil", fornece: "Filtros de ar, óleo, combustível e cabine", site: "https://www.filtrosbrasil.com.br/" },
-  { id: "nidec", nome: "Nidec", fornece: "Bombas d'água e de óleo", site: "http://www.nidec-gpm.com.br/" },
+  { id: "nidec", nome: "Nidec", fornece: "Bombas d'água e de óleo", site: "https://www.nidec-gpm.com.br/" },
   { id: "cofran", nome: "Cofran", fornece: "Lanternas e retrovisores", site: "https://cofranlanternas.com.br/" },
   { id: "pysko", nome: "Pysko", fornece: "Kits de suspensão", site: "https://www.pysko.com.br/" },
   { id: "hexlub", nome: "Hexlub", fornece: "Óleo lubrificante", site: "https://hexxlub.com.br/" },
